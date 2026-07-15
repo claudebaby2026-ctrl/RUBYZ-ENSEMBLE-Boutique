@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
-import { products, categories } from "@/lib/content";
+import { categories } from "@/lib/content";
+import { getProducts } from "@/lib/api";
 
 export const metadata = {
   title: "Collections",
   description: "Browse premium ethnic fashion collections with luxury filters and thoughtful curation.",
 };
 
-export default function CollectionsPage() {
+export default async function CollectionsPage() {
+  const products = await getProducts();
   return (
     <main className="bg-[#FBFAF8]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">

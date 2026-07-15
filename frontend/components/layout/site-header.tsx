@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, Heart, Menu } from "lucide-react";
+import { Search, ShoppingBag, Heart, Menu, User, LogOut } from "lucide-react";
+import { useState } from "react";
 import { brand } from "@/lib/content";
+import { useAuth } from "@/lib/useAuth";
 
 const navItems = [
   { href: "/collections", label: "Collections" },
@@ -14,6 +16,8 @@ const navItems = [
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur">
@@ -51,6 +55,53 @@ export function SiteHeader() {
           <Link href="/cart" className="rounded-full border border-black/10 p-2" aria-label="Cart">
             <ShoppingBag size={18} />
           </Link>
+
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className="rounded-full border border-black/10 p-2"
+              aria-label="Account"
+            >
+              <User size={18} />
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 top-12 w-48 rounded-[1rem] border border-black/5 bg-white p-2 shadow-lg">
+                {user ? (
+                  <>
+                    <p className="truncate px-3 py-2 text-xs text-gray-500">
+                      Signed in as <span className="text-[#111111]">{user.name}</span>
+                    </p>
+                    {user.role === "owner" && (
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setMenuOpen(false)}
+                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#F8F5F1]"
+                      >
+                        Owner Dashboard
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        logout();
+                        setMenuOpen(false);
+                      }}
+                      className="flex w-full items-center gap-2 rounded-[0.7rem] px-3 py-2 text-left text-sm text-[#D94F70] hover:bg-[#F8F5F1]"
+                    >
+                      <LogOut size={14} /> Log out
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#F8F5F1]"
+                  >
+                    Sign in / Create account
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

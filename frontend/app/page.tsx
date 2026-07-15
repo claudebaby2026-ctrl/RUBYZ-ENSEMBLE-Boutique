@@ -1,10 +1,12 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
-import { products, categories, occasions, reviews, brand } from "@/lib/content";
+import { categories, occasions, reviews, brand } from "@/lib/content";
+import { getProducts } from "@/lib/api";
 import Link from "next/link";
 import { ArrowRight, Camera, Check, Gem, Scissors, Sparkles, Truck } from "lucide-react";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const products = await getProducts();
   return (
     <main className="bg-[#FBFAF8] text-[#111111]">
       <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-16">

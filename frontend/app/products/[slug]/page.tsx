@@ -1,14 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Heart, MessageCircle, ShoppingBag, Sparkles } from "lucide-react";
-import { getProductBySlug, products } from "@/lib/content";
+import { getProductBySlug, getProducts } from "@/lib/api";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
-}
+export const dynamic = "force-dynamic";
 
-export function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export function generateMetadata() {
   return {
     title: "Product Details",
     description: "Luxury boutique product details with fabric, care and availability information.",
@@ -17,11 +15,14 @@ export function generateMetadata({ params }: { params: Promise<{ slug: string }>
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
+
+  const allProducts = await getProducts();
+  const related = allProducts.filter((item) => item.id !== product.id).slice(0, 4);
 
   return (
     <main className="bg-[#FBFAF8]">
@@ -106,7 +107,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#111111] hover:text-[#B68D40]">View All</Link>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {products.filter((item) => item.id !== product.id).slice(0, 4).map((item) => (
+          {related.map((item) => (
             <AnimatedProductCard key={item.id} product={item} />
           ))}
         </div>
