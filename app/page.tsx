@@ -1,65 +1,197 @@
-import Image from "next/image";
+import { AnimatedHero } from "@/components/ui/animated-hero";
+import { AnimatedProductCard } from "@/components/ui/animated-product-card";
+import { products, categories, occasions, reviews, brand } from "@/lib/content";
+import Link from "next/link";
+import { ArrowRight, Camera, Check, Gem, Scissors, Sparkles, Truck } from "lucide-react";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="bg-[#FBFAF8] text-[#111111]">
+      <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-16">
+        <AnimatedHero />
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <div className="mb-8 flex items-end justify-between">
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Curated Edits</p>
+            <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+              Shop by Category
+            </h2>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="grid gap-4 md:grid-cols-3">
+          {categories.map((category) => (
+            <Link key={category.name} href="/collections" className="group overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1">
+              <div className="h-48 bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] p-6">
+                <div className="flex h-full flex-col justify-between rounded-[1rem] border border-white/60 bg-white/40 p-5">
+                  <p className="text-xs uppercase tracking-[0.28em] text-[#B68D40]">Featured</p>
+                  <div>
+                    <h3 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+                      {category.name}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-600">{category.tag}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="bg-[#F8F5F1] py-16">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <div className="mb-8 flex items-end justify-between">
+            <div>
+              <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Fresh In</p>
+              <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+                New Arrivals
+              </h2>
+            </div>
+            <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#111111] hover:text-[#B68D40]">
+              View All
+            </Link>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {products.slice(0, 4).map((product) => (
+              <AnimatedProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <div className="mb-8 flex items-end justify-between">
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Most Loved</p>
+            <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+              Best Sellers
+            </h2>
+          </div>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {products.slice(4, 8).map((product) => (
+            <AnimatedProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[#111111] py-16 text-white">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Inspired Looks</p>
+          <h2 className="mb-8 text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
+            Celebrity Inspired Looks
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {[
+              { name: "Manish Malhotra", description: "Regal shimmer with couture energy." },
+              { name: "Sabyasachi", description: "Textural drama and heirloom elegance." },
+            ].map((look) => (
+              <div key={look.name} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-6">
+                <div className="mb-6 h-48 rounded-[1.2rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+                <h3 className="text-xl">Inspired by {look.name}</h3>
+                <p className="mt-2 text-sm text-gray-300">{look.description}</p>
+                <Link href="/collections" className="mt-5 inline-flex items-center gap-2 text-sm uppercase tracking-[0.28em] text-[#B68D40]">
+                  Explore Collection <ArrowRight size={14} />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <h2 className="mb-8 text-center text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+          Shop by Occasion
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-7">
+          {occasions.map((occasion) => (
+            <div key={occasion} className="rounded-[1rem] border border-black/5 bg-white p-4 text-center shadow-sm">
+              <Gem size={18} className="mx-auto mb-3 text-[#B68D40]" />
+              <p className="text-sm text-[#111111]">{occasion}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[#F8F5F1] py-16">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
+          {[
+            { icon: Sparkles, title: "Premium Fabrics" },
+            { icon: Scissors, title: "Expert Tailoring" },
+            { icon: Check, title: "Handpicked Collections" },
+            { icon: Truck, title: "Nationwide Shipping" },
+          ].map(({ icon: Icon, title }) => (
+            <div key={title} className="rounded-[1.2rem] bg-white p-6 text-center shadow-sm">
+              <Icon className="mx-auto mb-3 text-[#B68D40]" size={24} />
+              <p className="text-sm text-[#111111]">{title}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-2">
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Made for You</p>
+            <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+              Tailoring that feels personal.
+            </h2>
+            <p className="mt-4 max-w-xl text-base leading-7 text-gray-600">
+              Every piece can be tailored to your measurements. We offer bespoke alterations and made-to-measure refinement for a truly elevated fit.
+            </p>
+            <Link href="/tailoring" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white">
+              Book Tailoring <ArrowRight size={16} />
+            </Link>
+          </div>
+          <div className="rounded-[1.5rem] border border-black/5 bg-[#111111] p-6 text-white">
+            <div className="h-60 rounded-[1.2rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#F8F5F1] py-16">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
+          <h2 className="mb-8 text-center text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            Customer Reviews
+          </h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            {reviews.map((review) => (
+              <div key={review.name} className="rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
+                <p className="text-sm leading-7 text-gray-700">“{review.text}”</p>
+                <p className="mt-4 text-xs uppercase tracking-[0.28em] text-[#B68D40]">{review.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+        <div className="mb-8 flex items-center justify-center gap-2">
+          <Camera size={18} className="text-[#D94F70]" />
+          <h2 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            @{brand.name.toLowerCase().replace(/\s+/g, "")}
+          </h2>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {Array.from({ length: 12 }).map((_, index) => (
+            <div key={index} className="aspect-square rounded-[1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[#111111] py-16 text-white">
+        <div className="mx-auto max-w-xl px-5 text-center lg:px-8">
+          <h2 className="text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
+            Join Our Fashion Community
+          </h2>
+          <p className="mt-3 text-sm text-gray-400">Early access to new collections and styling notes.</p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <input placeholder="Your email" className="flex-1 rounded-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white placeholder-gray-500" />
+            <button className="rounded-full bg-[#B68D40] px-6 py-3 text-sm font-medium text-[#111111]">Subscribe</button>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
