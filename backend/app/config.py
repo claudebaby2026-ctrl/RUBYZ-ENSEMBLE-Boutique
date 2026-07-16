@@ -13,7 +13,15 @@ class Settings:
     needed anywhere else in the app.
     """
 
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./rubyz.db")
+    # Neon (and some other providers) hand out connection strings prefixed
+    # "postgres://", which SQLAlchemy's psycopg2 dialect rejects — it wants
+    # "postgresql://". Normalize so pasting Neon's string as-is just works.
+    _raw_db_url = os.getenv("DATABASE_URL", "sqlite:///./rubyz.db")
+    DATABASE_URL: str = (
+        _raw_db_url.replace("postgres://", "postgresql://", 1)
+        if _raw_db_url.startswith("postgres://")
+        else _raw_db_url
+    )
     CORS_ORIGINS: list[str] = os.getenv("CORS_ORIGINS", "*").split(",")
 
     # --- Auth ---
@@ -30,6 +38,29 @@ class Settings:
     OWNER_EMAIL: str = os.getenv("OWNER_EMAIL", "owner@rubyzensemble.in")
     OWNER_PASSWORD: str = os.getenv("OWNER_PASSWORD", "RubyzOwner@123")
     OWNER_NAME: str = os.getenv("OWNER_NAME", "RUBYZ Owner")
+
+    # --- Product image storage (Cloudflare R2) ---
+    # All four must be set for uploads to go to R2. If any is missing, the
+    # upload endpoint falls back to writing to local disk (backend/app/static/uploads)
+    # exactly like before, so local dev with zero setup still works.
+    R2_ACCOUNT_ID: str = os.getenv("R2_ACCOUNT_ID", "")
+    R2_ACCESS_KEY_ID: str = os.getenv("R2_ACCESS_KEY_ID", "")
+    R2_SECRET_ACCESS_KEY: str = os.getenv("R2_SECRET_ACCESS_KEY", "")
+    R2_BUCKET_NAME: str = os.getenv("R2_BUCKET_NAME", "")
+    # Public base URL the browser can load images from — either your R2.dev
+    # subdomain or a custom domain you've mapped to the bucket. No trailing
+    # slash.
+    R2_PUBLIC_URL: str = os.getenv("R2_PUBLIC_URL", "").rstrip("/")
+
+    @property
+    def R2_ENABLED(self) -> bool:
+        return bool(
+            self.R2_ACCOUNT_ID
+            and self.R2_ACCESS_KEY_ID
+            and self.R2_SECRET_ACCESS_KEY
+            and self.R2_BUCKET_NAME
+            and self.R2_PUBLIC_URL
+        )
 
 
 settings = Settings()
