@@ -57,7 +57,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </h1>
             <p className="mt-4 text-sm leading-7 text-gray-600">{product.description}</p>
 
-            <div className="mt-6 flex items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-[#F8F5F1] px-3 py-1 text-sm text-[#111111]">{product.category}</span>
               <span className="rounded-full bg-[#F8F5F1] px-3 py-1 text-sm text-[#111111]">{product.fabric}</span>
               <span className="rounded-full bg-[#F8F5F1] px-3 py-1 text-sm text-[#111111]">{product.occasion}</span>
