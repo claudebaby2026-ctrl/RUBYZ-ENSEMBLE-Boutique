@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   AlertTriangle, BarChart3, Boxes, Check, ClipboardList, LayoutGrid, Plus, Ticket,
   Users, Layout, ChevronRight, FileSpreadsheet, Save, X, Camera,
-  ChevronLeft, Pencil, Trash2, Loader2, LogOut, Upload, ImageOff,
+  ChevronLeft, Pencil, Trash2, Loader2, LogOut, Upload, ImageOff, Menu,
 } from "lucide-react";
 import type { Product } from "@/lib/content";
 import {
@@ -198,8 +198,8 @@ function DashboardHome({ setActive, stats, lowStockCount, loading }: {
       </div>
 
       {!loading && lowStockCount > 0 && (
-        <div className="flex items-center gap-3 rounded-[1.2rem] border border-[#EFD9B0] bg-[#FDF3E7] p-4">
-          <AlertTriangle size={18} className="text-[#B68D40]" />
+        <div className="flex flex-wrap items-center gap-3 rounded-[1.2rem] border border-[#EFD9B0] bg-[#FDF3E7] p-4">
+          <AlertTriangle size={18} className="shrink-0 text-[#B68D40]" />
           <p className="text-sm text-[#111111]"><strong>{lowStockCount} product(s)</strong> are running low on stock.</p>
           <button onClick={() => setActive("inventory")} className="ml-auto text-xs uppercase tracking-[0.24em] underline">View</button>
         </div>
@@ -375,10 +375,10 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Care Instructions</label>
               <div className="mt-1"><TagListInput tags={care} onChange={setCare} placeholder="e.g. Dry clean only — press Enter" /></div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <button onClick={() => setStep(1)} className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
               <button onClick={() => setSaved(true)} className="flex items-center gap-2 rounded-full bg-[#F8F5F1] px-6 py-3 text-sm"><Save size={14} /> Save as Draft</button>
-              <button onClick={() => setStep(3)} className="ml-auto rounded-full bg-[#111111] px-6 py-3 text-sm text-white">Continue</button>
+              <button onClick={() => setStep(3)} className="rounded-full bg-[#111111] px-6 py-3 text-sm text-white sm:ml-auto">Continue</button>
             </div>
             {saved && <p className="text-xs text-gray-500">Saved locally — continue whenever you're ready.</p>}
           </div>
@@ -448,23 +448,25 @@ function Orders() {
       ) : (
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
           <div className="overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
-            <table className="w-full text-sm">
-              <thead className="bg-[#FBFAF8] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
-                <tr>
-                  <th className="p-3">Order</th><th className="p-3">Customer</th><th className="p-3">Amount</th><th className="p-3">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id} onClick={() => setSelected(order)} className="cursor-pointer border-t border-black/5">
-                    <td className="p-3">{order.id}</td>
-                    <td className="p-3">{order.customerName}</td>
-                    <td className="p-3">₹{order.total}</td>
-                    <td className="p-3"><StatusPill status={order.status} /></td>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[480px] text-sm">
+                <thead className="bg-[#FBFAF8] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+                  <tr>
+                    <th className="p-3">Order</th><th className="p-3">Customer</th><th className="p-3">Amount</th><th className="p-3">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {orders.map((order) => (
+                    <tr key={order.id} onClick={() => setSelected(order)} className="cursor-pointer border-t border-black/5">
+                      <td className="p-3">{order.id}</td>
+                      <td className="p-3">{order.customerName}</td>
+                      <td className="p-3">₹{order.total}</td>
+                      <td className="p-3"><StatusPill status={order.status} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
           <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
             {!selected ? <p className="text-sm text-gray-400">Select an order to see details.</p> : (
@@ -553,7 +555,7 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
             <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Name</label>
             <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Price</label>
               <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
@@ -567,7 +569,7 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
               <input value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Category</label>
               <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
@@ -577,7 +579,7 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
               <input value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Fabric</label>
               <input value={form.fabric} onChange={(e) => setForm({ ...form, fabric: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
@@ -641,17 +643,17 @@ function Inventory({ products, loading, onChanged }: { products: Product[]; load
       ) : (
         <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
           {products.map((product) => (
-            <div key={product.id} className="flex items-center justify-between gap-3 border-b border-black/5 p-4 last:border-b-0">
-              <div className="flex items-center gap-3">
+            <div key={product.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 p-4 last:border-b-0">
+              <div className="flex min-w-0 items-center gap-3">
                 {product.images?.[0] ? (
-                  <img src={resolveImageUrl(product.images[0])} alt={product.name} className="h-12 w-10 rounded-[0.5rem] object-cover" />
+                  <img src={resolveImageUrl(product.images[0])} alt={product.name} className="h-12 w-10 shrink-0 rounded-[0.5rem] object-cover" />
                 ) : (
-                  <div className="flex h-12 w-10 items-center justify-center rounded-[0.5rem] bg-[#F8F5F1] text-gray-400">
+                  <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#F8F5F1] text-gray-400">
                     <ImageOff size={14} />
                   </div>
                 )}
-                <div>
-                  <p className="text-sm text-[#111111]">{product.name}</p>
+                <div className="min-w-0">
+                  <p className="truncate text-sm text-[#111111]">{product.name}</p>
                   <p className="text-xs text-gray-400">₹{product.price} · {product.category}</p>
                 </div>
               </div>
@@ -718,6 +720,7 @@ export default function DashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -754,8 +757,73 @@ export default function DashboardPage() {
     );
   }
 
+  const activeLabel = NAV.find((item) => item.id === active)?.label ?? "Dashboard";
+
   return (
     <div className="min-h-screen bg-[#FBFAF8]">
+      {/* Mobile top bar: hamburger + current section label, replaces the hidden sidebar */}
+      <div className="flex items-center justify-between border-b border-black/5 bg-white px-5 py-4 lg:hidden">
+        <button
+          onClick={() => setMobileNavOpen(true)}
+          className="rounded-full border border-black/10 p-2"
+          aria-label="Open dashboard menu"
+          aria-expanded={mobileNavOpen}
+        >
+          <Menu size={18} />
+        </button>
+        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#111111]">{activeLabel}</p>
+        <div className="w-9" />
+      </div>
+
+      {/* Mobile nav drawer */}
+      {mobileNavOpen && (
+        <div className="lg:hidden">
+          <button
+            aria-label="Close menu overlay"
+            onClick={() => setMobileNavOpen(false)}
+            className="fixed inset-0 z-40 bg-black/40"
+          />
+          <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[82vw] max-w-xs flex-col overflow-y-auto bg-white p-6 shadow-2xl">
+            <div className="mb-8 flex items-start justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Owner Panel</p>
+                <h2 className="mt-2 text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>RUBYZ Admin</h2>
+                <p className="mt-1 truncate text-xs text-gray-400">{user.email}</p>
+              </div>
+              <button onClick={() => setMobileNavOpen(false)} className="rounded-full border border-black/10 p-2" aria-label="Close menu">
+                <X size={18} />
+              </button>
+            </div>
+            <nav className="space-y-2">
+              {NAV.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActive(item.id);
+                      setMobileNavOpen(false);
+                    }}
+                    className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#111111] text-white" : "text-[#111111] hover:bg-[#F8F5F1]"}`}
+                  >
+                    <Icon size={16} /> {item.label}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => {
+                  logout();
+                  router.push("/login");
+                }}
+                className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#F8F5F1]"
+              >
+                <LogOut size={16} /> Log out
+              </button>
+            </nav>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto flex max-w-7xl gap-8 px-5 py-8 lg:px-8">
         <aside className="hidden w-72 shrink-0 rounded-[1.8rem] border border-black/5 bg-white p-6 shadow-sm lg:block">
           <div className="mb-8">
@@ -784,7 +852,7 @@ export default function DashboardPage() {
           </nav>
         </aside>
 
-        <main className="flex-1 rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm lg:p-8">
+        <main className="flex-1 rounded-[2rem] border border-black/5 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
           {active === "home" && <DashboardHome setActive={setActive} stats={stats} lowStockCount={lowStockCount} loading={loading} />}
           {active === "add" && <AddProduct onCreated={refresh} />}
           {active === "orders" && <Orders />}
