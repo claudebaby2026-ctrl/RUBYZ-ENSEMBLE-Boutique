@@ -53,20 +53,20 @@ export default function CartPage() {
             ) : (
               <div className="mt-6 space-y-4">
                 {items.map((item) => (
-                  <div key={`${item.productId}-${item.size}`} className="flex items-center gap-4 rounded-[1.2rem] border border-black/5 bg-[#F8F5F1] p-4">
+                  <div key={`${item.productId}-${item.size}`} className="flex flex-wrap items-center gap-4 rounded-[1.2rem] border border-black/5 bg-[#F8F5F1] p-4">
                     {item.image ? (
                       <img src={item.image} alt={item.name} className="h-20 w-16 shrink-0 rounded-[0.8rem] object-cover" />
                     ) : (
                       <div className="h-20 w-16 shrink-0 rounded-[0.8rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
                     )}
-                    <div className="flex-1">
+                    <div className="min-w-[140px] flex-1">
                       <Link href={`/products/${item.slug}`} className="font-medium text-[#111111] hover:text-[#B68D40]">
                         {item.name}
                       </Link>
                       <p className="mt-1 text-xs text-gray-500">Size: {item.size}</p>
                       <p className="mt-1 text-sm text-gray-600">₹{item.price}</p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="ml-auto flex items-center gap-3 sm:ml-0">
                       <button
                         onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}
                         className="rounded-full border border-black/10 p-2"
