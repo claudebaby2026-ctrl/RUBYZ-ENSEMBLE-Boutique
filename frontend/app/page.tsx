@@ -5,6 +5,8 @@ import { getProducts } from "@/lib/api";
 import Link from "next/link";
 import { ArrowRight, Camera, Check, Gem, Scissors, Sparkles, Truck } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const products = await getProducts();
   return (
