@@ -69,23 +69,23 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
 
   return (
     <>
-      <div className="flex flex-col gap-6 rounded-[2rem] border border-black/5 bg-white p-8 shadow-[0_20px_60px_rgba(17,17,17,0.06)] lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-6 rounded-[2rem] border border-black/5 bg-white p-5 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:p-8 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Collections</p>
-          <h1 className="mt-2 text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h1 className="mt-2 text-2xl text-[#111111] sm:text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
             Curated for celebration, comfort, and couture.
           </h1>
         </div>
-        <div className="flex items-center gap-3 rounded-full border border-black/10 bg-[#F8F5F1] px-4 py-3">
-          <Search size={16} className="text-gray-500" />
+        <div className="flex w-full items-center gap-3 rounded-full border border-black/10 bg-[#F8F5F1] px-4 py-3 lg:w-auto">
+          <Search size={16} className="shrink-0 text-gray-500" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search silhouettes, fabrics, occasions…"
-            className="w-56 bg-transparent text-sm outline-none placeholder:text-gray-400"
+            className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-gray-400 lg:w-56"
           />
           {query && (
-            <button aria-label="Clear search" onClick={() => setQuery("")} className="text-gray-400 hover:text-[#111111]">
+            <button aria-label="Clear search" onClick={() => setQuery("")} className="shrink-0 text-gray-400 hover:text-[#111111]">
               <X size={14} />
             </button>
           )}
@@ -158,7 +158,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         </aside>
 
         <div>
-          <div className="mb-5 flex items-center justify-between rounded-[1rem] border border-black/5 bg-white px-4 py-3 shadow-sm">
+          <div className="mb-5 flex flex-col gap-3 rounded-[1rem] border border-black/5 bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-gray-600">
               {query.trim() ? (
                 <>Showing {filtered.length} result{filtered.length === 1 ? "" : "s"} for &ldquo;{query.trim()}&rdquo;</>
