@@ -35,17 +35,29 @@ export type ProductInput = Omit<Product, "id"> & { stock?: number };
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getToken();
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options?.headers || {}),
-    },
-    // Product/order data changes often from the owner dashboard, so avoid
-    // Next.js's default fetch caching for these calls.
-    cache: "no-store",
-  });
+  const url = `${API_URL}${path}`;
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options?.headers || {}),
+      },
+      // Product/order data changes often from the owner dashboard, so avoid
+      // Next.js's default fetch caching for these calls.
+      cache: "no-store",
+    });
+  } catch (networkErr: any) {
+    // fetch() itself threw — the API is unreachable (wrong host/port, DNS
+    // failure, backend not running, etc). Surface the URL so it's obvious
+    // at a glance whether NEXT_PUBLIC_API_URL is pointing at the right place.
+    throw new Error(
+      `Could not reach API at ${url} (${networkErr?.message || "network error"}). ` +
+        `Check that the backend is running and NEXT_PUBLIC_API_URL is correct.`
+    );
+  }
   if (!res.ok) {
     if (res.status === 401) {
       // Session expired or missing — clear any stale token so the UI can
@@ -59,11 +71,13 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     let detail = "";
     try {
       const body = await res.json();
-      detail = typeof body.detail === "string" ? body.detail : "";
+      detail = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail ?? body);
     } catch {
       detail = await res.text().catch(() => "");
     }
-    throw new Error(detail || `API ${path} failed: ${res.status}`);
+    throw new Error(
+      `Request to ${url} failed: ${res.status} ${res.statusText}${detail ? ` — ${detail}` : ""}`
+    );
   }
   if (res.status === 204) return undefined as T;
   return res.json();
