@@ -152,7 +152,7 @@ export default function CheckoutPage() {
             <h2 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Order Summary</h2>
             <div className="mt-6 space-y-3 text-sm text-gray-600">
               {items.map((item) => (
-                <div key={`${item.productId}-${item.size}`} className="flex justify-between">
+                <div key={`${item.productId}-${item.size}`} className="flex flex-wrap justify-between gap-x-3 gap-y-1">
                   <span>{item.name} ({item.size}) x{item.quantity}</span>
                   <span>₹{(item.price * item.quantity).toLocaleString()}</span>
                 </div>
