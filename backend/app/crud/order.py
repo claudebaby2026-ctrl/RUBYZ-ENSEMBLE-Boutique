@@ -4,6 +4,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session, joinedload
 
 from app.models.order import Order, OrderItem
+from app.models.product import Product
 from app.schemas.order import OrderCreate
 
 
@@ -31,6 +32,8 @@ def create_order(db: Session, order: OrderCreate) -> Order:
         display_id=display_id,
         customer_name=order.customerName,
         phone=order.phone,
+        email=order.email,
+        address=order.address,
         mode=order.mode,
         status="Pending",
         total=order.total,
@@ -45,6 +48,20 @@ def create_order(db: Session, order: OrderCreate) -> Order:
         for item in order.items
     ]
     db.add(db_order)
+
+    # Keep inventory honest: a placed order should reduce available stock
+    # and count towards each product's "sold" tally, the same way it would
+    # on any real storefront.
+    for item in order.items:
+        if item.productId is None:
+            continue
+        product = db.query(Product).filter(Product.id == item.productId).first()
+        if not product:
+            continue
+        product.stock = max(0, (product.stock or 0) - item.quantity)
+        product.sold = (product.sold or 0) + item.quantity
+        product.availability = "In stock" if product.stock > 0 else "Out of stock"
+
     db.commit()
     db.refresh(db_order)
     return db_order

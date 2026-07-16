@@ -22,6 +22,8 @@ class OrderItemOut(BaseModel):
 class OrderCreate(BaseModel):
     customerName: str
     phone: str
+    email: Optional[str] = None
+    address: Optional[str] = None
     mode: str = "Delivery"
     items: List[OrderItemCreate]
     total: int
@@ -37,6 +39,8 @@ class OrderOut(BaseModel):
     id: str
     customerName: str
     phone: str
+    email: Optional[str] = None
+    address: Optional[str] = None
     mode: str
     status: str
     total: int
@@ -48,6 +52,8 @@ class OrderOut(BaseModel):
             id=order.display_id,
             customerName=order.customer_name,
             phone=order.phone,
+            email=order.email,
+            address=order.address,
             mode=order.mode,
             status=order.status,
             total=order.total,

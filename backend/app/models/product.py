@@ -23,6 +23,7 @@ class Product(Base):
     description = Column(String, default="")
     care = Column(JSON, default=list)
     sizes = Column(JSON, default=list)
+    images = Column(JSON, default=list)
     availability = Column(String, default="In stock")
     is_featured = Column(Boolean, default=False)
     is_new = Column(Boolean, default=False)

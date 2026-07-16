@@ -1,9 +1,12 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import Base, SessionLocal, engine
-from app.routers import admin, auth, orders, products
+from app.routers import admin, auth, orders, products, uploads
 from app.seed_data import seed_if_empty, seed_owner
 
 # Import models so SQLAlchemy metadata knows about them before create_all
@@ -22,6 +25,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
 
 @app.on_event("startup")
 def on_startup() -> None:
@@ -38,6 +45,7 @@ app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(orders.router)
 app.include_router(admin.router)
+app.include_router(uploads.router)
 
 
 @app.get("/health")

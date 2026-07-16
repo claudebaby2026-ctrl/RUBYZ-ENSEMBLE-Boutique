@@ -6,6 +6,7 @@ import { Search, ShoppingBag, Heart, Menu, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { brand } from "@/lib/content";
 import { useAuth } from "@/lib/useAuth";
+import { useCart } from "@/lib/useCart";
 
 const navItems = [
   { href: "/collections", label: "Collections" },
@@ -17,6 +18,7 @@ const navItems = [
 export function SiteHeader() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { count } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -52,8 +54,13 @@ export function SiteHeader() {
           <button className="rounded-full border border-black/10 p-2" aria-label="Wishlist">
             <Heart size={18} />
           </button>
-          <Link href="/cart" className="rounded-full border border-black/10 p-2" aria-label="Cart">
+          <Link href="/cart" className="relative rounded-full border border-black/10 p-2" aria-label="Cart">
             <ShoppingBag size={18} />
+            {count > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#D94F70] px-1 text-[10px] font-semibold text-white">
+                {count}
+              </span>
+            )}
           </Link>
 
           <div className="relative">

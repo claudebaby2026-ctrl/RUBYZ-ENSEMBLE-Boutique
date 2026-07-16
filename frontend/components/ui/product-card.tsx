@@ -2,6 +2,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Heart, Star } from "lucide-react";
 import type { Product } from "@/lib/content";
+import { resolveImageUrl } from "@/lib/api";
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -18,6 +19,7 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export function ProductCard({ product }: { product: Product }) {
+  const image = resolveImageUrl(product.images?.[0]);
   return (
     <motion.article
       whileHover={{ y: -4, scale: 1.01 }}
@@ -28,8 +30,11 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="absolute right-3 top-3 rounded-full bg-white/90 p-2 shadow-sm">
           <Heart size={15} className="text-[#111111]" />
         </div>
-        <div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
-        <div className="mt-3 flex items-center justify-between">
+        {image ? (
+          <img src={image} alt={product.name} className="h-64 w-full rounded-[1rem] object-cover" />
+        ) : (
+          <div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+        )}        <div className="mt-3 flex items-center justify-between">
           <span className="rounded-full bg-[#111111] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white">
             {product.badge}
           </span>

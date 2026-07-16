@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Heart, MessageCircle, ShoppingBag, Sparkles } from "lucide-react";
-import { getProductBySlug, getProducts } from "@/lib/api";
+import { Heart } from "lucide-react";
+import { getProductBySlug, getProducts, resolveImageUrl } from "@/lib/api";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
+import { AddToCartPanel } from "@/components/product/add-to-cart-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   const allProducts = await getProducts();
   const related = allProducts.filter((item) => item.id !== product.id).slice(0, 4);
+  const images = (product.images ?? []).map((img) => resolveImageUrl(img)).filter(Boolean) as string[];
+  const mainImage = images[0];
 
   return (
     <main className="bg-[#FBFAF8]">
@@ -33,12 +36,18 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <span className="rounded-full bg-[#111111] px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white">{product.badge}</span>
               <button className="rounded-full border border-black/10 p-2"><Heart size={16} /></button>
             </div>
-            <div className="h-[440px] rounded-[1.4rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
-            <div className="mt-4 grid grid-cols-4 gap-3">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="aspect-square rounded-[1rem] border border-black/5 bg-[#F8F5F1]" />
-              ))}
-            </div>
+            {mainImage ? (
+              <img src={mainImage} alt={product.name} className="h-[440px] w-full rounded-[1.4rem] object-cover" />
+            ) : (
+              <div className="h-[440px] rounded-[1.4rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+            )}
+            {images.length > 1 && (
+              <div className="mt-4 grid grid-cols-4 gap-3">
+                {images.slice(0, 4).map((src, index) => (
+                  <img key={index} src={src} alt={`${product.name} ${index + 1}`} className="aspect-square rounded-[1rem] border border-black/5 object-cover" />
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
@@ -62,14 +71,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <p className="text-sm text-gray-400 line-through">₹{product.mrp}</p>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <button className="inline-flex items-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white">
-                <ShoppingBag size={16} /> Add to Cart
-              </button>
-              <button className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm font-medium text-[#111111]">
-                <MessageCircle size={16} /> WhatsApp Enquiry
-              </button>
-            </div>
+            <AddToCartPanel product={product} image={images[0]} />
 
             <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
               <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Product Details</h2>

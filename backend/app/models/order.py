@@ -11,6 +11,8 @@ class Order(Base):
     display_id = Column(String, unique=True, index=True, nullable=False)
     customer_name = Column(String, nullable=False)
     phone = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+    address = Column(String, nullable=True)
     mode = Column(String, default="Delivery")
     status = Column(String, default="Pending")
     total = Column(Integer, default=0)

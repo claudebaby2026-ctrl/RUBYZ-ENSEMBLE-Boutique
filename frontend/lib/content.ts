@@ -28,6 +28,7 @@ export type Product = {
   description: string;
   care: string[];
   sizes: string[];
+  images?: string[];
   availability: string;
   isFeatured?: boolean;
   isNew?: boolean;

@@ -13,6 +13,11 @@
 - **Neon Postgres migration is a one-line change**: set `DATABASE_URL` in
   `backend/.env` to your Neon connection string. No code changes needed.
 
+> If you have an existing `backend/rubyz.db` from before this pass, delete
+> it (or point `DATABASE_URL` at a fresh database) before starting the
+> server — the `products` and `orders` tables gained new columns
+> (`images`, `email`, `address`) that a pre-existing SQLite file won't have.
+
 ## Run it
 
 ### Backend
@@ -38,16 +43,22 @@ Owner dashboard: http://localhost:3000/dashboard
 - `GET /products` — list all products (optional `?category=`)
 - `GET /products/slug/{slug}` — single product by slug
 - `GET /products/{id}` — single product by id
-- `POST /products` — create
-- `PUT /products/{id}` / `PATCH /products/{id}` — update
-- `DELETE /products/{id}` — delete
-- `GET /orders`, `POST /orders`, `PATCH /orders/{id}/status`
+- `POST /products` — create (owner only, accepts an `images` array of URLs)
+- `PUT /products/{id}` / `PATCH /products/{id}` — update (owner only)
+- `DELETE /products/{id}` — delete (owner only)
+- `POST /uploads/image` — owner-only image upload (multipart `file` field), returns `{ "url": "/static/uploads/<name>.jpg" }`; uploaded files are served back from `/static/uploads/...`
+- `GET /orders`, `POST /orders` (accepts `email`/`address`), `PATCH /orders/{id}/status`
 - `GET /admin/dashboard` — live stats (orders, revenue, low stock) computed from the DB
 
+## Product photos
+- The owner dashboard's **Add Product** and **Inventory → Edit** screens upload real photos via `POST /uploads/image`; files are saved to `backend/app/static/uploads/` and served publicly from `/static/uploads/...`.
+- Products can have multiple photos (stored as a JSON `images` list). The storefront (product cards, product detail gallery, cart, dashboard inventory) all render the actual uploaded photo, falling back to a neutral placeholder only when a product has none.
+
+## Cart & checkout
+- The cart is now real, shared client-side state (`frontend/lib/cart.ts` + `frontend/lib/useCart.ts`), persisted to `localStorage` and kept in sync across the header badge, `/cart`, and `/checkout` via a custom event (same pattern as the existing auth state).
+- Product detail pages let you pick a size/quantity and add to cart; `/cart` supports quantity changes, removal, and a delivery/pickup toggle with live totals; `/checkout` captures name/phone/email/address and calls the real `POST /orders` endpoint, which now also decrements product stock and updates `sold` counts.
+- **Payment is intentionally still a stub.** The "Pay via Razorpay" button places the order in the database (status `Pending`) but does not call Razorpay — wire up `checkout.js` / order creation with Razorpay's SDK at the point marked in `frontend/app/checkout/page.tsx`.
+
 ## Known limitations / next steps
-- Cart and checkout pages are still static mockups (no shared cart state or
-  payment integration) — they weren't part of the CRUD/database scope of
-  this pass, but `POST /orders` is ready to be wired up whenever cart state
-  is added.
-- Customers/Coupons/Homepage Editor tabs remain placeholders — no backing
-  data model was requested for these yet.
+- Customers/Coupons/Homepage Editor tabs remain placeholders — no backing data model was requested for these yet.
+- Razorpay payment capture itself isn't implemented (see above) — everything else in the purchase flow is.

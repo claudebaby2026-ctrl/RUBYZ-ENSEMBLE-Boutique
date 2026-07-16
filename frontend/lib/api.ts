@@ -3,10 +3,21 @@ import { getToken, logout } from "@/lib/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+// Product images are stored as paths relative to the API origin
+// (e.g. "/static/uploads/xyz.jpg"). This resolves them to a full URL the
+// browser can load regardless of which origin the frontend is served from.
+export function resolveImageUrl(path?: string | null): string | undefined {
+  if (!path) return undefined;
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return `${API_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
 export type Order = {
   id: string;
   customerName: string;
   phone: string;
+  email?: string;
+  address?: string;
   mode: string;
   status: string;
   total: number;
@@ -81,6 +92,34 @@ export function deleteProduct(id: number): Promise<void> {
   return request<void>(`/products/${id}`, { method: "DELETE" });
 }
 
+// Uploads a product photo (owner-only). Uses FormData directly instead of
+// the JSON `request` helper since this is a multipart upload.
+export async function uploadImage(file: File): Promise<{ url: string }> {
+  const token = getToken();
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch(`${API_URL}/uploads/image`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    body: form,
+  });
+  if (!res.ok) {
+    if (res.status === 401) {
+      logout();
+      throw new Error("You need to be logged in as the owner to do that.");
+    }
+    let detail = "";
+    try {
+      const body = await res.json();
+      detail = typeof body.detail === "string" ? body.detail : "";
+    } catch {
+      detail = await res.text().catch(() => "");
+    }
+    throw new Error(detail || `Upload failed: ${res.status}`);
+  }
+  return res.json();
+}
+
 // ---- Orders ----
 
 export function getOrders(): Promise<Order[]> {
@@ -90,6 +129,8 @@ export function getOrders(): Promise<Order[]> {
 export function createOrder(payload: {
   customerName: string;
   phone: string;
+  email?: string;
+  address?: string;
   mode: string;
   items: { productId?: number; name: string; quantity: number; price: number }[];
   total: number;

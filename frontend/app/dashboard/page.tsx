@@ -4,13 +4,13 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle, BarChart3, Boxes, Check, ClipboardList, LayoutGrid, Plus, Ticket,
-  Users, Layout, ChevronRight, FileSpreadsheet, Save, Sparkles, X, Mic, Camera,
-  ChevronLeft, Pencil, Trash2, Loader2, LogOut,
+  Users, Layout, ChevronRight, FileSpreadsheet, Save, X, Camera,
+  ChevronLeft, Pencil, Trash2, Loader2, LogOut, Upload, ImageOff,
 } from "lucide-react";
 import type { Product } from "@/lib/content";
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
-  getOrders, updateOrderStatus, getDashboardStats,
+  getOrders, updateOrderStatus, getDashboardStats, uploadImage, resolveImageUrl,
   type Order, type DashboardStats,
 } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
@@ -32,6 +32,63 @@ function slugify(text: string) {
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "") || `product-${Date.now()}`;
+}
+
+function ImageUploader({ images, onChange }: { images: string[]; onChange: (images: string[]) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const uploaded: string[] = [];
+      for (const file of Array.from(files)) {
+        const { url } = await uploadImage(file);
+        uploaded.push(url);
+      }
+      onChange([...images, ...uploaded]);
+    } catch (e: any) {
+      setError(e?.message || "Could not upload image");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = (url: string) => onChange(images.filter((img) => img !== url));
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-3">
+        {images.map((img) => (
+          <div key={img} className="relative h-24 w-20 overflow-hidden rounded-[0.8rem] border border-black/10">
+            <img src={resolveImageUrl(img)} alt="Product" className="h-full w-full object-cover" />
+            <button
+              onClick={() => removeImage(img)}
+              className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white"
+              aria-label="Remove image"
+            >
+              <X size={10} />
+            </button>
+          </div>
+        ))}
+        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B68D40] hover:text-[#B68D40]">
+          {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
+          <span className="text-[10px]">{uploading ? "Uploading" : "Add photo"}</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            multiple
+            className="hidden"
+            onChange={(e) => handleFiles(e.target.files)}
+            disabled={uploading}
+          />
+        </label>
+      </div>
+      {error && <p className="mt-2 text-xs text-[#D94F70]">{error}</p>}
+    </div>
+  );
 }
 
 function StatCard({ label, value, tone = "ink", icon: Icon }: any) {
@@ -100,28 +157,16 @@ function DashboardHome({ setActive, stats, lowStockCount, loading }: {
 
 function AddProduct({ onCreated }: { onCreated: () => void }) {
   const [step, setStep] = useState(1);
-  const [photoAdded, setPhotoAdded] = useState(false);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [tags, setTags] = useState(["Pakistani Suit", "Pink", "Embroidery"]);
+  const [images, setImages] = useState<string[]>([]);
   const [form, setForm] = useState({
     title: "", price: "", mrp: "", stock: "", description: "",
     category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "",
   });
-  const [voiceListening, setVoiceListening] = useState(false);
   const [saved, setSaved] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const steps = ["Photo", "AI Tags", "Details", "Publish"];
-
-  const runAI = () => {
-    setPhotoAdded(true);
-    setAnalyzing(true);
-    setTimeout(() => setAnalyzing(false), 1000);
-  };
-
-  const useVoice = () => setVoiceListening((prev) => !prev);
-  const removeTag = (tag: string) => setTags((current) => current.filter((value) => value !== tag));
+  const steps = ["Photos", "Details", "Publish"];
 
   const publish = async () => {
     setPublishing(true);
@@ -144,6 +189,7 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
         description: form.description,
         care: ["Dry clean recommended"],
         sizes: ["S", "M", "L"],
+        images,
         availability: Number(form.stock) > 0 ? "In stock" : "Out of stock",
         isNew: true,
       });
@@ -163,7 +209,7 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
         <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
         <p className="mt-2 text-sm text-gray-500">"{form.title}" is now live in the store and inventory.</p>
         <button
-          onClick={() => { setStep(1); setPhotoAdded(false); setPublished(false); setForm({ title: "", price: "", mrp: "", stock: "", description: "", category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "" }); }}
+          onClick={() => { setStep(1); setImages([]); setPublished(false); setForm({ title: "", price: "", mrp: "", stock: "", description: "", category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "" }); }}
           className="mt-6 rounded-full bg-[#111111] px-8 py-3 text-sm text-white"
         >
           Add Another Product
@@ -175,7 +221,7 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
   return (
     <div className="max-w-2xl">
       <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Add a Product</h1>
-      <p className="mt-1 text-sm text-gray-500">Just like posting on Instagram — add a photo and we help with the rest.</p>
+      <p className="mt-1 text-sm text-gray-500">Upload real photos of the outfit, then fill in the details.</p>
       <div className="mt-8 flex items-center gap-2">
         {steps.map((stepLabel, index) => (
           <div key={stepLabel} className="flex flex-1 items-center gap-2 text-xs text-gray-500">
@@ -187,48 +233,18 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
 
       {step === 1 && (
         <div className="mt-8 rounded-[1.4rem] border-2 border-dashed border-gray-300 p-10 text-center">
-          {!photoAdded ? (
-            <>
-              <Camera size={30} className="mx-auto mb-4 text-[#B68D40]" />
-              <p className="text-sm text-gray-600">Tap to add a photo of the outfit.</p>
-              <button onClick={runAI} className="mt-4 rounded-full bg-[#111111] px-6 py-3 text-sm text-white">Choose Photo</button>
-            </>
-          ) : analyzing ? (
-            <div className="flex flex-col items-center gap-3">
-              <Sparkles size={24} className="animate-pulse text-[#B68D40]" />
-              <p className="text-sm text-gray-600">Reading the photo and suggesting tags…</p>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-3">
-              <div className="h-52 w-40 rounded-[1.2rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
-              <button onClick={() => setStep(2)} className="rounded-full bg-[#111111] px-6 py-3 text-sm text-white">Continue</button>
-            </div>
-          )}
+          <Camera size={30} className="mx-auto mb-4 text-[#B68D40]" />
+          <p className="text-sm text-gray-600">Upload one or more photos of the outfit.</p>
+          <div className="mt-5 flex justify-center">
+            <ImageUploader images={images} onChange={setImages} />
+          </div>
+          <button onClick={() => setStep(2)} className="mt-6 rounded-full bg-[#111111] px-6 py-3 text-sm text-white">
+            Continue
+          </button>
         </div>
       )}
 
       {step === 2 && (
-        <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
-          <div className="flex items-center gap-2">
-            <Sparkles size={16} className="text-[#B68D40]" />
-            <p className="text-sm text-gray-600">Our AI suggested these tags from your photo — remove anything that's not right.</p>
-          </div>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <span key={tag} className="flex items-center gap-2 rounded-full bg-[#F8F5F1] px-3 py-2 text-sm text-[#111111]">
-                {tag}
-                <button onClick={() => removeTag(tag)}><X size={12} /></button>
-              </span>
-            ))}
-          </div>
-          <div className="mt-6 flex gap-3">
-            <button onClick={() => setStep(1)} className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
-            <button onClick={() => setStep(3)} className="rounded-full bg-[#111111] px-6 py-3 text-sm text-white">Looks Good</button>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
         <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
           <div className="space-y-4">
             <div>
@@ -260,25 +276,20 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
               </div>
             </div>
             <div>
-              <div className="mb-1 flex items-center justify-between">
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Description</label>
-                <button onClick={useVoice} className={`rounded-full px-3 py-1.5 text-xs ${voiceListening ? "bg-[#D94F70] text-white" : "bg-[#F8F5F1] text-[#111111]"}`}>
-                  <Mic size={12} className="mr-1 inline" /> {voiceListening ? "Listening…" : "Speak in Hindi or English"}
-                </button>
-              </div>
+              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Description</label>
               <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} className="w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setStep(2)} className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
+              <button onClick={() => setStep(1)} className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
               <button onClick={() => setSaved(true)} className="flex items-center gap-2 rounded-full bg-[#F8F5F1] px-6 py-3 text-sm"><Save size={14} /> Save as Draft</button>
-              <button onClick={() => setStep(4)} className="ml-auto rounded-full bg-[#111111] px-6 py-3 text-sm text-white">Continue</button>
+              <button onClick={() => setStep(3)} className="ml-auto rounded-full bg-[#111111] px-6 py-3 text-sm text-white">Continue</button>
             </div>
             {saved && <p className="text-xs text-gray-500">Saved locally — continue whenever you're ready.</p>}
           </div>
         </div>
       )}
 
-      {step === 4 && (
+      {step === 3 && (
         <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-10 text-center shadow-sm">
           <Check size={36} className="mx-auto mb-4 text-[#3A9D5D]" />
           <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Ready to Publish</h2>
@@ -393,6 +404,7 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
     stock: String(product.stock ?? 0),
     description: product.description,
   });
+  const [images, setImages] = useState<string[]>(product.images ?? []);
   const [saving, setSaving] = useState(false);
 
   const save = async () => {
@@ -404,6 +416,7 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
         mrp: Number(form.mrp) || 0,
         stock: Number(form.stock) || 0,
         description: form.description,
+        images,
       });
       onSaved();
       onClose();
@@ -420,6 +433,12 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
           <button onClick={onClose}><X size={18} /></button>
         </div>
         <div className="mt-5 space-y-3">
+          <div>
+            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Photos</label>
+            <div className="mt-1">
+              <ImageUploader images={images} onChange={setImages} />
+            </div>
+          </div>
           <div>
             <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Name</label>
             <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
@@ -479,9 +498,18 @@ function Inventory({ products, loading, onChanged }: { products: Product[]; load
         <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
           {products.map((product) => (
             <div key={product.id} className="flex items-center justify-between gap-3 border-b border-black/5 p-4 last:border-b-0">
-              <div>
-                <p className="text-sm text-[#111111]">{product.name}</p>
-                <p className="text-xs text-gray-400">₹{product.price} · {product.category}</p>
+              <div className="flex items-center gap-3">
+                {product.images?.[0] ? (
+                  <img src={resolveImageUrl(product.images[0])} alt={product.name} className="h-12 w-10 rounded-[0.5rem] object-cover" />
+                ) : (
+                  <div className="flex h-12 w-10 items-center justify-center rounded-[0.5rem] bg-[#F8F5F1] text-gray-400">
+                    <ImageOff size={14} />
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-[#111111]">{product.name}</p>
+                  <p className="text-xs text-gray-400">₹{product.price} · {product.category}</p>
+                </div>
               </div>
               <div className="flex items-center gap-3">
                 {(product.stock ?? 0) <= 3 && <span className="text-xs text-[#D94F70]">Low Stock</span>}
