@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { TailoringActions } from "@/components/tailoring/tailoring-actions";
 
 export const metadata = {
   title: "Tailoring",
@@ -16,10 +16,7 @@ export default function TailoringPage() {
             <p className="mt-5 text-sm leading-7 text-gray-600">
               Our atelier offers bespoke alterations, custom fitting, and styling guidance for a seamless luxury experience.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <button className="rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white">Book an Appointment</button>
-              <button className="rounded-full border border-black/10 px-6 py-3 text-sm font-medium text-[#111111]">WhatsApp Us</button>
-            </div>
+            <TailoringActions />
           </div>
           <div className="rounded-[2rem] border border-black/5 bg-[#111111] p-8 text-white">
             <div className="h-64 rounded-[1.4rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />

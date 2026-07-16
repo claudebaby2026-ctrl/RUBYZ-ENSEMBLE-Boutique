@@ -33,7 +33,7 @@ export function SiteFooter() {
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Visit</p>
           <p className="mt-4 text-sm leading-7 text-gray-300">
             Plot 42, Janpath Lane, Bhubaneswar<br />
-            +91 98765 43210<br />
+            +91 78730 11110<br />
             hello@rubyzensemble.in
           </p>
           <div className="mt-6 flex gap-3">

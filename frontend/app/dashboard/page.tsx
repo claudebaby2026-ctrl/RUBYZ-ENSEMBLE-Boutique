@@ -91,6 +91,75 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
   );
 }
 
+const ALL_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Free Size"];
+const AVAILABILITY_OPTIONS = ["In stock", "Low stock", "Made to order", "Out of stock"];
+
+function SizePicker({ sizes, onChange }: { sizes: string[]; onChange: (sizes: string[]) => void }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {ALL_SIZES.map((size) => {
+        const active = sizes.includes(size);
+        return (
+          <button
+            type="button"
+            key={size}
+            onClick={() => onChange(active ? sizes.filter((s) => s !== size) : [...sizes, size])}
+            className={`rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.18em] ${
+              active ? "border-[#111111] bg-[#111111] text-white" : "border-black/10 text-gray-600 hover:border-[#B68D40]"
+            }`}
+          >
+            {size}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function TagListInput({ tags, onChange, placeholder }: { tags: string[]; onChange: (tags: string[]) => void; placeholder?: string }) {
+  const [draft, setDraft] = useState("");
+
+  const addTag = () => {
+    const value = draft.trim();
+    if (value && !tags.includes(value)) onChange([...tags, value]);
+    setDraft("");
+  };
+
+  return (
+    <div>
+      <div className="flex gap-2">
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addTag();
+            }
+          }}
+          placeholder={placeholder}
+          className="w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm"
+        />
+        <button type="button" onClick={addTag} className="shrink-0 rounded-[1rem] border border-black/10 px-4 text-sm text-[#111111] hover:border-[#B68D40]">
+          Add
+        </button>
+      </div>
+      {tags.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span key={tag} className="flex items-center gap-1 rounded-full bg-[#F8F5F1] px-3 py-1 text-xs text-[#111111]">
+              {tag}
+              <button type="button" onClick={() => onChange(tags.filter((t) => t !== tag))} aria-label={`Remove ${tag}`}>
+                <X size={11} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StatCard({ label, value, tone = "ink", icon: Icon }: any) {
   return (
     <div className="rounded-[1.2rem] border border-black/5 bg-white p-5 shadow-sm">
@@ -161,7 +230,10 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
   const [form, setForm] = useState({
     title: "", price: "", mrp: "", stock: "", description: "",
     category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "",
+    availability: "In stock",
   });
+  const [care, setCare] = useState<string[]>(["Dry clean recommended"]);
+  const [sizes, setSizes] = useState<string[]>(["S", "M", "L"]);
   const [saved, setSaved] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
@@ -187,10 +259,10 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
         sold: 0,
         badge: "NEW",
         description: form.description,
-        care: ["Dry clean recommended"],
-        sizes: ["S", "M", "L"],
+        care: care.length > 0 ? care : ["Dry clean recommended"],
+        sizes: sizes.length > 0 ? sizes : ["Free Size"],
         images,
-        availability: Number(form.stock) > 0 ? "In stock" : "Out of stock",
+        availability: Number(form.stock) > 0 ? form.availability : "Out of stock",
         isNew: true,
       });
       setPublished(true);
@@ -209,7 +281,7 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
         <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
         <p className="mt-2 text-sm text-gray-500">"{form.title}" is now live in the store and inventory.</p>
         <button
-          onClick={() => { setStep(1); setImages([]); setPublished(false); setForm({ title: "", price: "", mrp: "", stock: "", description: "", category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "" }); }}
+          onClick={() => { setStep(1); setImages([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", stock: "", description: "", category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
           className="mt-6 rounded-full bg-[#111111] px-8 py-3 text-sm text-white"
         >
           Add Another Product
@@ -275,9 +347,33 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
                 <input value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
               </div>
             </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div>
+                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Fabric</label>
+                <input value={form.fabric} onChange={(e) => setForm({ ...form, fabric: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Occasion</label>
+                <input value={form.occasion} onChange={(e) => setForm({ ...form, occasion: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
+              </div>
+              <div>
+                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Availability</label>
+                <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm">
+                  {AVAILABILITY_OPTIONS.map((option) => <option key={option}>{option}</option>)}
+                </select>
+              </div>
+            </div>
             <div>
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Description</label>
               <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} className="w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Available Sizes</label>
+              <div className="mt-1"><SizePicker sizes={sizes} onChange={setSizes} /></div>
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Care Instructions</label>
+              <div className="mt-1"><TagListInput tags={care} onChange={setCare} placeholder="e.g. Dry clean only — press Enter" /></div>
             </div>
             <div className="flex gap-3">
               <button onClick={() => setStep(1)} className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
@@ -403,7 +499,14 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
     mrp: String(product.mrp),
     stock: String(product.stock ?? 0),
     description: product.description,
+    category: product.category,
+    fabric: product.fabric,
+    occasion: product.occasion,
+    color: product.color,
+    availability: product.availability || "In stock",
   });
+  const [care, setCare] = useState<string[]>(product.care ?? []);
+  const [sizes, setSizes] = useState<string[]>(product.sizes ?? []);
   const [images, setImages] = useState<string[]>(product.images ?? []);
   const [saving, setSaving] = useState(false);
 
@@ -416,6 +519,13 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
         mrp: Number(form.mrp) || 0,
         stock: Number(form.stock) || 0,
         description: form.description,
+        category: form.category,
+        fabric: form.fabric,
+        occasion: form.occasion,
+        color: form.color,
+        availability: form.availability,
+        care,
+        sizes,
         images,
       });
       onSaved();
@@ -427,7 +537,7 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5">
-      <div className="w-full max-w-md rounded-[1.4rem] bg-white p-6 shadow-xl">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.4rem] bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h3 className="text-lg text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Edit Product</h3>
           <button onClick={onClose}><X size={18} /></button>
@@ -457,9 +567,43 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
               <input value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Category</label>
+              <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Color</label>
+              <input value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Fabric</label>
+              <input value={form.fabric} onChange={(e) => setForm({ ...form, fabric: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Occasion</label>
+              <input value={form.occasion} onChange={(e) => setForm({ ...form, occasion: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Availability</label>
+              <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm">
+                {AVAILABILITY_OPTIONS.map((option) => <option key={option}>{option}</option>)}
+              </select>
+            </div>
+          </div>
           <div>
             <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Description</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Available Sizes</label>
+            <div className="mt-1"><SizePicker sizes={sizes} onChange={setSizes} /></div>
+          </div>
+          <div>
+            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Care Instructions</label>
+            <div className="mt-1"><TagListInput tags={care} onChange={setCare} placeholder="e.g. Dry clean only — press Enter" /></div>
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-3">

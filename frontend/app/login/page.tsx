@@ -100,7 +100,7 @@ function LoginForm() {
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 className="w-full text-sm outline-none"
-                placeholder="98765 43210"
+                placeholder="78730 11110"
               />
             </div>
           </div>

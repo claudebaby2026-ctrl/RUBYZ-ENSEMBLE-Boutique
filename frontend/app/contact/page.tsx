@@ -15,7 +15,7 @@ export default function ContactPage() {
             <h1 className="mt-3 text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>We would love to welcome you.</h1>
             <div className="mt-8 space-y-4 text-sm text-gray-600">
               <div className="flex gap-3"><MapPin size={16} className="mt-1 text-[#B68D40]" /><span>Plot 42, Janpath Lane, Bhubaneswar</span></div>
-              <div className="flex gap-3"><Phone size={16} className="mt-1 text-[#B68D40]" /><span>+91 98765 43210</span></div>
+              <div className="flex gap-3"><Phone size={16} className="mt-1 text-[#B68D40]" /><span>+91 78730 11110</span></div>
               <div className="flex gap-3"><MessageCircle size={16} className="mt-1 text-[#B68D40]" /><span>hello@rubyzensemble.in</span></div>
             </div>
           </div>
