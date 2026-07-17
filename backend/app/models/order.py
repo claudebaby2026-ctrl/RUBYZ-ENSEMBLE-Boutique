@@ -9,6 +9,9 @@ class Order(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     display_id = Column(String, unique=True, index=True, nullable=False)
+    # Orders now require a signed-in customer, so every order is tied to
+    # the account that placed it (nullable so pre-existing rows still load).
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     customer_name = Column(String, nullable=False)
     phone = Column(String, nullable=False)
     email = Column(String, nullable=True)

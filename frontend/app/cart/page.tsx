@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Loader2, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/useCart";
+import { useAuth } from "@/lib/useAuth";
 import { DELIVERY_FEE } from "@/lib/cart";
 import { useRouter } from "next/navigation";
 
@@ -12,6 +13,7 @@ const MODE_KEY = "rubyz_delivery_mode";
 export default function CartPage() {
   const router = useRouter();
   const { items, hydrated, subtotal, updateQuantity, removeFromCart } = useCart();
+  const { user, loading: authLoading } = useAuth();
   const [mode, setMode] = useState<"Delivery" | "Pickup">(() => {
     if (typeof window === "undefined") return "Delivery";
     return (window.localStorage.getItem(MODE_KEY) as "Delivery" | "Pickup") || "Delivery";
@@ -121,12 +123,17 @@ export default function CartPage() {
               </div>
             </div>
             <button
-              disabled={items.length === 0}
-              onClick={() => router.push("/checkout")}
+              disabled={items.length === 0 || authLoading}
+              onClick={() => router.push(user ? "/checkout" : "/login?redirect=/checkout")}
               className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Proceed to Checkout <ArrowRight size={16} />
+              {user ? "Proceed to Checkout" : "Sign In to Checkout"} <ArrowRight size={16} />
             </button>
+            {!authLoading && !user && items.length > 0 && (
+              <p className="mt-3 text-center text-xs text-gray-400">
+                You'll need an account to place an order.
+              </p>
+            )}
           </div>
         </div>
       </section>

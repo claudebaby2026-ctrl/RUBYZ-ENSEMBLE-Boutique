@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useCart } from "@/lib/useCart";
+import { useAuth } from "@/lib/useAuth";
 import { DELIVERY_FEE } from "@/lib/cart";
 import { createOrder } from "@/lib/api";
 
@@ -13,6 +14,7 @@ const MODE_KEY = "rubyz_delivery_mode";
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, hydrated, subtotal, clearCart } = useCart();
+  const { user, loading: authLoading } = useAuth();
   const [mode, setMode] = useState<"Delivery" | "Pickup">("Delivery");
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -23,6 +25,27 @@ export default function CheckoutPage() {
     const stored = window.localStorage.getItem(MODE_KEY);
     if (stored === "Delivery" || stored === "Pickup") setMode(stored);
   }, []);
+
+  useEffect(() => {
+    // Checkout requires an account — bounce to login and send the customer
+    // straight back here once they've signed in.
+    if (!authLoading && !user) {
+      router.replace("/login?redirect=/checkout");
+    }
+  }, [authLoading, user, router]);
+
+  useEffect(() => {
+    // Pre-fill from the signed-in account so returning customers don't have
+    // to retype their details.
+    if (user) {
+      setForm((f) => ({
+        ...f,
+        name: f.name || user.name || "",
+        email: f.email || user.email || "",
+        phone: f.phone || user.phone || "",
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     // Nothing left to check out — bounce back to the cart, unless we just
@@ -70,7 +93,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!hydrated) {
+  if (!hydrated || authLoading || !user) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center bg-[#FBFAF8]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -102,7 +125,7 @@ export default function CheckoutPage() {
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">
-            <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Guest Checkout</h1>
+            <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Checkout</h1>
             <div className="mt-6 space-y-4">
               <input
                 placeholder="Full name"

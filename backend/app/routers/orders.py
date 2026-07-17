@@ -7,7 +7,7 @@ from app.crud import order as order_crud
 from app.database import get_db
 from app.models.user import User
 from app.schemas.order import OrderCreate, OrderOut, OrderStatusUpdate
-from app.security import get_current_owner
+from app.security import get_current_owner, get_current_user
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -22,11 +22,14 @@ def list_orders(
 
 
 @router.post("", response_model=OrderOut, status_code=201)
-def create_order(payload: OrderCreate, db: Session = Depends(get_db)):
-    # Left open for guest checkout (storefront cart/checkout isn't wired to
-    # customer accounts yet) — anyone can place an order, same as any public
-    # e-commerce checkout form.
-    order = order_crud.create_order(db, payload)
+def create_order(
+    payload: OrderCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # Checkout now requires a signed-in account — the frontend sends the
+    # customer's bearer token, and we tie the order to that account.
+    order = order_crud.create_order(db, payload, user_id=current_user.id)
     return OrderOut.from_model(order)
 
 

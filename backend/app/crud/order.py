@@ -26,10 +26,11 @@ def get_order_by_display_id(db: Session, display_id: str) -> Optional[Order]:
     )
 
 
-def create_order(db: Session, order: OrderCreate) -> Order:
+def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None) -> Order:
     display_id = f"#{uuid.uuid4().hex[:6].upper()}"
     db_order = Order(
         display_id=display_id,
+        user_id=user_id,
         customer_name=order.customerName,
         phone=order.phone,
         email=order.email,
