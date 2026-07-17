@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Heart, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import type { Product } from "@/lib/content";
 import { resolveImageUrl } from "@/lib/api";
+import { LikeButton } from "@/components/product/like-button";
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -27,8 +28,8 @@ export function ProductCard({ product }: { product: Product }) {
       className="group overflow-hidden rounded-[1.5rem] border border-black/5 bg-white p-3 shadow-[0_12px_40px_rgba(17,17,17,0.04)]"
     >
       <div className="relative overflow-hidden rounded-[1.2rem] bg-[#F8F5F1] p-4">
-        <div className="absolute right-3 top-3 rounded-full bg-white/90 p-2 shadow-sm">
-          <Heart size={15} className="text-[#111111]" />
+        <div className="absolute right-3 top-3">
+          <LikeButton productId={product.id} />
         </div>
         {image ? (
           <img src={image} alt={product.name} className="h-64 w-full rounded-[1rem] object-cover" />

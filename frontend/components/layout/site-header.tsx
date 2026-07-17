@@ -80,9 +80,9 @@ export function SiteHeader() {
           <button className="hidden rounded-full border border-black/10 p-2 sm:inline-flex" aria-label="Search">
             <Search size={18} />
           </button>
-          <button className="hidden rounded-full border border-black/10 p-2 sm:inline-flex" aria-label="Wishlist">
+          <Link href="/wishlist" className="hidden rounded-full border border-black/10 p-2 sm:inline-flex" aria-label="Wishlist">
             <Heart size={18} />
-          </button>
+          </Link>
           <Link href="/cart" className="relative rounded-full border border-black/10 p-2" aria-label="Cart">
             <ShoppingBag size={18} />
             {count > 0 && (
@@ -198,12 +198,13 @@ export function SiteHeader() {
             >
               <ShoppingBag size={16} /> Cart {count > 0 ? `(${count})` : ""}
             </Link>
-            <button
+            <Link
+              href="/wishlist"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#111111] hover:bg-[#F8F5F1]"
+              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#F8F5F1]"
             >
               <Heart size={16} /> Wishlist
-            </button>
+            </Link>
 
             {user ? (
               <>

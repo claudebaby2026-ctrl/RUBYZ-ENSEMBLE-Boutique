@@ -159,6 +159,24 @@ export function updateOrderStatus(displayId: string, status: string): Promise<Or
   });
 }
 
+// ---- Likes / Wishlist ----
+
+export function getLikedProducts(): Promise<Product[]> {
+  return request<Product[]>(`/likes`);
+}
+
+export function getLikedProductIds(): Promise<number[]> {
+  return request<number[]>(`/likes/ids`);
+}
+
+export function likeProduct(productId: number): Promise<{ liked: boolean }> {
+  return request(`/likes/${productId}`, { method: "POST" });
+}
+
+export function unlikeProduct(productId: number): Promise<void> {
+  return request<void>(`/likes/${productId}`, { method: "DELETE" });
+}
+
 // ---- Admin ----
 
 export function getDashboardStats(): Promise<DashboardStats> {

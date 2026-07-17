@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Heart } from "lucide-react";
 import { getProductBySlug, getProducts, resolveImageUrl } from "@/lib/api";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { AddToCartPanel } from "@/components/product/add-to-cart-panel";
+import { LikeButton } from "@/components/product/like-button";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +34,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <div className="rounded-[2rem] border border-black/5 bg-white p-5 shadow-[0_20px_60px_rgba(17,17,17,0.06)]">
             <div className="mb-4 flex items-center justify-between">
               <span className="rounded-full bg-[#111111] px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white">{product.badge}</span>
-              <button className="rounded-full border border-black/10 p-2"><Heart size={16} /></button>
+              <LikeButton productId={product.id} className="rounded-full border border-black/10 p-2" />
             </div>
             {mainImage ? (
               <img src={mainImage} alt={product.name} className="h-[440px] w-full rounded-[1.4rem] object-cover" />
