@@ -4,6 +4,7 @@ import { getProductBySlug, getProducts, resolveImageUrl } from "@/lib/api";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { AddToCartPanel } from "@/components/product/add-to-cart-panel";
 import { LikeButton } from "@/components/product/like-button";
+import { ProductImageGallery } from "@/components/product/product-image-gallery";
 
 export const dynamic = "force-dynamic";
 
@@ -37,16 +38,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <LikeButton productId={product.id} className="rounded-full border border-black/10 p-2" />
             </div>
             {mainImage ? (
-              <img src={mainImage} alt={product.name} className="h-[440px] w-full rounded-[1.4rem] object-cover" />
+              <ProductImageGallery images={images} alt={product.name} />
             ) : (
               <div className="h-[440px] rounded-[1.4rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
-            )}
-            {images.length > 1 && (
-              <div className="mt-4 grid grid-cols-4 gap-3">
-                {images.slice(0, 4).map((src, index) => (
-                  <img key={index} src={src} alt={`${product.name} ${index + 1}`} className="aspect-square rounded-[1rem] border border-black/5 object-cover" />
-                ))}
-              </div>
             )}
           </div>
 
