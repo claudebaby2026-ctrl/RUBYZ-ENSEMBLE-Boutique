@@ -1,12 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
-import { categories } from "@/lib/content";
+import { getAttributes } from "@/lib/api";
 import type { Product } from "@/lib/content";
 
-const FABRICS = ["Cotton", "Georgette", "Silk", "Net", "Velvet"];
 const MIN_PRICE = 1500;
 const MAX_PRICE = 12000;
 
@@ -20,8 +19,44 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   const [query, setQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
+  const [selectedOccasions, setSelectedOccasions] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [sort, setSort] = useState<SortOption>("Featured");
+
+  // Filter option lists come from the taxonomy API (the same table the
+  // owner dashboard's "add new" dropdowns write to), so any category,
+  // fabric, occasion, or color the owner adds shows up here too — falling
+  // back to whatever's actually on the current products if the API call
+  // hasn't resolved yet.
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+  const [fabricOptions, setFabricOptions] = useState<string[]>([]);
+  const [occasionOptions, setOccasionOptions] = useState<string[]>([]);
+  const [colorOptions, setColorOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getAttributes()
+      .then((attributes) => {
+        if (cancelled) return;
+        setCategoryOptions(attributes.filter((a) => a.type === "category").map((a) => a.value));
+        setFabricOptions(attributes.filter((a) => a.type === "fabric").map((a) => a.value));
+        setOccasionOptions(attributes.filter((a) => a.type === "occasion").map((a) => a.value));
+        setColorOptions(attributes.filter((a) => a.type === "color").map((a) => a.value));
+      })
+      .catch(() => {
+        // Fall back to whatever values are present on the loaded products.
+        if (cancelled) return;
+        const unique = (values: (string | undefined)[]) => Array.from(new Set(values.filter(Boolean))) as string[];
+        setCategoryOptions(unique(products.map((p) => p.category)));
+        setFabricOptions(unique(products.map((p) => p.fabric)));
+        setOccasionOptions(unique(products.map((p) => p.occasion)));
+        setColorOptions(unique(products.map((p) => p.color)));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [products]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -40,9 +75,15 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         selectedFabrics.length === 0 ||
         selectedFabrics.some((fabric) => product.fabric?.toLowerCase().includes(fabric.toLowerCase()));
 
+      const matchesOccasion =
+        selectedOccasions.length === 0 || selectedOccasions.includes(product.occasion);
+
+      const matchesColor =
+        selectedColors.length === 0 || selectedColors.includes(product.color);
+
       const matchesPrice = product.price <= maxPrice;
 
-      return matchesQuery && matchesCategory && matchesFabric && matchesPrice;
+      return matchesQuery && matchesCategory && matchesFabric && matchesOccasion && matchesColor && matchesPrice;
     });
 
     if (sort === "Price: Low to High") {
@@ -55,15 +96,22 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     }
 
     return result;
-  }, [products, query, selectedCategories, selectedFabrics, maxPrice, sort]);
+  }, [products, query, selectedCategories, selectedFabrics, selectedOccasions, selectedColors, maxPrice, sort]);
 
   const hasActiveFilters =
-    query.trim().length > 0 || selectedCategories.length > 0 || selectedFabrics.length > 0 || maxPrice < MAX_PRICE;
+    query.trim().length > 0 ||
+    selectedCategories.length > 0 ||
+    selectedFabrics.length > 0 ||
+    selectedOccasions.length > 0 ||
+    selectedColors.length > 0 ||
+    maxPrice < MAX_PRICE;
 
   const clearFilters = () => {
     setQuery("");
     setSelectedCategories([]);
     setSelectedFabrics([]);
+    setSelectedOccasions([]);
+    setSelectedColors([]);
     setMaxPrice(MAX_PRICE);
   };
 
@@ -109,14 +157,14 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             <div>
               <p className="text-sm font-semibold text-[#111111]">Category</p>
               <div className="mt-3 space-y-2 text-sm text-gray-600">
-                {categories.map((category) => (
-                  <label key={category.name} className="flex items-center gap-2">
+                {categoryOptions.map((category) => (
+                  <label key={category} className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={selectedCategories.includes(category.name)}
-                      onChange={() => setSelectedCategories((current) => toggle(current, category.name))}
+                      checked={selectedCategories.includes(category)}
+                      onChange={() => setSelectedCategories((current) => toggle(current, category))}
                     />
-                    {category.name}
+                    {category}
                   </label>
                 ))}
               </div>
@@ -142,7 +190,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             <div>
               <p className="text-sm font-semibold text-[#111111]">Fabric</p>
               <div className="mt-3 space-y-2 text-sm text-gray-600">
-                {FABRICS.map((fabric) => (
+                {fabricOptions.map((fabric) => (
                   <label key={fabric} className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -150,6 +198,36 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                       onChange={() => setSelectedFabrics((current) => toggle(current, fabric))}
                     />
                     {fabric}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[#111111]">Occasion</p>
+              <div className="mt-3 space-y-2 text-sm text-gray-600">
+                {occasionOptions.map((occasion) => (
+                  <label key={occasion} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedOccasions.includes(occasion)}
+                      onChange={() => setSelectedOccasions((current) => toggle(current, occasion))}
+                    />
+                    {occasion}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-[#111111]">Color</p>
+              <div className="mt-3 space-y-2 text-sm text-gray-600">
+                {colorOptions.map((color) => (
+                  <label key={color} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedColors.includes(color)}
+                      onChange={() => setSelectedColors((current) => toggle(current, color))}
+                    />
+                    {color}
                   </label>
                 ))}
               </div>

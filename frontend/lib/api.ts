@@ -33,6 +33,16 @@ export type DashboardStats = {
 
 export type ProductInput = Omit<Product, "id"> & { stock?: number };
 
+// ---- Attributes (category / occasion / color / fabric taxonomy) ----
+
+export type AttributeType = "category" | "occasion" | "color" | "fabric";
+
+export type Attribute = {
+  id: number;
+  type: AttributeType;
+  value: string;
+};
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getToken();
   const url = `${API_URL}${path}`;
@@ -132,6 +142,18 @@ export async function uploadImage(file: File): Promise<{ url: string }> {
     throw new Error(detail || `Upload failed: ${res.status}`);
   }
   return res.json();
+}
+
+export function getAttributes(type?: AttributeType): Promise<Attribute[]> {
+  const query = type ? `?type=${encodeURIComponent(type)}` : "";
+  return request<Attribute[]>(`/attributes${query}`);
+}
+
+// Owner-only. Persists a brand-new category/occasion/color/fabric value so
+// it shows up as an option everywhere (dashboard dropdowns + storefront
+// filters) from then on.
+export function createAttribute(type: AttributeType, value: string): Promise<Attribute> {
+  return request<Attribute>(`/attributes`, { method: "POST", body: JSON.stringify({ type, value }) });
 }
 
 // ---- Orders ----

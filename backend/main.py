@@ -6,10 +6,11 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import Base, SessionLocal, engine
-from app.routers import admin, auth, likes, orders, products, uploads
-from app.seed_data import seed_if_empty, seed_owner
+from app.routers import admin, attributes, auth, likes, orders, products, uploads
+from app.seed_data import seed_attributes, seed_if_empty, seed_owner
 
 # Import models so SQLAlchemy metadata knows about them before create_all
+from app.models import attribute as _attribute_models  # noqa: F401
 from app.models import like as _like_models  # noqa: F401
 from app.models import order as _order_models  # noqa: F401
 from app.models import product as _product_models  # noqa: F401
@@ -38,6 +39,7 @@ def on_startup() -> None:
     try:
         seed_if_empty(db)
         seed_owner(db)
+        seed_attributes(db)
     finally:
         db.close()
 
@@ -48,6 +50,7 @@ app.include_router(orders.router)
 app.include_router(admin.router)
 app.include_router(uploads.router)
 app.include_router(likes.router)
+app.include_router(attributes.router)
 
 @app.head("/health")    
 @app.get("/health")

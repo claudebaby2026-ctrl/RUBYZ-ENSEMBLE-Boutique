@@ -1,9 +1,27 @@
 from sqlalchemy.orm import Session
 
 from app.config import settings
+from app.crud.attribute import create_attribute
 from app.models.product import Product
 from app.models.user import User
 from app.security import hash_password
+
+# Sensible starting options for the owner dashboard's dropdowns, on top of
+# whatever INITIAL_PRODUCTS already use. Purely a convenience seed — the
+# owner can add any further value from the dashboard at any time.
+DEFAULT_ATTRIBUTES = {
+    "category": [
+        "Pakistani Suits",
+        "Party Wear",
+        "Wedding Collection",
+        "Luxury Edit",
+        "Summer Collection",
+        "Tailoring Services",
+    ],
+    "occasion": ["Wedding", "Festive", "Office", "Casual", "Party Wear", "Eid", "Diwali"],
+    "color": ["Rose", "Gold", "Ivory", "Emerald", "Maroon", "Black", "Navy", "Blush"],
+    "fabric": ["Cotton", "Georgette", "Silk", "Net", "Velvet", "Chiffon", "Lawn"],
+}
 
 INITIAL_PRODUCTS = [
     dict(
@@ -169,6 +187,19 @@ def seed_if_empty(db: Session) -> None:
         return
     db.bulk_save_objects([Product(**data) for data in INITIAL_PRODUCTS])
     db.commit()
+
+
+def seed_attributes(db: Session) -> None:
+    """Ensure the default taxonomy options exist. Safe to call on every
+    startup — create_attribute() is a no-op for values that already exist,
+    so this only ever adds missing defaults, never duplicates or resets
+    anything the owner has since added or renamed via the dashboard."""
+    for type_, values in DEFAULT_ATTRIBUTES.items():
+        for value in values:
+            create_attribute(db, type_, value)
+    for data in INITIAL_PRODUCTS:
+        for field in ("category", "occasion", "color", "fabric"):
+            create_attribute(db, field, data[field])
 
 
 def seed_owner(db: Session) -> None:

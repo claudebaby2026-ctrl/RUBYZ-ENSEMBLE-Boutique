@@ -11,9 +11,15 @@ import type { Product } from "@/lib/content";
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
   getOrders, updateOrderStatus, getDashboardStats, uploadImage, resolveImageUrl,
-  type Order, type DashboardStats,
+  getAttributes, type Order, type DashboardStats, type AttributeType,
 } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
+import { AttributeSelect } from "@/components/ui/attribute-select";
+
+// Product fields backed by the taxonomy (attributes) table — dropdown +
+// "add new" everywhere they're edited, instead of free text.
+export type AttributeOptions = Record<AttributeType, string[]>;
+const EMPTY_ATTRIBUTE_OPTIONS: AttributeOptions = { category: [], occasion: [], color: [], fabric: [] };
 
 const NAV = [
   { id: "home", label: "Dashboard", icon: LayoutGrid },
@@ -224,7 +230,15 @@ function DashboardHome({ setActive, stats, lowStockCount, loading }: {
   );
 }
 
-function AddProduct({ onCreated }: { onCreated: () => void }) {
+function AddProduct({
+  onCreated,
+  attributeOptions,
+  onAttributeAdded,
+}: {
+  onCreated: () => void;
+  attributeOptions: AttributeOptions;
+  onAttributeAdded: (type: AttributeType, value: string) => void;
+}) {
   const [step, setStep] = useState(1);
   const [images, setImages] = useState<string[]>([]);
   const [form, setForm] = useState({
@@ -338,24 +352,40 @@ function AddProduct({ onCreated }: { onCreated: () => void }) {
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Category</label>
-                <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
-              </div>
-              <div>
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Color</label>
-                <input value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
-              </div>
+              <AttributeSelect
+                label="Category"
+                type="category"
+                value={form.category}
+                options={attributeOptions.category}
+                onChange={(value) => setForm({ ...form, category: value })}
+                onOptionAdded={(value) => onAttributeAdded("category", value)}
+              />
+              <AttributeSelect
+                label="Color"
+                type="color"
+                value={form.color}
+                options={attributeOptions.color}
+                onChange={(value) => setForm({ ...form, color: value })}
+                onOptionAdded={(value) => onAttributeAdded("color", value)}
+              />
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              <div>
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Fabric</label>
-                <input value={form.fabric} onChange={(e) => setForm({ ...form, fabric: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
-              </div>
-              <div>
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Occasion</label>
-                <input value={form.occasion} onChange={(e) => setForm({ ...form, occasion: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
-              </div>
+              <AttributeSelect
+                label="Fabric"
+                type="fabric"
+                value={form.fabric}
+                options={attributeOptions.fabric}
+                onChange={(value) => setForm({ ...form, fabric: value })}
+                onOptionAdded={(value) => onAttributeAdded("fabric", value)}
+              />
+              <AttributeSelect
+                label="Occasion"
+                type="occasion"
+                value={form.occasion}
+                options={attributeOptions.occasion}
+                onChange={(value) => setForm({ ...form, occasion: value })}
+                onOptionAdded={(value) => onAttributeAdded("occasion", value)}
+              />
               <div>
                 <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Availability</label>
                 <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm">
@@ -494,7 +524,19 @@ function Orders() {
   );
 }
 
-function EditProductModal({ product, onClose, onSaved }: { product: Product; onClose: () => void; onSaved: () => void }) {
+function EditProductModal({
+  product,
+  onClose,
+  onSaved,
+  attributeOptions,
+  onAttributeAdded,
+}: {
+  product: Product;
+  onClose: () => void;
+  onSaved: () => void;
+  attributeOptions: AttributeOptions;
+  onAttributeAdded: (type: AttributeType, value: string) => void;
+}) {
   const [form, setForm] = useState({
     name: product.name,
     price: String(product.price),
@@ -570,24 +612,40 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Category</label>
-              <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
-            </div>
-            <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Color</label>
-              <input value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
-            </div>
+            <AttributeSelect
+              label="Category"
+              type="category"
+              value={form.category}
+              options={attributeOptions.category}
+              onChange={(value) => setForm({ ...form, category: value })}
+              onOptionAdded={(value) => onAttributeAdded("category", value)}
+            />
+            <AttributeSelect
+              label="Color"
+              type="color"
+              value={form.color}
+              options={attributeOptions.color}
+              onChange={(value) => setForm({ ...form, color: value })}
+              onOptionAdded={(value) => onAttributeAdded("color", value)}
+            />
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Fabric</label>
-              <input value={form.fabric} onChange={(e) => setForm({ ...form, fabric: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
-            </div>
-            <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Occasion</label>
-              <input value={form.occasion} onChange={(e) => setForm({ ...form, occasion: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
-            </div>
+            <AttributeSelect
+              label="Fabric"
+              type="fabric"
+              value={form.fabric}
+              options={attributeOptions.fabric}
+              onChange={(value) => setForm({ ...form, fabric: value })}
+              onOptionAdded={(value) => onAttributeAdded("fabric", value)}
+            />
+            <AttributeSelect
+              label="Occasion"
+              type="occasion"
+              value={form.occasion}
+              options={attributeOptions.occasion}
+              onChange={(value) => setForm({ ...form, occasion: value })}
+              onOptionAdded={(value) => onAttributeAdded("occasion", value)}
+            />
             <div>
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Availability</label>
               <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm">
@@ -617,7 +675,19 @@ function EditProductModal({ product, onClose, onSaved }: { product: Product; onC
   );
 }
 
-function Inventory({ products, loading, onChanged }: { products: Product[]; loading: boolean; onChanged: () => void }) {
+function Inventory({
+  products,
+  loading,
+  onChanged,
+  attributeOptions,
+  onAttributeAdded,
+}: {
+  products: Product[];
+  loading: boolean;
+  onChanged: () => void;
+  attributeOptions: AttributeOptions;
+  onAttributeAdded: (type: AttributeType, value: string) => void;
+}) {
   const [editing, setEditing] = useState<Product | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -670,7 +740,13 @@ function Inventory({ products, loading, onChanged }: { products: Product[]; load
         </div>
       )}
       {editing && (
-        <EditProductModal product={editing} onClose={() => setEditing(null)} onSaved={onChanged} />
+        <EditProductModal
+          product={editing}
+          onClose={() => setEditing(null)}
+          onSaved={onChanged}
+          attributeOptions={attributeOptions}
+          onAttributeAdded={onAttributeAdded}
+        />
       )}
     </div>
   );
@@ -721,16 +797,33 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [attributeOptions, setAttributeOptions] = useState<AttributeOptions>(EMPTY_ATTRIBUTE_OPTIONS);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const [productsData, statsData] = await Promise.all([getProducts(), getDashboardStats()]);
+      const [productsData, statsData, attributesData] = await Promise.all([
+        getProducts(),
+        getDashboardStats(),
+        getAttributes(),
+      ]);
       setProducts(productsData);
       setStats(statsData);
+      const grouped: AttributeOptions = { category: [], occasion: [], color: [], fabric: [] };
+      for (const attribute of attributesData) grouped[attribute.type].push(attribute.value);
+      setAttributeOptions(grouped);
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // Add a freshly-created option to local state immediately, so it's
+  // available in every dropdown without waiting on a full refresh.
+  const handleAttributeAdded = useCallback((type: AttributeType, value: string) => {
+    setAttributeOptions((current) => {
+      if (current[type].includes(value)) return current;
+      return { ...current, [type]: [...current[type], value].sort() };
+    });
   }, []);
 
   useEffect(() => {
@@ -854,9 +947,19 @@ export default function DashboardPage() {
 
         <main className="flex-1 rounded-[2rem] border border-black/5 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
           {active === "home" && <DashboardHome setActive={setActive} stats={stats} lowStockCount={lowStockCount} loading={loading} />}
-          {active === "add" && <AddProduct onCreated={refresh} />}
+          {active === "add" && (
+            <AddProduct onCreated={refresh} attributeOptions={attributeOptions} onAttributeAdded={handleAttributeAdded} />
+          )}
           {active === "orders" && <Orders />}
-          {active === "inventory" && <Inventory products={products} loading={loading} onChanged={refresh} />}
+          {active === "inventory" && (
+            <Inventory
+              products={products}
+              loading={loading}
+              onChanged={refresh}
+              attributeOptions={attributeOptions}
+              onAttributeAdded={handleAttributeAdded}
+            />
+          )}
           {active === "customers" && <Customers />}
           {active === "analytics" && <Analytics products={products} />}
           {active === "coupons" && <Coupons />}
