@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { CollectionsExplorer } from "@/components/collections/collections-explorer";
 import { getProducts } from "@/lib/api";
 
@@ -13,7 +14,12 @@ export default async function CollectionsPage() {
   return (
     <main className="bg-[#FBFAF8]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
-        <CollectionsExplorer products={products} />
+        {/* CollectionsExplorer reads ?q= via useSearchParams, which requires
+            a Suspense boundary so Next.js doesn't force this whole route to
+            de-opt to fully client-rendered. */}
+        <Suspense fallback={null}>
+          <CollectionsExplorer products={products} />
+        </Suspense>
       </section>
     </main>
   );

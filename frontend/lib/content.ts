@@ -72,3 +72,27 @@ export const footerLinks = [
   { href: "/tailoring", label: "Tailoring" },
   { href: "/contact", label: "Contact" },
 ];
+
+// Business details used across the legal/compliance pages. NOTE: the
+// bracketed placeholders should be replaced with the registered business's
+// actual legal name and GSTIN before going live / submitting these pages
+// for Razorpay or Shiprocket verification.
+export const legalEntity = {
+  legalName: "[Legal / registered business name of RUBYZ Ensemble]",
+  gstin: "[GSTIN, if registered]",
+  address: "Plot 42, Janpath Lane, Bhubaneswar, Odisha, India",
+  email: "hello@rubyzensemble.in",
+  phone: "+91 78730 11110",
+};
+
+// Pages required for Razorpay merchant verification and Shiprocket seller
+// onboarding: Privacy Policy, Terms & Conditions, Shipping Policy and a
+// Cancellation/Refund Policy, each reachable from a compact footer strip
+// rather than the main nav so they don't compete for space with the
+// storefront's primary links.
+export const legalLinks = [
+  { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/terms-and-conditions", label: "Terms & Conditions" },
+  { href: "/shipping-policy", label: "Shipping Policy" },
+  { href: "/refund-policy", label: "Cancellation & Refund Policy" },
+];

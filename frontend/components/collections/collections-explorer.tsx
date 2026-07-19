@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { getAttributes } from "@/lib/api";
@@ -16,7 +17,10 @@ function toggle(list: string[], value: string) {
 }
 
 export function CollectionsExplorer({ products }: { products: Product[] }) {
-  const [query, setQuery] = useState("");
+  // Seeds the search box from ?q= so the header search's "View all results"
+  // link lands here with the term already applied.
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   const [selectedOccasions, setSelectedOccasions] = useState<string[]>([]);
@@ -33,6 +37,14 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   const [fabricOptions, setFabricOptions] = useState<string[]>([]);
   const [occasionOptions, setOccasionOptions] = useState<string[]>([]);
   const [colorOptions, setColorOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Keep the search box in sync if the user searches again from the
+    // header while already on this page (client-side navigation doesn't
+    // remount the component, so the initial useState value won't update).
+    setQuery(searchParams.get("q") ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.get("q")]);
 
   useEffect(() => {
     let cancelled = false;

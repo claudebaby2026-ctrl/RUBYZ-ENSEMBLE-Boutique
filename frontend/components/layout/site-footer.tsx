@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Camera, MessageCircle, PhoneCall } from "lucide-react";
-import { brand, footerLinks } from "@/lib/content";
+import { brand, footerLinks, legalLinks } from "@/lib/content";
 
 export function SiteFooter() {
   return (
@@ -47,6 +47,22 @@ export function SiteFooter() {
               <PhoneCall size={16} />
             </a>
           </div>
+        </div>
+      </div>
+
+      {/* Slim compliance strip — keeps Privacy/Terms/Shipping/Refund policy
+          pages accessible from every page (required for Razorpay & Shiprocket
+          verification) without competing for space with the main footer nav. */}
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-col-reverse items-center gap-3 px-5 py-5 text-xs text-gray-500 sm:flex-row sm:justify-between lg:px-8">
+          <p>© {new Date().getFullYear()} {brand.name}. All rights reserved.</p>
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            {legalLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="transition hover:text-white">
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
     </footer>

@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { brand } from "@/lib/content";
 import { useAuth } from "@/lib/useAuth";
 import { useCart } from "@/lib/useCart";
+import { SearchOverlay } from "@/components/layout/search-overlay";
 
 const navItems = [
   { href: "/collections", label: "Collections" },
@@ -22,15 +23,17 @@ export function SiteHeader() {
   const { count } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Close the mobile drawer whenever the route changes.
+  // Close the mobile drawer and search overlay whenever the route changes.
   useEffect(() => {
     setMobileNavOpen(false);
+    setSearchOpen(false);
   }, [pathname]);
 
   // Lock body scroll while the mobile drawer is open.
@@ -77,7 +80,11 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <button className="hidden rounded-full border border-black/10 p-2 sm:inline-flex" aria-label="Search">
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="rounded-full border border-black/10 p-2"
+            aria-label="Search"
+          >
             <Search size={18} />
           </button>
           <Link href="/wishlist" className="hidden rounded-full border border-black/10 p-2 sm:inline-flex" aria-label="Wishlist">
@@ -244,6 +251,8 @@ export function SiteHeader() {
       </div>,
       document.body
     )}
+
+    <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }
