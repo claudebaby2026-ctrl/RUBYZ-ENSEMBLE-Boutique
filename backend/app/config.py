@@ -24,6 +24,11 @@ class Settings:
     )
     CORS_ORIGINS: list[str] = os.getenv("CORS_ORIGINS", "*").split(",")
 
+    # Must match frontend/lib/cart.ts's DELIVERY_FEE constant. Kept here so
+    # the backend can independently recompute an order's total server-side
+    # (see app/crud/order.py::create_order) instead of trusting the client.
+    DELIVERY_FEE: int = int(os.getenv("DELIVERY_FEE", "150"))
+
     # --- Auth ---
     # JWT_SECRET MUST be overridden in production via the environment / .env
     # file. The fallback below is only for zero-config local development.

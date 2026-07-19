@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.crud import order as order_crud
+from app.crud.order import OrderError
 from app.database import get_db
 from app.models.user import User
 from app.schemas.order import OrderCreate, OrderOut, OrderStatusUpdate
@@ -38,7 +39,16 @@ def create_order(
 ):
     # Checkout now requires a signed-in account — the frontend sends the
     # customer's bearer token, and we tie the order to that account.
-    order = order_crud.create_order(db, payload, user_id=current_user.id)
+    #
+    # create_order does all price/stock validation server-side (never
+    # trusting the client's price/total) and raises OrderError subclasses
+    # for anything that should come back as a 400 — e.g. insufficient
+    # stock or a product that no longer exists.
+    try:
+        order = order_crud.create_order(db, payload, user_id=current_user.id)
+    except OrderError as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     return OrderOut.from_model(order)
 
 

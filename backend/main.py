@@ -3,10 +3,14 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 from app.config import settings
 from app.database import Base, SessionLocal, engine
 from app.migrations import run_migrations
+from app.rate_limit import limiter
 from app.routers import (
     admin,
     attributes,
@@ -30,6 +34,13 @@ from app.models import product as _product_models  # noqa: F401
 from app.models import user as _user_models  # noqa: F401
 
 app = FastAPI(title="RUBYZ Ensemble API", version="2.0.0")
+
+# Rate limiting (brute-force protection on /auth/login and /auth/register —
+# see app/rate_limit.py and app/routers/auth.py). Requests over the limit
+# get a 429 via the handler below instead of an unhandled exception.
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
