@@ -44,6 +44,49 @@ export type Attribute = {
   value: string;
 };
 
+// ---- Coupons ----
+
+export type Coupon = {
+  id: number;
+  code: string;
+  discount_type: "percent" | "flat";
+  discount_value: number;
+  active: boolean;
+  usage_limit: number | null;
+  used_count: number;
+  expires_at: string | null;
+  created_at: string;
+};
+
+export type CouponInput = {
+  code: string;
+  discount_type: "percent" | "flat";
+  discount_value: number;
+  usage_limit?: number | null;
+  expires_at?: string | null;
+};
+
+// ---- Customers ----
+
+export type Customer = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  ordersCount: number;
+  totalSpent: number;
+  lastOrderAt: string | null;
+};
+
+// ---- Homepage editor ----
+
+export type HomepageConfig = {
+  hero_heading: string;
+  hero_subheading: string;
+  banner_text: string;
+  featured_product_ids: number[];
+};
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getToken();
   const url = `${API_URL}${path}`;
@@ -204,4 +247,36 @@ export function unlikeProduct(productId: number): Promise<void> {
 
 export function getDashboardStats(): Promise<DashboardStats> {
   return request<DashboardStats>(`/admin/dashboard`);
+}
+
+export function getCustomers(): Promise<Customer[]> {
+  return request<Customer[]>(`/admin/customers`);
+}
+
+// ---- Coupons ----
+
+export function getCoupons(): Promise<Coupon[]> {
+  return request<Coupon[]>(`/coupons`);
+}
+
+export function createCoupon(payload: CouponInput): Promise<Coupon> {
+  return request<Coupon>(`/coupons`, { method: "POST", body: JSON.stringify(payload) });
+}
+
+export function updateCoupon(id: number, payload: Partial<{ active: boolean; discount_value: number; usage_limit: number | null; expires_at: string | null }>): Promise<Coupon> {
+  return request<Coupon>(`/coupons/${id}`, { method: "PATCH", body: JSON.stringify(payload) });
+}
+
+export function deleteCoupon(id: number): Promise<void> {
+  return request<void>(`/coupons/${id}`, { method: "DELETE" });
+}
+
+// ---- Homepage editor ----
+
+export function getHomepageConfig(): Promise<HomepageConfig> {
+  return request<HomepageConfig>(`/homepage`);
+}
+
+export function updateHomepageConfig(payload: HomepageConfig): Promise<HomepageConfig> {
+  return request<HomepageConfig>(`/homepage`, { method: "PUT", body: JSON.stringify(payload) });
 }

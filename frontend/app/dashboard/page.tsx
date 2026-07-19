@@ -12,6 +12,9 @@ import {
   getProducts, createProduct, updateProduct, deleteProduct,
   getOrders, updateOrderStatus, getDashboardStats, uploadImage, resolveImageUrl,
   getAttributes, type Order, type DashboardStats, type AttributeType,
+  getCustomers, type Customer,
+  getCoupons, createCoupon, updateCoupon, deleteCoupon, type Coupon,
+  getHomepageConfig, updateHomepageConfig, type HomepageConfig,
 } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
 import { AttributeSelect } from "@/components/ui/attribute-select";
@@ -831,10 +834,59 @@ function Inventory({
 }
 
 function Customers() {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getCustomers()
+      .then((data) => { if (!cancelled) setCustomers(data); })
+      .catch((err) => { if (!cancelled) setError(err.message); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <div>
       <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Customers</h1>
-      <p className="mt-1 text-sm text-gray-500">Customer accounts aren't tracked yet — this will populate once checkout captures customer records.</p>
+      <p className="mt-1 text-sm text-gray-500">Every account that has signed in, with their order history at a glance.</p>
+      {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
+      {loading ? (
+        <p className="mt-8 text-sm text-gray-400">Loading customers…</p>
+      ) : customers.length === 0 ? (
+        <p className="mt-8 text-sm text-gray-400">No customer accounts yet — this fills in as people sign up and check out.</p>
+      ) : (
+        <div className="mt-8 overflow-x-auto rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
+          <table className="w-full min-w-[560px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-black/5 text-xs uppercase tracking-[0.18em] text-gray-500">
+                <th className="p-4 font-normal">Name</th>
+                <th className="p-4 font-normal">Contact</th>
+                <th className="p-4 font-normal">Orders</th>
+                <th className="p-4 font-normal">Total Spent</th>
+                <th className="p-4 font-normal">Last Order</th>
+              </tr>
+            </thead>
+            <tbody>
+              {customers.map((c) => (
+                <tr key={c.id} className="border-b border-black/5 last:border-b-0">
+                  <td className="p-4 text-[#111111]">{c.name}</td>
+                  <td className="p-4 text-gray-500">
+                    <p>{c.email}</p>
+                    {c.phone && <p className="text-xs text-gray-400">{c.phone}</p>}
+                  </td>
+                  <td className="p-4 text-gray-500">{c.ordersCount}</td>
+                  <td className="p-4 text-gray-500">₹{c.totalSpent.toLocaleString("en-IN")}</td>
+                  <td className="p-4 text-gray-500">
+                    {c.lastOrderAt ? formatOrderTimestamp(c.lastOrderAt) : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
@@ -860,11 +912,296 @@ function Analytics({ products }: { products: Product[] }) {
 }
 
 function Coupons() {
-  return <div><h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Coupons</h1><div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">Create and manage promo campaigns for festive launches and loyal customers.</div></div>;
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [busyId, setBusyId] = useState<number | null>(null);
+  const [form, setForm] = useState({ code: "", discount_type: "percent" as "percent" | "flat", discount_value: "10", usage_limit: "" });
+
+  const load = useCallback(() => {
+    setLoading(true);
+    getCoupons()
+      .then(setCoupons)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.code.trim()) return;
+    setCreating(true);
+    setError(null);
+    try {
+      await createCoupon({
+        code: form.code,
+        discount_type: form.discount_type,
+        discount_value: Number(form.discount_value) || 0,
+        usage_limit: form.usage_limit ? Number(form.usage_limit) : null,
+      });
+      setForm({ code: "", discount_type: "percent", discount_value: "10", usage_limit: "" });
+      load();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const toggleActive = async (coupon: Coupon) => {
+    setBusyId(coupon.id);
+    try {
+      await updateCoupon(coupon.id, { active: !coupon.active });
+      load();
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const remove = async (coupon: Coupon) => {
+    if (!confirm(`Delete coupon "${coupon.code}"?`)) return;
+    setBusyId(coupon.id);
+    try {
+      await deleteCoupon(coupon.id);
+      load();
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  return (
+    <div>
+      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Coupons</h1>
+      <p className="mt-1 text-sm text-gray-500">Create and manage promo campaigns for festive launches and loyal customers.</p>
+
+      <form onSubmit={submit} className="mt-8 grid gap-4 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Code</label>
+          <input
+            value={form.code}
+            onChange={(e) => setForm({ ...form, code: e.target.value })}
+            placeholder="FESTIVE25"
+            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm uppercase"
+          />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Type</label>
+          <select
+            value={form.discount_type}
+            onChange={(e) => setForm({ ...form, discount_type: e.target.value as "percent" | "flat" })}
+            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+          >
+            <option value="percent">Percent off</option>
+            <option value="flat">Flat ₹ off</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">
+            {form.discount_type === "percent" ? "Discount %" : "Discount ₹"}
+          </label>
+          <input
+            type="number"
+            min={0}
+            value={form.discount_value}
+            onChange={(e) => setForm({ ...form, discount_value: e.target.value })}
+            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Usage limit</label>
+          <input
+            type="number"
+            min={0}
+            value={form.usage_limit}
+            onChange={(e) => setForm({ ...form, usage_limit: e.target.value })}
+            placeholder="Unlimited"
+            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+          />
+        </div>
+        <div className="sm:col-span-2 lg:col-span-4">
+          <button
+            type="submit"
+            disabled={creating || !form.code.trim()}
+            className="flex items-center gap-2 rounded-full bg-[#111111] px-6 py-2.5 text-sm text-white disabled:opacity-50"
+          >
+            {creating ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+            Create Coupon
+          </button>
+        </div>
+      </form>
+
+      {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
+
+      {loading ? (
+        <p className="mt-8 text-sm text-gray-400">Loading coupons…</p>
+      ) : coupons.length === 0 ? (
+        <p className="mt-8 text-sm text-gray-400">No coupons yet — create your first campaign above.</p>
+      ) : (
+        <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
+          {coupons.map((c) => (
+            <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 p-4 last:border-b-0">
+              <div>
+                <p className="text-sm tracking-[0.1em] text-[#111111]">{c.code}</p>
+                <p className="text-xs text-gray-400">
+                  {c.discount_type === "percent" ? `${c.discount_value}% off` : `₹${c.discount_value} off`}
+                  {" · "}{c.used_count} used{c.usage_limit ? ` / ${c.usage_limit}` : ""}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs uppercase tracking-[0.18em] ${c.active ? "text-green-600" : "text-gray-400"}`}>
+                  {c.active ? "Active" : "Paused"}
+                </span>
+                <button
+                  onClick={() => toggleActive(c)}
+                  disabled={busyId === c.id}
+                  className="rounded-full border border-black/10 p-2 text-[#111111] disabled:opacity-50"
+                  title={c.active ? "Pause coupon" : "Activate coupon"}
+                >
+                  {busyId === c.id ? <Loader2 size={14} className="animate-spin" /> : c.active ? <X size={14} /> : <Check size={14} />}
+                </button>
+                <button
+                  onClick={() => remove(c)}
+                  disabled={busyId === c.id}
+                  className="rounded-full border border-[#D94F70] p-2 text-[#D94F70] disabled:opacity-50"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
-function HomepageEditor() {
-  return <div><h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1><div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">Reorder modules and highlight featured products without touching any code.</div></div>;
+function HomepageEditor({ products }: { products: Product[] }) {
+  const [config, setConfig] = useState<HomepageConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getHomepageConfig()
+      .then((data) => { if (!cancelled) setConfig(data); })
+      .catch((err) => { if (!cancelled) setError(err.message); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const toggleFeatured = (id: number) => {
+    if (!config) return;
+    const already = config.featured_product_ids.includes(id);
+    const next = already
+      ? config.featured_product_ids.filter((p) => p !== id)
+      : [...config.featured_product_ids, id];
+    setConfig({ ...config, featured_product_ids: next });
+  };
+
+  const save = async () => {
+    if (!config) return;
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      const updated = await updateHomepageConfig(config);
+      setConfig(updated);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading || !config) {
+    return (
+      <div>
+        <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1>
+        <p className="mt-8 text-sm text-gray-400">Loading…</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1>
+      <p className="mt-1 text-sm text-gray-500">Edit the hero copy and choose which products get featured on the storefront homepage.</p>
+
+      <div className="mt-8 space-y-4 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Hero Heading</label>
+          <input
+            value={config.hero_heading}
+            onChange={(e) => setConfig({ ...config, hero_heading: e.target.value })}
+            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Hero Subheading</label>
+          <textarea
+            value={config.hero_subheading}
+            onChange={(e) => setConfig({ ...config, hero_subheading: e.target.value })}
+            rows={2}
+            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Announcement Banner (optional)</label>
+          <input
+            value={config.banner_text}
+            onChange={(e) => setConfig({ ...config, banner_text: e.target.value })}
+            placeholder="e.g. Free shipping on orders above ₹4999"
+            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
+        <p className="text-xs uppercase tracking-[0.18em] text-gray-500">Featured Products</p>
+        <p className="mt-1 text-xs text-gray-400">Selected products appear in the homepage&apos;s featured module.</p>
+        {products.length === 0 ? (
+          <p className="mt-4 text-sm text-gray-400">Add products from &quot;Add Product&quot; first.</p>
+        ) : (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {products.map((p) => {
+              const checked = config.featured_product_ids.includes(p.id);
+              return (
+                <label
+                  key={p.id}
+                  className={`flex cursor-pointer items-center gap-3 rounded-[0.9rem] border p-3 text-sm ${checked ? "border-[#111111] bg-[#F8F5F1]" : "border-black/10"}`}
+                >
+                  <input type="checkbox" checked={checked} onChange={() => toggleFeatured(p.id)} className="accent-[#111111]" />
+                  {p.images?.[0] ? (
+                    <img src={resolveImageUrl(p.images[0])} alt={p.name} className="h-10 w-8 rounded-[0.4rem] object-cover" />
+                  ) : (
+                    <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#F8F5F1] text-gray-400"><ImageOff size={12} /></div>
+                  )}
+                  <span className="truncate">{p.name}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
+
+      <button
+        onClick={save}
+        disabled={saving}
+        className="mt-6 flex items-center gap-2 rounded-full bg-[#111111] px-6 py-2.5 text-sm text-white disabled:opacity-50"
+      >
+        {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <Check size={14} /> : <Save size={14} />}
+        {saved ? "Saved" : "Save Changes"}
+      </button>
+    </div>
+  );
 }
 
 export default function DashboardPage() {
@@ -1041,7 +1378,7 @@ export default function DashboardPage() {
           {active === "customers" && <Customers />}
           {active === "analytics" && <Analytics products={products} />}
           {active === "coupons" && <Coupons />}
-          {active === "homepage" && <HomepageEditor />}
+          {active === "homepage" && <HomepageEditor products={products} />}
         </main>
       </div>
     </div>
