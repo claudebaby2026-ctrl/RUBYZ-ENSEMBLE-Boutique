@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, AlertTriangle } from "lucide-react";
 import { useCart } from "@/lib/useCart";
 import { useAuth } from "@/lib/useAuth";
 import { DELIVERY_FEE } from "@/lib/cart";
-import { createOrder } from "@/lib/api";
+import { createOrder, ApiError } from "@/lib/api";
 
 const MODE_KEY = "rubyz_delivery_mode";
 
@@ -19,6 +19,7 @@ export default function CheckoutPage() {
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "" });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isStockError, setIsStockError] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export default function CheckoutPage() {
     if (!valid || submitting) return;
     setSubmitting(true);
     setError(null);
+    setIsStockError(false);
     try {
       const order = await createOrder({
         customerName: form.name,
@@ -87,6 +89,12 @@ export default function CheckoutPage() {
       setOrderId(order.id);
       clearCart();
     } catch (e: any) {
+      // A 400 here means the server rejected the order after re-checking
+      // stock/prices against the DB (see POST /orders) — most commonly
+      // because someone else bought the last unit while this cart sat
+      // open. The message already names the product and what's left, so
+      // just point the customer back to their cart to adjust quantities.
+      setIsStockError(e instanceof ApiError && e.status === 400);
       setError(e?.message || "Could not place your order. Please try again.");
     } finally {
       setSubmitting(false);
@@ -183,7 +191,19 @@ export default function CheckoutPage() {
               <div className="flex justify-between"><span>Delivery</span><span>{deliveryFee ? `₹${deliveryFee}` : "Free"}</span></div>
               <div className="mt-3 flex justify-between border-t border-black/5 pt-3 text-base font-semibold text-[#111111]"><span>Total</span><span>₹{total.toLocaleString()}</span></div>
             </div>
-            {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
+            {error && (
+              <div className="mt-4 flex items-start gap-2 rounded-2xl border border-[#D94F70]/20 bg-[#D94F70]/5 p-4 text-sm text-[#D94F70]">
+                <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+                <div>
+                  <p>{error}</p>
+                  {isStockError && (
+                    <Link href="/cart" className="mt-1 inline-block font-medium underline underline-offset-2">
+                      Back to cart to adjust quantities
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
             <button
               onClick={placeOrder}
               disabled={!valid || submitting}
