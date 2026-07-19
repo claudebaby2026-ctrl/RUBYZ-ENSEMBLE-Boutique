@@ -1,5 +1,8 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from datetime import datetime, timezone
+
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from app.database import Base
 
@@ -19,6 +22,16 @@ class Order(Base):
     mode = Column(String, default="Delivery")
     status = Column(String, default="Pending")
     total = Column(Integer, default=0)
+    # When the order was placed. `default` guarantees every ORM insert sets
+    # this (needed because databases migrated by app/migrations.py may not
+    # have a DB-level DEFAULT on this column — see there for why), while
+    # `server_default` covers rows inserted outside the ORM.
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
+        nullable=False,
+    )
 
     items = relationship(
         "OrderItem", back_populates="order", cascade="all, delete-orphan"

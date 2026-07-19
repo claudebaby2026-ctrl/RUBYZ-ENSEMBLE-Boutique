@@ -21,6 +21,15 @@ def list_orders(
     return [OrderOut.from_model(o) for o in order_crud.get_orders(db)]
 
 
+@router.get("/today", response_model=List[OrderOut])
+def list_today_orders(
+    db: Session = Depends(get_db), current_owner: User = Depends(get_current_owner)
+):
+    # Same data as `list_orders`, pre-filtered to orders placed today so the
+    # dashboard's "today's orders" shortcut actually shows today's orders.
+    return [OrderOut.from_model(o) for o in order_crud.get_today_orders(db)]
+
+
 @router.post("", response_model=OrderOut, status_code=201)
 def create_order(
     payload: OrderCreate,

@@ -21,6 +21,7 @@ export type Order = {
   mode: string;
   status: string;
   total: number;
+  createdAt: string;
   items: { id: number; name: string; quantity: number; price: number }[];
 };
 

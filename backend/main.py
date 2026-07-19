@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import Base, SessionLocal, engine
+from app.migrations import run_migrations
 from app.routers import admin, attributes, auth, likes, orders, products, uploads
 from app.seed_data import seed_attributes, seed_if_empty, seed_owner
 
@@ -35,6 +36,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 @app.on_event("startup")
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
+    run_migrations(engine)
     db = SessionLocal()
     try:
         seed_if_empty(db)

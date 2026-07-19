@@ -431,6 +431,81 @@ function AddProduct({
   );
 }
 
+// Formats an ISO timestamp for the orders table: just the time for orders
+// placed today (in the browser's local timezone), otherwise a short date +
+// time so older orders are still easy to place in time.
+function isSameLocalDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+function formatOrderTimestamp(iso: string): string {
+  const date = new Date(iso);
+  const time = date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  if (isSameLocalDay(date, new Date())) return time;
+  const day = date.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  return `${day}, ${time}`;
+}
+
+function OrdersTable({
+  title,
+  subtitle,
+  orders,
+  selected,
+  onSelect,
+  emptyLabel,
+}: {
+  title: string;
+  subtitle?: string;
+  orders: Order[];
+  selected: Order | null;
+  onSelect: (order: Order) => void;
+  emptyLabel: string;
+}) {
+  return (
+    <div className="overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
+      <div className="flex items-baseline justify-between gap-3 border-b border-black/5 px-4 py-3">
+        <h2 className="text-sm font-medium uppercase tracking-[0.18em] text-[#111111]">
+          {title} <span className="text-gray-400">({orders.length})</span>
+        </h2>
+        {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
+      </div>
+      {orders.length === 0 ? (
+        <p className="p-5 text-sm text-gray-400">{emptyLabel}</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[520px] text-sm">
+            <thead className="bg-[#FBFAF8] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+              <tr>
+                <th className="p-3">Order</th><th className="p-3">Customer</th><th className="p-3">Amount</th>
+                <th className="p-3">Placed</th><th className="p-3">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr
+                  key={order.id}
+                  onClick={() => onSelect(order)}
+                  className={`cursor-pointer border-t border-black/5 ${selected?.id === order.id ? "bg-[#FBFAF8]" : ""}`}
+                >
+                  <td className="p-3">{order.id}</td>
+                  <td className="p-3">{order.customerName}</td>
+                  <td className="p-3">₹{order.total}</td>
+                  <td className="p-3 text-gray-500">{formatOrderTimestamp(order.createdAt)}</td>
+                  <td className="p-3"><StatusPill status={order.status} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
@@ -463,6 +538,8 @@ function Orders() {
     if (selected?.id === order.id) setSelected(updated);
   };
 
+  const todayOrders = orders.filter((o) => isSameLocalDay(new Date(o.createdAt), new Date()));
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -477,26 +554,22 @@ function Orders() {
         <p className="mt-8 text-sm text-gray-400">No orders yet.</p>
       ) : (
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[480px] text-sm">
-                <thead className="bg-[#FBFAF8] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
-                  <tr>
-                    <th className="p-3">Order</th><th className="p-3">Customer</th><th className="p-3">Amount</th><th className="p-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order) => (
-                    <tr key={order.id} onClick={() => setSelected(order)} className="cursor-pointer border-t border-black/5">
-                      <td className="p-3">{order.id}</td>
-                      <td className="p-3">{order.customerName}</td>
-                      <td className="p-3">₹{order.total}</td>
-                      <td className="p-3"><StatusPill status={order.status} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="space-y-6">
+            <OrdersTable
+              title="Today's Orders"
+              orders={todayOrders}
+              selected={selected}
+              onSelect={setSelected}
+              emptyLabel="No orders placed today yet."
+            />
+            <OrdersTable
+              title="All Orders"
+              subtitle="Full order history"
+              orders={orders}
+              selected={selected}
+              onSelect={setSelected}
+              emptyLabel="No orders yet."
+            />
           </div>
           <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
             {!selected ? <p className="text-sm text-gray-400">Select an order to see details.</p> : (
@@ -508,6 +581,11 @@ function Orders() {
                   </div>
                   <StatusPill status={selected.status} />
                 </div>
+                <p className="mt-3 text-xs uppercase tracking-[0.18em] text-gray-400">
+                  Placed {new Date(selected.createdAt).toLocaleString(undefined, {
+                    day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit",
+                  })}
+                </p>
                 <p className="mt-5 text-sm text-gray-600"><strong>Items:</strong> {selected.items.map((i) => `${i.name} x${i.quantity}`).join(", ")}</p>
                 <p className="mt-2 text-sm text-gray-600"><strong>Mode:</strong> {selected.mode}</p>
                 <p className="mt-2 text-sm text-gray-600"><strong>Total:</strong> ₹{selected.total}</p>

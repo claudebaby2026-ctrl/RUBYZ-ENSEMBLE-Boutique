@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from sqlalchemy.orm import Session, joinedload
@@ -6,6 +7,18 @@ from sqlalchemy.orm import Session, joinedload
 from app.models.order import Order, OrderItem
 from app.models.product import Product
 from app.schemas.order import OrderCreate
+
+
+def _today_range_utc() -> tuple[datetime, datetime]:
+    """Return the [start, end) UTC window for "today".
+
+    Orders are timestamped in UTC (see Order.created_at), so we bucket
+    "today" using UTC day boundaries to match what's actually stored.
+    """
+    now = datetime.now(timezone.utc)
+    start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end = start + timedelta(days=1)
+    return start, end
 
 
 def get_orders(db: Session) -> List[Order]:
@@ -75,8 +88,24 @@ def update_order_status(db: Session, db_order: Order, status: str) -> Order:
     return db_order
 
 
+def get_today_orders(db: Session) -> List[Order]:
+    start, end = _today_range_utc()
+    return (
+        db.query(Order)
+        .options(joinedload(Order.items))
+        .filter(Order.created_at >= start, Order.created_at < end)
+        .order_by(Order.id.desc())
+        .all()
+    )
+
+
 def count_today_orders(db: Session) -> int:
-    return db.query(Order).count()
+    start, end = _today_range_utc()
+    return (
+        db.query(Order)
+        .filter(Order.created_at >= start, Order.created_at < end)
+        .count()
+    )
 
 
 def count_pending_orders(db: Session) -> int:

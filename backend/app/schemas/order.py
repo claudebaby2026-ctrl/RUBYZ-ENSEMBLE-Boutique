@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict
@@ -44,6 +45,7 @@ class OrderOut(BaseModel):
     mode: str
     status: str
     total: int
+    createdAt: datetime
     items: List[OrderItemOut]
 
     @classmethod
@@ -57,5 +59,6 @@ class OrderOut(BaseModel):
             mode=order.mode,
             status=order.status,
             total=order.total,
+            createdAt=order.created_at,
             items=[OrderItemOut.model_validate(i) for i in order.items],
         )
