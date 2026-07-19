@@ -1,7 +1,9 @@
 // Plain browser-safe cart helpers (no React), following the same pattern as
 // lib/auth.ts: state lives in localStorage, and a custom event lets any
 // component in the tab (e.g. the header's cart badge) react instantly.
-const CART_KEY = "rubyz_cart";
+import { getStoredUser } from "@/lib/auth";
+
+const CART_KEY_PREFIX = "rubyz_cart";
 const CART_EVENT = "rubyz-cart-changed";
 export const DELIVERY_FEE = 150;
 
@@ -17,10 +19,21 @@ export type CartItem = {
   quantity: number;
 };
 
+// The cart is namespaced per signed-in account (falling back to a shared
+// "guest" bucket when logged out) so logging out and logging into a
+// different account in the same browser never shows you someone else's
+// cart. getStoredUser() reads whatever's currently in localStorage, so this
+// stays correct the instant a login/logout happens — no extra plumbing
+// needed here.
+function cartKey(): string {
+  const user = getStoredUser();
+  return user ? `${CART_KEY_PREFIX}_${user.id}` : `${CART_KEY_PREFIX}_guest`;
+}
+
 function readRaw(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(CART_KEY);
+    const raw = window.localStorage.getItem(cartKey());
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
@@ -31,7 +44,7 @@ function readRaw(): CartItem[] {
 
 function writeRaw(items: CartItem[]) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(CART_KEY, JSON.stringify(items));
+  window.localStorage.setItem(cartKey(), JSON.stringify(items));
   window.dispatchEvent(new Event(CART_EVENT));
 }
 
