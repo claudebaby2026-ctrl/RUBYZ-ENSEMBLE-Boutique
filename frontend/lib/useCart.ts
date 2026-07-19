@@ -32,9 +32,15 @@ export function useCart() {
     refresh();
     window.addEventListener(CART_EVENT, refresh);
     window.addEventListener("storage", refresh);
+    // The cart is namespaced per account (see lib/cart.ts), so a login or
+    // logout points reads/writes at a different storage key — refresh here
+    // too, or the UI would keep showing the previous account's cart until
+    // something else happened to trigger a re-render.
+    window.addEventListener("rubyz-auth-changed", refresh);
     return () => {
       window.removeEventListener(CART_EVENT, refresh);
       window.removeEventListener("storage", refresh);
+      window.removeEventListener("rubyz-auth-changed", refresh);
     };
   }, [refresh]);
 
