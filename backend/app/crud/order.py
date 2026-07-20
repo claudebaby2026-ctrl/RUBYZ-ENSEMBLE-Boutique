@@ -9,7 +9,8 @@ from app.crud import coupon as coupon_crud
 from app.crud.coupon import CouponValidationError
 from app.models.order import Order, OrderItem
 from app.models.product import Product
-from app.schemas.order import OrderCreate
+from app.schemas.order import OrderCreate, OrderItemCreate
+from app.services.payments import verify_razorpay_signature
 
 
 class OrderError(Exception):
@@ -44,6 +45,20 @@ class CouponError(OrderError):
     ignored, and never trusted from the client either."""
 
 
+class PaymentVerificationError(OrderError):
+    """Raised when the Razorpay payment signature on an order-creation
+    request doesn't check out. This is the difference between "someone
+    paid" and "someone claims they paid" — a client could otherwise POST
+    /orders with a made-up razorpayPaymentId and get free stock."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            "We couldn't verify this payment. If money was deducted, it "
+            "will be auto-refunded by Razorpay within a few days — please "
+            "contact us if it isn't."
+        )
+
+
 def _today_range_utc() -> tuple[datetime, datetime]:
     """Return the [start, end) UTC window for "today".
 
@@ -74,25 +89,38 @@ def get_order_by_display_id(db: Session, display_id: str) -> Optional[Order]:
     )
 
 
-def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None) -> Order:
-    """Create an order.
+class _PricedCart:
+    __slots__ = ("subtotal", "discount", "total", "products", "requested_qty", "coupon")
 
-    SECURITY: the client-submitted `price` on each item and the overall
-    `total` are NEVER trusted — a customer could edit those in devtools
-    before hitting POST /orders. Every price is recomputed here from the
-    Product row in the database, and the total is the sum of those
-    DB-sourced line prices (plus the delivery fee, itself a server-side
-    constant, never the client's number).
+    def __init__(self, subtotal, discount, total, products, requested_qty, coupon):
+        self.subtotal = subtotal
+        self.discount = discount
+        self.total = total
+        self.products = products
+        self.requested_qty = requested_qty
+        self.coupon = coupon
 
-    Stock is also re-checked here, against a row-locked read of each
-    Product, before anything is written. If two checkout requests race for
-    the last unit of the same product, `with_for_update()` (on Postgres —
-    SQLite has no server-side locking and doesn't need it, being
-    effectively single-writer) makes the second request block until the
-    first commits, so it sees the already-decremented stock and correctly
-    fails instead of overselling.
+
+def price_cart(
+    db: Session,
+    items: List[OrderItemCreate],
+    mode: str,
+    coupon_code: Optional[str],
+    lock: bool,
+) -> _PricedCart:
+    """Validate stock and price a cart entirely from the DB — shared by
+    POST /payments/create-razorpay-order (to know what to charge) and
+    create_order() below (to know what was actually owed at the moment the
+    order is written). The client's own prices/total are never consulted.
+
+    `lock` selects row-locked reads (`with_for_update`) so writers block
+    each other. Use lock=True only right before actually writing the
+    order/decrementing stock (in create_order) — using it for the
+    Razorpay-order preview too would hold locks for as long as the
+    customer takes to complete the Razorpay checkout modal, which could be
+    minutes.
     """
-    if not order.items:
+    if not items:
         raise OrderError("Your cart is empty.")
 
     # A cart can list the same product twice (e.g. two different sizes),
@@ -100,23 +128,19 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
     # against the *summed* requested quantity per product, not each line in
     # isolation.
     requested_qty: Dict[int, int] = {}
-    for item in order.items:
+    for item in items:
         if item.productId is None:
             raise InvalidProductError(product_id=-1)
         if item.quantity < 1:
             raise OrderError(f"Invalid quantity for '{item.name}'.")
         requested_qty[item.productId] = requested_qty.get(item.productId, 0) + item.quantity
 
-    # Lock + validate every distinct product referenced in the order before
-    # writing anything.
     products: Dict[int, Product] = {}
     for product_id, qty in requested_qty.items():
-        product = (
-            db.query(Product)
-            .filter(Product.id == product_id)
-            .with_for_update()
-            .first()
-        )
+        query = db.query(Product).filter(Product.id == product_id)
+        if lock:
+            query = query.with_for_update()
+        product = query.first()
         if not product:
             raise InvalidProductError(product_id)
         available = product.stock or 0
@@ -124,23 +148,11 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
             raise OutOfStockError(product.name, available, qty)
         products[product_id] = product
 
-    # Recompute every line price straight from the DB and build the order
-    # total from that — the client's `item.price` / `order.total` are
-    # ignored entirely.
+    # Recompute every line price straight from the DB — the client's
+    # `item.price` is ignored entirely.
     subtotal = 0
-    order_items: List[OrderItem] = []
-    for item in order.items:
-        product = products[item.productId]
-        line_price = product.price
-        subtotal += line_price * item.quantity
-        order_items.append(
-            OrderItem(
-                product_id=item.productId,
-                name=item.name,
-                quantity=item.quantity,
-                price=line_price,
-            )
-        )
+    for item in items:
+        subtotal += products[item.productId].price * item.quantity
 
     # Coupon: re-validate server-side against the exact same rules as
     # GET /coupons/validate/{code} (active / not expired / under its usage
@@ -150,9 +162,9 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
     # not anything the client sent.
     coupon = None
     discount = 0
-    if order.couponCode:
+    if coupon_code:
         try:
-            coupon = coupon_crud.validate_coupon(db, order.couponCode, for_update=True)
+            coupon = coupon_crud.validate_coupon(db, coupon_code, for_update=lock)
         except CouponValidationError as exc:
             raise CouponError(str(exc)) from exc
         if coupon.discount_type == "flat":
@@ -163,8 +175,51 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
         # discount larger than the cart).
         discount = max(0, min(discount, subtotal))
 
-    delivery_fee = settings.DELIVERY_FEE if order.mode == "Delivery" else 0
+    delivery_fee = settings.DELIVERY_FEE if mode == "Delivery" else 0
     total = subtotal - discount + delivery_fee
+
+    return _PricedCart(subtotal, discount, total, products, requested_qty, coupon)
+
+
+def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None) -> Order:
+    """Verify the Razorpay payment, then create the order.
+
+    SECURITY: the client-submitted `price` on each item and the overall
+    `total` are NEVER trusted — a customer could edit those in devtools
+    before hitting POST /orders. Every price is recomputed here from the
+    Product row in the database, and the total is the sum of those
+    DB-sourced line prices (plus the delivery fee, itself a server-side
+    constant, never the client's number). Similarly, payment success is
+    never taken on the client's word — razorpaySignature is verified
+    against Razorpay's own HMAC before anything is written (see
+    app/services/payments.py).
+
+    Stock is also re-checked here, against a row-locked read of each
+    Product, before anything is written. If two checkout requests race for
+    the last unit of the same product, `with_for_update()` (on Postgres —
+    SQLite has no server-side locking and doesn't need it, being
+    effectively single-writer) makes the second request block until the
+    first commits, so it sees the already-decremented stock and correctly
+    fails instead of overselling.
+    """
+    # Verify the payment BEFORE touching stock/coupons/DB rows. A forged
+    # or tampered signature never gets this far.
+    if not verify_razorpay_signature(
+        order.razorpayOrderId, order.razorpayPaymentId, order.razorpaySignature
+    ):
+        raise PaymentVerificationError()
+
+    priced = price_cart(db, order.items, order.mode, order.couponCode, lock=True)
+
+    order_items: List[OrderItem] = [
+        OrderItem(
+            product_id=item.productId,
+            name=item.name,
+            quantity=item.quantity,
+            price=priced.products[item.productId].price,
+        )
+        for item in order.items
+    ]
 
     display_id = f"#{uuid.uuid4().hex[:6].upper()}"
     db_order = Order(
@@ -176,9 +231,12 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
         address=order.address,
         mode=order.mode,
         status="Pending",
-        total=total,
-        coupon_code=coupon.code if coupon else None,
-        discount=discount,
+        total=priced.total,
+        coupon_code=priced.coupon.code if priced.coupon else None,
+        discount=priced.discount,
+        payment_status="paid",
+        razorpay_order_id=order.razorpayOrderId,
+        razorpay_payment_id=order.razorpayPaymentId,
     )
     db_order.items = order_items
     db.add(db_order)
@@ -187,16 +245,16 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
     # coupon as used — folded into the same transaction/commit as the order
     # and stock updates below, so a coupon's used_count can never increment
     # without a matching order actually existing.
-    if coupon:
-        coupon_crud.increment_usage(db, coupon)
+    if priced.coupon:
+        coupon_crud.increment_usage(db, priced.coupon)
 
     # Keep inventory honest: a placed order reduces available stock and
     # counts towards each product's "sold" tally. We already validated
     # `qty <= product.stock` above under a row lock, so this can no longer
     # go negative — the old max(0, ...) clamp masked oversells instead of
     # preventing them.
-    for product_id, qty in requested_qty.items():
-        product = products[product_id]
+    for product_id, qty in priced.requested_qty.items():
+        product = priced.products[product_id]
         product.stock = (product.stock or 0) - qty
         product.sold = (product.sold or 0) + qty
         product.availability = "In stock" if product.stock > 0 else "Out of stock"

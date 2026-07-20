@@ -63,3 +63,20 @@ def run_migrations(engine: Engine) -> None:
             # — unlike created_at above, 0 is a constant default.
             conn.execute(text("ALTER TABLE orders ADD COLUMN discount INTEGER DEFAULT 0"))
             conn.execute(text("UPDATE orders SET discount = 0 WHERE discount IS NULL"))
+
+    if not _has_column(engine, "orders", "payment_status"):
+        with engine.begin() as conn:
+            conn.execute(
+                text("ALTER TABLE orders ADD COLUMN payment_status VARCHAR DEFAULT 'paid'")
+            )
+            conn.execute(
+                text("UPDATE orders SET payment_status = 'paid' WHERE payment_status IS NULL")
+            )
+
+    if not _has_column(engine, "orders", "razorpay_order_id"):
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE orders ADD COLUMN razorpay_order_id VARCHAR"))
+
+    if not _has_column(engine, "orders", "razorpay_payment_id"):
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE orders ADD COLUMN razorpay_payment_id VARCHAR"))

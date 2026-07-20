@@ -27,6 +27,15 @@ class Order(Base):
     # `discount`, this just records what produced that number.
     coupon_code = Column(String, nullable=True)
     discount = Column(Integer, default=0, nullable=False)
+    # --- Razorpay payment tracking ---
+    # payment_status is separate from `status` (order fulfillment status:
+    # Pending/Confirmed/Shipped/...) — this tracks the payment lifecycle
+    # itself. "paid" is only ever set after the signature verification in
+    # crud/order.py::create_order succeeds, so its presence is proof the
+    # payment was verified server-side, never just client-reported.
+    payment_status = Column(String, default="paid", nullable=False)
+    razorpay_order_id = Column(String, nullable=True)
+    razorpay_payment_id = Column(String, nullable=True)
     # When the order was placed. `default` guarantees every ORM insert sets
     # this (needed because databases migrated by app/migrations.py may not
     # have a DB-level DEFAULT on this column — see there for why), while

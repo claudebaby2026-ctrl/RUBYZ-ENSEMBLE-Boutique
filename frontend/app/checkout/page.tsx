@@ -1,15 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import Script from "next/script";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2, AlertTriangle, Tag, X } from "lucide-react";
 import { useCart } from "@/lib/useCart";
 import { useAuth } from "@/lib/useAuth";
 import { DELIVERY_FEE } from "@/lib/cart";
-import { createOrder, validateCoupon, ApiError, type Coupon } from "@/lib/api";
+import { createOrder, createRazorpayOrder, validateCoupon, ApiError, type Coupon } from "@/lib/api";
 
 const MODE_KEY = "rubyz_delivery_mode";
+
+// Minimal shape of the `window.Razorpay` constructor injected by
+// https://checkout.razorpay.com/v1/checkout.js — the full type is much
+// bigger, this just covers what we use below.
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => {
+      open: () => void;
+      on: (event: string, handler: (response: unknown) => void) => void;
+    };
+  }
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -95,48 +108,101 @@ export default function CheckoutPage() {
     setCouponError(null);
   };
 
-  // This calls the real order-creation endpoint (POST /orders) so every part
-  // of checkout except the actual payment gateway is fully wired up. Swap
-  // the block below for a Razorpay `checkout.js` order + payment flow when
-  // that integration is ready — on success, call the same createOrder logic
-  // (or confirm the pending order) before clearing the cart.
+  const orderItemsPayload = () =>
+    items.map((item) => ({
+      productId: item.productId,
+      name: `${item.name} (${item.size})`,
+      quantity: item.quantity,
+      price: item.price,
+    }));
+
+  // Two-step Razorpay flow:
+  //  1. Ask the backend to price this cart from the DB and open a
+  //     matching Razorpay order (POST /payments/create-razorpay-order).
+  //  2. Launch the Razorpay checkout modal for that order. Only once the
+  //     customer actually completes payment does its `handler` callback
+  //     fire — at which point we call POST /orders with the payment proof
+  //     (order id, payment id, signature), which the backend verifies
+  //     server-side before creating the order and decrementing stock.
   const placeOrder = async () => {
     if (!valid || submitting) return;
+    if (!window.Razorpay) {
+      setError("Payment gateway is still loading — please try again in a moment.");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     setIsStockError(false);
     try {
-      const order = await createOrder({
-        customerName: form.name,
-        phone: form.phone,
-        email: form.email || undefined,
-        address: mode === "Delivery" ? form.address : "Store pickup",
+      const rpOrder = await createRazorpayOrder({
         mode,
-        items: items.map((item) => ({
-          productId: item.productId,
-          name: `${item.name} (${item.size})`,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        total,
-        // The server never trusts this total/discount — it only reads the
-        // code and re-validates + recomputes the discount itself (see
-        // POST /orders). This is purely what the customer already saw.
+        items: orderItemsPayload(),
         couponCode: appliedCoupon?.code,
       });
-      setOrderId(order.id);
-      clearCart();
+
+      const rzp = new window.Razorpay({
+        key: rpOrder.keyId,
+        amount: rpOrder.amount,
+        currency: rpOrder.currency,
+        order_id: rpOrder.razorpayOrderId,
+        name: "RUBYZ Ensemble",
+        description: "Order payment",
+        prefill: {
+          name: form.name,
+          email: form.email || undefined,
+          contact: form.phone,
+        },
+        theme: { color: "#B68D40" },
+        handler: async (response: any) => {
+          try {
+            const order = await createOrder({
+              customerName: form.name,
+              phone: form.phone,
+              email: form.email || undefined,
+              address: mode === "Delivery" ? form.address : "Store pickup",
+              mode,
+              items: orderItemsPayload(),
+              total,
+              // The server never trusts this total/discount — it only
+              // reads the code and re-validates + recomputes the discount
+              // itself (see POST /orders). This is purely what the
+              // customer already saw.
+              couponCode: appliedCoupon?.code,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            setOrderId(order.id);
+            clearCart();
+          } catch (e: any) {
+            // A 400 here means the server rejected the order after
+            // re-checking stock/prices (or the coupon) against the DB —
+            // most commonly because someone else bought the last unit, or
+            // the coupon expired / hit its usage limit, while checkout was
+            // open. Payment was already captured by Razorpay in this case;
+            // it will be auto-refunded, and the message says so.
+            setIsStockError(e instanceof ApiError && e.status === 400);
+            setError(e?.message || "Could not confirm your order. Please contact us if you were charged.");
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        modal: {
+          // Customer closed the checkout modal without paying — just
+          // reset the button, nothing was charged or created.
+          ondismiss: () => setSubmitting(false),
+        },
+      });
+
+      rzp.on("payment.failed", () => {
+        setError("Payment failed. Please try again or use a different payment method.");
+        setSubmitting(false);
+      });
+
+      rzp.open();
     } catch (e: any) {
-      // A 400 here means the server rejected the order after re-checking
-      // stock/prices (or the coupon) against the DB — most commonly
-      // because someone else bought the last unit, or the coupon expired /
-      // hit its usage limit, while this cart sat open. The message already
-      // names what went wrong, so just point the customer back to their
-      // cart to adjust quantities (for stock issues) — for a coupon issue
-      // they can just remove it and retry.
       setIsStockError(e instanceof ApiError && e.status === 400);
-      setError(e?.message || "Could not place your order. Please try again.");
-    } finally {
+      setError(e?.message || "Could not start payment. Please try again.");
       setSubmitting(false);
     }
   };
@@ -144,6 +210,7 @@ export default function CheckoutPage() {
   if (!hydrated || authLoading || !user) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center bg-[#FBFAF8]">
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Loading checkout…
         </div>
@@ -170,6 +237,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="bg-[#FBFAF8]">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">

@@ -67,5 +67,17 @@ class Settings:
             and self.R2_PUBLIC_URL
         )
 
+    # --- Payments (Razorpay) ---
+    # Use the "rzp_test_..." / test secret from the Razorpay Dashboard
+    # (Test Mode) while developing. Swap for the live "rzp_live_..." pair
+    # only once you're ready to accept real payments — no code changes
+    # needed, the same client is used for both.
+    RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "")
+    RAZORPAY_KEY_SECRET: str = os.getenv("RAZORPAY_KEY_SECRET", "")
+
+    @property
+    def RAZORPAY_ENABLED(self) -> bool:
+        return bool(self.RAZORPAY_KEY_ID and self.RAZORPAY_KEY_SECRET)
+
 
 settings = Settings()

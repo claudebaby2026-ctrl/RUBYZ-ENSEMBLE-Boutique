@@ -38,8 +38,19 @@ export type Order = {
   total: number;
   couponCode?: string | null;
   discount?: number;
+  paymentStatus?: string;
+  razorpayPaymentId?: string | null;
   createdAt: string;
   items: { id: number; name: string; quantity: number; price: number }[];
+};
+
+// ---- Payments (Razorpay) ----
+
+export type RazorpayOrder = {
+  razorpayOrderId: string;
+  amount: number; // paise
+  currency: string;
+  keyId: string;
 };
 
 export type DashboardStats = {
@@ -237,8 +248,30 @@ export function createOrder(payload: {
   items: { productId?: number; name: string; quantity: number; price: number }[];
   total: number;
   couponCode?: string;
+  // Proof of payment from Razorpay checkout.js's success handler. The
+  // backend re-verifies the signature server-side before creating the
+  // order — see crud/order.py::create_order — so these three are
+  // required for every order now that checkout is Razorpay-only.
+  razorpayOrderId: string;
+  razorpayPaymentId: string;
+  razorpaySignature: string;
 }): Promise<Order> {
   return request<Order>(`/orders`, { method: "POST", body: JSON.stringify(payload) });
+}
+
+// Step 1 of checkout: ask the backend to price the cart (server-side,
+// from the DB — never the client's numbers) and open a matching Razorpay
+// order. Returns the razorpayOrderId + amount + the Razorpay key id to
+// hand to checkout.js.
+export function createRazorpayOrder(payload: {
+  mode: string;
+  items: { productId?: number; name: string; quantity: number; price: number }[];
+  couponCode?: string;
+}): Promise<RazorpayOrder> {
+  return request<RazorpayOrder>(`/payments/create-razorpay-order`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 export function updateOrderStatus(displayId: string, status: string): Promise<Order> {

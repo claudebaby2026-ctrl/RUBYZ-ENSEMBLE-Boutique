@@ -11,3 +11,4 @@ python-multipart==0.0.9
 email-validator==2.2.0
 boto3==1.35.74
 slowapi==0.1.10
+razorpay==1.4.2

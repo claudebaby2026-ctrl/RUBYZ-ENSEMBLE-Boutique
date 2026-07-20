@@ -19,6 +19,7 @@ from app.routers import (
     homepage,
     likes,
     orders,
+    payments,
     products,
     uploads,
 )
@@ -72,6 +73,7 @@ def on_startup() -> None:
 app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(orders.router)
+app.include_router(payments.router)
 app.include_router(admin.router)
 app.include_router(uploads.router)
 app.include_router(likes.router)
