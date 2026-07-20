@@ -28,6 +28,11 @@ class OrderCreate(BaseModel):
     mode: str = "Delivery"
     items: List[OrderItemCreate]
     total: int
+    # Optional coupon code from checkout. NEVER trust a client-computed
+    # discount — only the code is accepted here; create_order re-validates
+    # it server-side (same rules as GET /coupons/validate/{code}) and
+    # computes the discount itself from the DB-sourced subtotal.
+    couponCode: Optional[str] = None
 
 
 class OrderStatusUpdate(BaseModel):
@@ -45,6 +50,8 @@ class OrderOut(BaseModel):
     mode: str
     status: str
     total: int
+    couponCode: Optional[str] = None
+    discount: int = 0
     createdAt: datetime
     items: List[OrderItemOut]
 
@@ -59,6 +66,8 @@ class OrderOut(BaseModel):
             mode=order.mode,
             status=order.status,
             total=order.total,
+            couponCode=order.coupon_code,
+            discount=order.discount or 0,
             createdAt=order.created_at,
             items=[OrderItemOut.model_validate(i) for i in order.items],
         )

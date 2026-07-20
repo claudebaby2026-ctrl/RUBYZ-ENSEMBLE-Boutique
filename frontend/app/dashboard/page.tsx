@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle, BarChart3, Boxes, Check, ClipboardList, LayoutGrid, Plus, Ticket,
   Users, Layout, ChevronRight, FileSpreadsheet, Save, X, Camera,
   ChevronLeft, Pencil, Trash2, Loader2, LogOut, Upload, ImageOff, Menu,
 } from "lucide-react";
+import {
+  ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  BarChart, Bar, PieChart, Pie, Cell, Legend,
+} from "recharts";
 import type { Product } from "@/lib/content";
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
@@ -891,13 +895,87 @@ function Customers() {
   );
 }
 
+const STATUS_COLORS: Record<string, string> = {
+  Pending: "#B68D40",
+  Packed: "#3A9D5D",
+  "Out for Delivery": "#111111",
+  Delivered: "#2F7D46",
+  Rejected: "#D94F70",
+};
+const FALLBACK_STATUS_COLOR = "#9CA3AF";
+
 function Analytics({ products }: { products: Product[] }) {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getOrders()
+      .then((data) => { if (!cancelled) setOrders(data); })
+      .catch((err) => { if (!cancelled) setError(err.message); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
   const topByRating = [...products].sort((a, b) => b.rating - a.rating)[0];
   const topBySold = [...products].sort((a, b) => b.sold - a.sold)[0];
+
+  // Revenue + order volume over the last 14 days.
+  const revenueByDay = useMemo(() => {
+    const map = new Map<string, { revenue: number; orders: number }>();
+    const today = new Date();
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+      map.set(d.toDateString(), { revenue: 0, orders: 0 });
+    }
+    for (const o of orders) {
+      const key = new Date(o.createdAt).toDateString();
+      const entry = map.get(key);
+      if (entry) {
+        entry.revenue += o.total;
+        entry.orders += 1;
+      }
+    }
+    return Array.from(map.entries()).map(([key, val]) => ({
+      label: new Date(key).toLocaleDateString(undefined, { day: "numeric", month: "short" }),
+      revenue: val.revenue,
+      orders: val.orders,
+    }));
+  }, [orders]);
+
+  // Order status breakdown.
+  const statusBreakdown = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const o of orders) map.set(o.status, (map.get(o.status) ?? 0) + 1);
+    return Array.from(map.entries()).map(([status, count]) => ({ status, count }));
+  }, [orders]);
+
+  // Top products by revenue (price × quantity summed across every order
+  // line), not just units sold.
+  const topProductsByRevenue = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const o of orders) {
+      for (const item of o.items) {
+        map.set(item.name, (map.get(item.name) ?? 0) + item.price * item.quantity);
+      }
+    }
+    return Array.from(map.entries())
+      .map(([name, revenue]) => ({ name, revenue }))
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5);
+  }, [orders]);
+
+  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  const averageOrderValue = orders.length > 0 ? Math.round(totalRevenue / orders.length) : 0;
+
   return (
     <div>
       <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Analytics</h1>
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
+
+      {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
           <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Top Rated Product</p>
           <p className="mt-3 text-lg text-[#111111]">{topByRating?.name ?? "—"}</p>
@@ -906,7 +984,85 @@ function Analytics({ products }: { products: Product[] }) {
           <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Best Seller</p>
           <p className="mt-3 text-lg text-[#111111]">{topBySold?.name ?? "—"}</p>
         </div>
+        <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Total Revenue</p>
+          <p className="mt-3 text-lg text-[#111111]">{loading ? "…" : `₹${totalRevenue.toLocaleString()}`}</p>
+        </div>
+        <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Average Order Value</p>
+          <p className="mt-3 text-lg text-[#111111]">{loading ? "…" : `₹${averageOrderValue.toLocaleString()}`}</p>
+        </div>
       </div>
+
+      {loading ? (
+        <p className="mt-8 text-sm text-gray-400">Loading order data…</p>
+      ) : orders.length === 0 ? (
+        <p className="mt-8 text-sm text-gray-400">No orders yet — charts will appear once orders start coming in.</p>
+      ) : (
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm lg:col-span-2">
+            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Revenue — Last 14 Days</p>
+            <div className="mt-4 h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueByDay} margin={{ top: 5, right: 12, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#00000010" />
+                  <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#9CA3AF" />
+                  <YAxis tick={{ fontSize: 11 }} stroke="#9CA3AF" width={48} />
+                  <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, "Revenue"]} />
+                  <Line type="monotone" dataKey="revenue" stroke="#B68D40" strokeWidth={2} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Order Volume — Last 14 Days</p>
+            <div className="mt-4 h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={revenueByDay} margin={{ top: 5, right: 12, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#00000010" />
+                  <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#9CA3AF" />
+                  <YAxis tick={{ fontSize: 11 }} allowDecimals={false} stroke="#9CA3AF" width={32} />
+                  <Tooltip />
+                  <Bar dataKey="orders" fill="#111111" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Orders by Status</p>
+            <div className="mt-4 h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={statusBreakdown} dataKey="count" nameKey="status" innerRadius={45} outerRadius={75} paddingAngle={2}>
+                    {statusBreakdown.map((entry) => (
+                      <Cell key={entry.status} fill={STATUS_COLORS[entry.status] ?? FALLBACK_STATUS_COLOR} />
+                    ))}
+                  </Pie>
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm lg:col-span-2">
+            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Top Products by Revenue</p>
+            <div className="mt-4 h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={topProductsByRevenue} layout="vertical" margin={{ top: 5, right: 24, left: 12, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#00000010" />
+                  <XAxis type="number" tick={{ fontSize: 11 }} stroke="#9CA3AF" />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="#9CA3AF" width={160} />
+                  <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, "Revenue"]} />
+                  <Bar dataKey="revenue" fill="#B68D40" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

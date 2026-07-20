@@ -51,3 +51,15 @@ def run_migrations(engine: Engine) -> None:
                         "WHERE created_at IS NULL"
                     )
                 )
+
+    if not _has_column(engine, "orders", "coupon_code"):
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE orders ADD COLUMN coupon_code VARCHAR"))
+
+    if not _has_column(engine, "orders", "discount"):
+        with engine.begin() as conn:
+            # Bare ADD COLUMN (no default) works the same way on SQLite and
+            # Postgres for a plain integer, so no dialect branch needed here
+            # — unlike created_at above, 0 is a constant default.
+            conn.execute(text("ALTER TABLE orders ADD COLUMN discount INTEGER DEFAULT 0"))
+            conn.execute(text("UPDATE orders SET discount = 0 WHERE discount IS NULL"))

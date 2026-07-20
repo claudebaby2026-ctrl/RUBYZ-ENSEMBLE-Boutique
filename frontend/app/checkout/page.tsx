@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2, AlertTriangle } from "lucide-react";
+import { CheckCircle2, Loader2, AlertTriangle, Tag, X } from "lucide-react";
 import { useCart } from "@/lib/useCart";
 import { useAuth } from "@/lib/useAuth";
 import { DELIVERY_FEE } from "@/lib/cart";
-import { createOrder, ApiError } from "@/lib/api";
+import { createOrder, validateCoupon, ApiError, type Coupon } from "@/lib/api";
 
 const MODE_KEY = "rubyz_delivery_mode";
 
@@ -21,6 +21,10 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [isStockError, setIsStockError] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(MODE_KEY);
@@ -57,9 +61,39 @@ export default function CheckoutPage() {
   }, [hydrated, items.length, orderId, router]);
 
   const deliveryFee = mode === "Delivery" ? DELIVERY_FEE : 0;
-  const total = subtotal + deliveryFee;
+  const discount = appliedCoupon
+    ? Math.min(
+        appliedCoupon.discount_type === "flat"
+          ? appliedCoupon.discount_value
+          : Math.floor((subtotal * appliedCoupon.discount_value) / 100),
+        subtotal
+      )
+    : 0;
+  const total = subtotal - discount + deliveryFee;
 
   const valid = form.name.trim().length > 1 && form.phone.trim().length >= 8 && (mode === "Pickup" || form.address.trim().length > 4);
+
+  const applyCoupon = async () => {
+    const code = couponInput.trim();
+    if (!code || couponLoading) return;
+    setCouponLoading(true);
+    setCouponError(null);
+    try {
+      const coupon = await validateCoupon(code);
+      setAppliedCoupon(coupon);
+    } catch (e: any) {
+      setAppliedCoupon(null);
+      setCouponError(e?.message || "Could not apply this coupon.");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput("");
+    setCouponError(null);
+  };
 
   // This calls the real order-creation endpoint (POST /orders) so every part
   // of checkout except the actual payment gateway is fully wired up. Swap
@@ -85,15 +119,21 @@ export default function CheckoutPage() {
           price: item.price,
         })),
         total,
+        // The server never trusts this total/discount — it only reads the
+        // code and re-validates + recomputes the discount itself (see
+        // POST /orders). This is purely what the customer already saw.
+        couponCode: appliedCoupon?.code,
       });
       setOrderId(order.id);
       clearCart();
     } catch (e: any) {
       // A 400 here means the server rejected the order after re-checking
-      // stock/prices against the DB (see POST /orders) — most commonly
-      // because someone else bought the last unit while this cart sat
-      // open. The message already names the product and what's left, so
-      // just point the customer back to their cart to adjust quantities.
+      // stock/prices (or the coupon) against the DB — most commonly
+      // because someone else bought the last unit, or the coupon expired /
+      // hit its usage limit, while this cart sat open. The message already
+      // names what went wrong, so just point the customer back to their
+      // cart to adjust quantities (for stock issues) — for a coupon issue
+      // they can just remove it and retry.
       setIsStockError(e instanceof ApiError && e.status === 400);
       setError(e?.message || "Could not place your order. Please try again.");
     } finally {
@@ -189,8 +229,48 @@ export default function CheckoutPage() {
                 </div>
               ))}
               <div className="flex justify-between"><span>Delivery</span><span>{deliveryFee ? `₹${deliveryFee}` : "Free"}</span></div>
+              {appliedCoupon && (
+                <div className="flex justify-between text-[#3A9D5D]">
+                  <span>Coupon ({appliedCoupon.code})</span>
+                  <span>−₹{discount.toLocaleString()}</span>
+                </div>
+              )}
               <div className="mt-3 flex justify-between border-t border-black/5 pt-3 text-base font-semibold text-[#111111]"><span>Total</span><span>₹{total.toLocaleString()}</span></div>
             </div>
+
+            <div className="mt-6">
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between gap-2 rounded-2xl border border-[#3A9D5D]/30 bg-[#3A9D5D]/5 px-4 py-3 text-sm text-[#111111]">
+                  <span className="flex items-center gap-2">
+                    <Tag size={14} className="text-[#3A9D5D]" />
+                    <strong className="tracking-[0.08em]">{appliedCoupon.code}</strong> applied
+                  </span>
+                  <button onClick={removeCoupon} className="rounded-full p-1 text-gray-500 hover:text-[#D94F70]" aria-label="Remove coupon">
+                    <X size={14} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    placeholder="Coupon code"
+                    value={couponInput}
+                    onChange={(e) => { setCouponInput(e.target.value); setCouponError(null); }}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); applyCoupon(); } }}
+                    className="flex-1 rounded-[1rem] border border-black/10 px-4 py-2.5 text-sm uppercase"
+                  />
+                  <button
+                    onClick={applyCoupon}
+                    disabled={!couponInput.trim() || couponLoading}
+                    className="flex items-center gap-2 whitespace-nowrap rounded-[1rem] border border-[#111111] px-4 py-2.5 text-sm font-medium text-[#111111] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {couponLoading && <Loader2 size={14} className="animate-spin" />}
+                    Apply
+                  </button>
+                </div>
+              )}
+              {couponError && <p className="mt-2 text-xs text-[#D94F70]">{couponError}</p>}
+            </div>
+
             {error && (
               <div className="mt-4 flex items-start gap-2 rounded-2xl border border-[#D94F70]/20 bg-[#D94F70]/5 p-4 text-sm text-[#D94F70]">
                 <AlertTriangle size={16} className="mt-0.5 shrink-0" />

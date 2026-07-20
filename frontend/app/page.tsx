@@ -1,18 +1,40 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
-import { categories, occasions, reviews, brand } from "@/lib/content";
-import { getProducts } from "@/lib/api";
+import { categories, occasions, reviews, brand, type Product } from "@/lib/content";
+import { getProducts, getHomepageConfig } from "@/lib/api";
 import Link from "next/link";
-import { ArrowRight, Camera, Check, Gem, Scissors, Sparkles, Truck } from "lucide-react";
+import { ArrowRight, Camera, Check, Gem, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const products = await getProducts();
+  const [products, homepageConfig] = await Promise.all([getProducts(), getHomepageConfig()]);
+
+  // Featured module is driven by the owner's Homepage Editor selection.
+  // Falls back to the first few products (the old static behavior) when
+  // nothing has been configured yet, so the section is never empty.
+  const featuredProducts: Product[] =
+    homepageConfig.featured_product_ids.length > 0
+      ? homepageConfig.featured_product_ids
+          .map((id) => products.find((p) => p.id === id))
+          .filter((p): p is Product => Boolean(p))
+      : products.slice(0, 4);
+
+  const heroHeading = homepageConfig.hero_heading?.trim() || undefined;
+  const heroSubheading = homepageConfig.hero_subheading?.trim() || undefined;
+  const bannerText = homepageConfig.banner_text?.trim();
+
   return (
     <main className="bg-[#FBFAF8] text-[#111111]">
+      {bannerText && (
+        <div className="flex items-center justify-center gap-2 bg-[#111111] px-5 py-2.5 text-center text-xs uppercase tracking-[0.24em] text-white">
+          <Megaphone size={13} className="shrink-0 text-[#B68D40]" />
+          <span>{bannerText}</span>
+        </div>
+      )}
+
       <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-16">
-        <AnimatedHero />
+        <AnimatedHero heading={heroHeading} subheading={heroSubheading} />
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
@@ -47,9 +69,9 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mb-8 flex items-end justify-between">
             <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Fresh In</p>
+              <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Owner&apos;s Picks</p>
               <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
-                New Arrivals
+                Featured
               </h2>
             </div>
             <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#111111] hover:text-[#B68D40]">
@@ -57,7 +79,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {products.slice(0, 4).map((product) => (
+            {featuredProducts.map((product) => (
               <AnimatedProductCard key={product.id} product={product} />
             ))}
           </div>

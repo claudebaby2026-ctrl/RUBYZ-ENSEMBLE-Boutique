@@ -1,10 +1,10 @@
-from datetime import datetime, timezone
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.crud import coupon as coupon_crud
+from app.crud.coupon import CouponExpiredError, CouponLimitReachedError, CouponNotFoundError
 from app.database import get_db
 from app.models.user import User
 from app.schemas.coupon import CouponCreate, CouponOut, CouponUpdate
@@ -59,16 +59,13 @@ def delete_coupon(
 @router.get("/validate/{code}", response_model=CouponOut)
 def validate_coupon(code: str, db: Session = Depends(get_db)):
     """Public — the storefront checkout calls this to check a code before
-    applying it to the cart total."""
-    coupon = coupon_crud.get_coupon_by_code(db, code)
-    if not coupon or not coupon.active:
-        raise HTTPException(status_code=404, detail="Invalid or inactive coupon")
-    if coupon.expires_at:
-        # SQLite doesn't preserve tzinfo, so normalize both sides to naive
-        # UTC before comparing to avoid a naive/aware TypeError.
-        expires = coupon.expires_at.replace(tzinfo=None)
-        if expires < datetime.now(timezone.utc).replace(tzinfo=None):
-            raise HTTPException(status_code=400, detail="This coupon has expired")
-    if coupon.usage_limit is not None and coupon.used_count >= coupon.usage_limit:
-        raise HTTPException(status_code=400, detail="This coupon has reached its usage limit")
-    return coupon
+    applying it to the cart total. Order creation (POST /orders)
+    re-runs this exact same validation server-side before applying the
+    discount, so a coupon can never be honored on an order under
+    conditions this endpoint would reject."""
+    try:
+        return coupon_crud.validate_coupon(db, code)
+    except CouponNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except (CouponExpiredError, CouponLimitReachedError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc

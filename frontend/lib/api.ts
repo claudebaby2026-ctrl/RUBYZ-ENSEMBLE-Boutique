@@ -36,6 +36,8 @@ export type Order = {
   mode: string;
   status: string;
   total: number;
+  couponCode?: string | null;
+  discount?: number;
   createdAt: string;
   items: { id: number; name: string; quantity: number; price: number }[];
 };
@@ -234,6 +236,7 @@ export function createOrder(payload: {
   mode: string;
   items: { productId?: number; name: string; quantity: number; price: number }[];
   total: number;
+  couponCode?: string;
 }): Promise<Order> {
   return request<Order>(`/orders`, { method: "POST", body: JSON.stringify(payload) });
 }
@@ -277,6 +280,11 @@ export function getCustomers(): Promise<Customer[]> {
 
 export function getCoupons(): Promise<Coupon[]> {
   return request<Coupon[]>(`/coupons`);
+}
+
+// Public — used by the checkout page to check a code before applying it.
+export function validateCoupon(code: string): Promise<Coupon> {
+  return request<Coupon>(`/coupons/validate/${encodeURIComponent(code)}`);
 }
 
 export function createCoupon(payload: CouponInput): Promise<Coupon> {

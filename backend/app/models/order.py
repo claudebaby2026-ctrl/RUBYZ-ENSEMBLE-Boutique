@@ -22,6 +22,11 @@ class Order(Base):
     mode = Column(String, default="Delivery")
     status = Column(String, default="Pending")
     total = Column(Integer, default=0)
+    # Coupon applied at checkout, if any. Both are set together server-side
+    # in crud/order.py::create_order — `total` above is already net of
+    # `discount`, this just records what produced that number.
+    coupon_code = Column(String, nullable=True)
+    discount = Column(Integer, default=0, nullable=False)
     # When the order was placed. `default` guarantees every ORM insert sets
     # this (needed because databases migrated by app/migrations.py may not
     # have a DB-level DEFAULT on this column — see there for why), while

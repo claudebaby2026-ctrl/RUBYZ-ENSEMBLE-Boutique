@@ -5,6 +5,8 @@ from typing import Dict, List, Optional
 from sqlalchemy.orm import Session, joinedload
 
 from app.config import settings
+from app.crud import coupon as coupon_crud
+from app.crud.coupon import CouponValidationError
 from app.models.order import Order, OrderItem
 from app.models.product import Product
 from app.schemas.order import OrderCreate
@@ -33,6 +35,13 @@ class OutOfStockError(OrderError):
             f"Only {available} unit(s) of '{product_name}' left in stock "
             f"(you requested {requested})."
         )
+
+
+class CouponError(OrderError):
+    """Wraps a CouponValidationError so an invalid/expired/inactive/
+    limit-reached coupon at checkout surfaces as the same 400 the client
+    would have seen from GET /coupons/validate/{code} — never silently
+    ignored, and never trusted from the client either."""
 
 
 def _today_range_utc() -> tuple[datetime, datetime]:
@@ -133,8 +142,29 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
             )
         )
 
+    # Coupon: re-validate server-side against the exact same rules as
+    # GET /coupons/validate/{code} (active / not expired / under its usage
+    # limit) — the client only ever sends the *code*, never a discount
+    # amount, so there's nothing from the client to trust here. The
+    # discount itself is computed from the DB-sourced `subtotal` above,
+    # not anything the client sent.
+    coupon = None
+    discount = 0
+    if order.couponCode:
+        try:
+            coupon = coupon_crud.validate_coupon(db, order.couponCode, for_update=True)
+        except CouponValidationError as exc:
+            raise CouponError(str(exc)) from exc
+        if coupon.discount_type == "flat":
+            discount = coupon.discount_value
+        else:
+            discount = (subtotal * coupon.discount_value) // 100
+        # Never let a coupon push the subtotal below zero (e.g. a flat
+        # discount larger than the cart).
+        discount = max(0, min(discount, subtotal))
+
     delivery_fee = settings.DELIVERY_FEE if order.mode == "Delivery" else 0
-    total = subtotal + delivery_fee
+    total = subtotal - discount + delivery_fee
 
     display_id = f"#{uuid.uuid4().hex[:6].upper()}"
     db_order = Order(
@@ -147,9 +177,18 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
         mode=order.mode,
         status="Pending",
         total=total,
+        coupon_code=coupon.code if coupon else None,
+        discount=discount,
     )
     db_order.items = order_items
     db.add(db_order)
+
+    # Only now that the order is guaranteed to be created do we count the
+    # coupon as used — folded into the same transaction/commit as the order
+    # and stock updates below, so a coupon's used_count can never increment
+    # without a matching order actually existing.
+    if coupon:
+        coupon_crud.increment_usage(db, coupon)
 
     # Keep inventory honest: a placed order reduces available stock and
     # counts towards each product's "sold" tally. We already validated
