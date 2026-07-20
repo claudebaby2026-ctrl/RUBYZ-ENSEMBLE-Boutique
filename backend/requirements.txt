@@ -11,5 +11,12 @@ python-multipart==0.0.9
 email-validator==2.2.0
 boto3==1.35.74
 slowapi==0.1.10
-setuptools>=70
-razorpay==1.4.2
+# Talks to Razorpay's REST API directly (see app/services/payments.py)
+# instead of the `razorpay` SDK — that package's client.py does
+# `import pkg_resources` (from setuptools), which recent Python builds
+# (3.12+, including Render's) no longer ship by default, so the app
+# failed to boot with "ModuleNotFoundError: No module named
+# 'pkg_resources'". requests + hmac/hashlib (stdlib) cover everything we
+# actually need from Razorpay: creating an order and verifying a payment
+# signature.
+requests==2.32.3

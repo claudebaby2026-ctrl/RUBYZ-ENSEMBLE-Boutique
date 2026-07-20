@@ -7,7 +7,11 @@ from app.database import get_db
 from app.models.user import User
 from app.schemas.order import RazorpayOrderCreate, RazorpayOrderOut
 from app.security import get_current_user
-from app.services.payments import RazorpayNotConfiguredError, create_razorpay_order
+from app.services.payments import (
+    RazorpayApiError,
+    RazorpayNotConfiguredError,
+    create_razorpay_order,
+)
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 
@@ -40,6 +44,8 @@ def create_order_for_payment(
         )
     except RazorpayNotConfiguredError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except RazorpayApiError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
 
     return RazorpayOrderOut(
         razorpayOrderId=rp_order["id"],

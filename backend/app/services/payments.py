@@ -1,22 +1,26 @@
-"""Thin wrapper around the Razorpay Python SDK.
+"""Talks to Razorpay's REST API directly with `requests` — no `razorpay`
+SDK. That package's client.py does `import pkg_resources` (from
+setuptools), which recent Python builds no longer ship by default, and
+which is being phased out entirely, so pinning around it is a moving
+target. Everything we actually need is two things:
 
-Two things live here:
-  - create_razorpay_order(): opens a Razorpay "order" (their term for a
-    payment intent) for a given amount, returned to the frontend so
-    checkout.js knows what to charge.
-  - verify_razorpay_signature(): re-derives the HMAC-SHA256 signature
-    Razorpay signs successful payments with and compares it to what the
-    client sent, so a forged/tampered "I paid!" claim from the browser is
-    rejected before an order is ever created.
+  - create_razorpay_order(): POST /v1/orders to open a payment intent.
+  - verify_razorpay_signature(): an HMAC-SHA256 check, done with the
+    stdlib `hmac`/`hashlib` — this is all the SDK's "verify_payment_signature"
+    ever did under the hood.
 
-Both raise a clear RuntimeError if RAZORPAY_KEY_ID/RAZORPAY_KEY_SECRET
-aren't configured, instead of failing confusingly deep inside the SDK.
+Docs: https://razorpay.com/docs/api/orders/ and
+https://razorpay.com/docs/payments/server-integration/python/payment-gateway/build-integration/#step-3-verify-payment-signature
 """
 
-import razorpay
-from razorpay.errors import SignatureVerificationError
+import hashlib
+import hmac
+
+import requests
 
 from app.config import settings
+
+RAZORPAY_API_BASE = "https://api.razorpay.com/v1"
 
 
 class RazorpayNotConfiguredError(RuntimeError):
@@ -28,32 +32,48 @@ class RazorpayNotConfiguredError(RuntimeError):
         )
 
 
-_client: razorpay.Client | None = None
+class RazorpayApiError(RuntimeError):
+    """Raised when Razorpay's API itself rejects or fails a request (bad
+    keys, network issue, malformed payload, etc) — distinct from a
+    signature verification failure, which is a normal/expected outcome
+    for a tampered payment and not an error state."""
 
 
-def _get_client() -> razorpay.Client:
-    global _client
+def _auth() -> tuple[str, str]:
     if not settings.RAZORPAY_ENABLED:
         raise RazorpayNotConfiguredError()
-    if _client is None:
-        _client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-    return _client
+    return (settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
 
 
 def create_razorpay_order(amount_rupees: int, receipt: str) -> dict:
     """Create a Razorpay order for `amount_rupees` (converted to paise,
-    since Razorpay's API is paise-denominated) and return the raw SDK
-    response dict (has ["id"], ["amount"], ["currency"], ...).
+    since Razorpay's API is paise-denominated) and return the parsed JSON
+    response (has ["id"], ["amount"], ["currency"], ...).
     """
-    client = _get_client()
-    return client.order.create(
-        {
-            "amount": amount_rupees * 100,
-            "currency": "INR",
-            "receipt": receipt,
-            "payment_capture": 1,  # auto-capture on successful auth
-        }
-    )
+    try:
+        resp = requests.post(
+            f"{RAZORPAY_API_BASE}/orders",
+            auth=_auth(),
+            json={
+                "amount": amount_rupees * 100,
+                "currency": "INR",
+                "receipt": receipt,
+                "payment_capture": 1,  # auto-capture on successful auth
+            },
+            timeout=15,
+        )
+    except requests.RequestException as exc:
+        raise RazorpayApiError(f"Could not reach Razorpay: {exc}") from exc
+
+    if not resp.ok:
+        # Razorpay's error body is {"error": {"description": "...", ...}}
+        try:
+            detail = resp.json().get("error", {}).get("description", resp.text)
+        except ValueError:
+            detail = resp.text
+        raise RazorpayApiError(f"Razorpay order creation failed: {detail}")
+
+    return resp.json()
 
 
 def verify_razorpay_signature(
@@ -64,16 +84,18 @@ def verify_razorpay_signature(
     ever be trusted as proof of payment — never a bare "success" flag from
     the frontend, which anyone can send with devtools regardless of
     whether they actually paid.
+
+    Razorpay signs `"{order_id}|{payment_id}"` with HMAC-SHA256 keyed on
+    your key secret; we just redo that computation and compare.
     """
-    client = _get_client()
-    try:
-        client.utility.verify_payment_signature(
-            {
-                "razorpay_order_id": razorpay_order_id,
-                "razorpay_payment_id": razorpay_payment_id,
-                "razorpay_signature": razorpay_signature,
-            }
-        )
-        return True
-    except SignatureVerificationError:
-        return False
+    if not settings.RAZORPAY_ENABLED:
+        raise RazorpayNotConfiguredError()
+
+    payload = f"{razorpay_order_id}|{razorpay_payment_id}".encode()
+    expected = hmac.new(
+        settings.RAZORPAY_KEY_SECRET.encode(), payload, hashlib.sha256
+    ).hexdigest()
+
+    # Constant-time comparison — avoids leaking signature-match info via
+    # response-timing side channels.
+    return hmac.compare_digest(expected, razorpay_signature)
