@@ -24,6 +24,16 @@ export default async function HomePage() {
   const heroSubheading = homepageConfig.hero_subheading?.trim() || undefined;
   const bannerText = homepageConfig.banner_text?.trim();
 
+  // "Best Sellers" is data-driven off actual sales (Product.sold), not a
+  // hardcoded slice — mirrors the dashboard's own "Best Seller" stat.
+  // Excludes anything already shown in Featured above so the two sections
+  // don't just duplicate each other.
+  const featuredIds = new Set(featuredProducts.map((p) => p.id));
+  const bestSellers: Product[] = [...products]
+    .filter((p) => !featuredIds.has(p.id))
+    .sort((a, b) => b.sold - a.sold)
+    .slice(0, 4);
+
   return (
     <main className="bg-[#FBFAF8] text-[#111111]">
       {bannerText && (
@@ -96,7 +106,7 @@ export default async function HomePage() {
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {products.slice(4, 8).map((product) => (
+          {bestSellers.map((product) => (
             <AnimatedProductCard key={product.id} product={product} />
           ))}
         </div>
