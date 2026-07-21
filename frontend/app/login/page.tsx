@@ -38,8 +38,8 @@ function LoginForm() {
         router.push(redirectTo === "/dashboard" ? "/" : redirectTo);
       }
       router.refresh();
-    } catch (err: any) {
-      setError(err?.message || "Something went wrong. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -149,7 +149,7 @@ function LoginForm() {
 
       {mode === "login" && (
         <p className="mt-2 text-center text-xs text-gray-400">
-          Boutique owner? Sign in above with your owner email — you'll be taken straight to the dashboard.
+          Boutique owner? Sign in above with your owner email — you&apos;ll be taken straight to the dashboard.
         </p>
       )}
     </div>

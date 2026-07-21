@@ -65,8 +65,8 @@ export function AttributeSelect({
       onOptionAdded(created.value);
       onChange(created.value);
       setAdding(false);
-    } catch (e: any) {
-      setError(e?.message || "Could not save new option");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not save new option");
     } finally {
       setSaving(false);
     }

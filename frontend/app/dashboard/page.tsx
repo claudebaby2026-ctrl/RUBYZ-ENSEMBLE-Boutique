@@ -6,6 +6,7 @@ import {
   AlertTriangle, BarChart3, Boxes, Check, ClipboardList, LayoutGrid, Plus, Ticket,
   Users, Layout, ChevronRight, FileSpreadsheet, Save, X, Camera,
   ChevronLeft, Pencil, Trash2, Loader2, LogOut, Upload, ImageOff, Menu,
+  type LucideIcon,
 } from "lucide-react";
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -66,8 +67,8 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
         uploaded.push(url);
       }
       onChange([...images, ...uploaded]);
-    } catch (e: any) {
-      setError(e?.message || "Could not upload image");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not upload image");
     } finally {
       setUploading(false);
     }
@@ -177,7 +178,12 @@ function TagListInput({ tags, onChange, placeholder }: { tags: string[]; onChang
   );
 }
 
-function StatCard({ label, value, tone = "ink", icon: Icon }: any) {
+function StatCard({ label, value, tone = "ink", icon: Icon }: {
+  label: string;
+  value: string | number;
+  tone?: "ink" | "rose";
+  icon?: LucideIcon;
+}) {
   return (
     <div className="rounded-[1.2rem] border border-black/5 bg-white p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
@@ -234,7 +240,7 @@ function DashboardHome({ setActive, stats, lowStockCount, loading }: {
           <span>+ Add a new product, Instagram-style</span><ChevronRight size={16} />
         </button>
         <button onClick={() => setActive("orders")} className="flex items-center justify-between rounded-[1.2rem] border border-black/10 bg-white p-5">
-          <span>View today's orders</span><FileSpreadsheet size={16} />
+          <span>View today&apos;s orders</span><FileSpreadsheet size={16} />
         </button>
       </div>
     </div>
@@ -292,8 +298,8 @@ function AddProduct({
       });
       setPublished(true);
       onCreated();
-    } catch (e: any) {
-      setError(e?.message || "Could not publish product");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not publish product");
     } finally {
       setPublishing(false);
     }
@@ -304,7 +310,7 @@ function AddProduct({
       <div className="max-w-2xl rounded-[1.4rem] border border-black/5 bg-white p-10 text-center shadow-sm">
         <Check size={36} className="mx-auto mb-4 text-[#3A9D5D]" />
         <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
-        <p className="mt-2 text-sm text-gray-500">"{form.title}" is now live in the store and inventory.</p>
+        <p className="mt-2 text-sm text-gray-500">&quot;{form.title}&quot; is now live in the store and inventory.</p>
         <button
           onClick={() => { setStep(1); setImages([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", stock: "", description: "", category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
           className="mt-6 rounded-full bg-[#111111] px-8 py-3 text-sm text-white"
@@ -421,7 +427,7 @@ function AddProduct({
               <button onClick={() => setSaved(true)} className="flex items-center gap-2 rounded-full bg-[#F8F5F1] px-6 py-3 text-sm"><Save size={14} /> Save as Draft</button>
               <button onClick={() => setStep(3)} className="rounded-full bg-[#111111] px-6 py-3 text-sm text-white sm:ml-auto">Continue</button>
             </div>
-            {saved && <p className="text-xs text-gray-500">Saved locally — continue whenever you're ready.</p>}
+            {saved && <p className="text-xs text-gray-500">Saved locally — continue whenever you&apos;re ready.</p>}
           </div>
         </div>
       )}
@@ -430,7 +436,7 @@ function AddProduct({
         <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-10 text-center shadow-sm">
           <Check size={36} className="mx-auto mb-4 text-[#3A9D5D]" />
           <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Ready to Publish</h2>
-          <p className="mt-2 text-sm text-gray-500">"{form.title || "Untitled product"}" will be saved to the database and go live instantly.</p>
+          <p className="mt-2 text-sm text-gray-500">&quot;{form.title || "Untitled product"}&quot; will be saved to the database and go live instantly.</p>
           {error && <p className="mt-3 text-sm text-[#D94F70]">{error}</p>}
           <button onClick={publish} disabled={publishing} className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#111111] px-8 py-3 text-sm text-white disabled:opacity-60">
             {publishing && <Loader2 size={14} className="animate-spin" />}
@@ -602,7 +608,7 @@ function Orders() {
         current.map((o) => (o.id === order.id ? { ...o, ...result } : o))
       );
       setSelected((current) => (current?.id === order.id ? { ...current, ...result } : current));
-    } catch (e: any) {
+    } catch (e) {
       // 502 with a detail string means Shiprocket rejected/failed the
       // request — surface it so the owner knows to check server logs.
       setRetryError(e instanceof ApiError ? e.message : "Could not create the shipment. Please try again.");
@@ -950,7 +956,7 @@ function Inventory({
       {loading ? (
         <p className="mt-8 text-sm text-gray-400">Loading products…</p>
       ) : products.length === 0 ? (
-        <p className="mt-8 text-sm text-gray-400">No products yet. Add your first one from "Add Product".</p>
+        <p className="mt-8 text-sm text-gray-400">No products yet. Add your first one from &quot;Add Product&quot;.</p>
       ) : (
         <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
           {products.map((product) => (
@@ -1255,8 +1261,8 @@ function Coupons() {
       });
       setForm({ code: "", discount_type: "percent", discount_value: "10", usage_limit: "" });
       load();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not create coupon.");
     } finally {
       setCreating(false);
     }
@@ -1424,8 +1430,8 @@ function HomepageEditor({ products }: { products: Product[] }) {
       setConfig(updated);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save homepage settings.");
     } finally {
       setSaving(false);
     }
@@ -1549,8 +1555,8 @@ function ShippingDefaultsEditor() {
       setRows(updated.rows);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save shipping defaults.");
     } finally {
       setSaving(false);
     }

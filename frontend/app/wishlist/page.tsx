@@ -51,7 +51,7 @@ export default function WishlistPage() {
         <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
           Your Wishlist
         </h1>
-        <p className="mt-2 text-sm text-gray-500">Pieces you've saved to come back to.</p>
+        <p className="mt-2 text-sm text-gray-500">Pieces you&apos;ve saved to come back to.</p>
 
         {loading ? (
           <div className="mt-16 flex items-center justify-center gap-2 text-sm text-gray-500">

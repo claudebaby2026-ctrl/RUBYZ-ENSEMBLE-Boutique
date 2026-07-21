@@ -56,7 +56,7 @@ export default function OrdersPage() {
         <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
           Your Orders
         </h1>
-        <p className="mt-2 text-sm text-gray-500">Every order you've placed, with the latest shipment status.</p>
+        <p className="mt-2 text-sm text-gray-500">Every order you&apos;ve placed, with the latest shipment status.</p>
 
         {loading ? (
           <div className="mt-16 flex items-center justify-center gap-2 text-sm text-gray-500">
@@ -67,7 +67,7 @@ export default function OrdersPage() {
         ) : orders.length === 0 ? (
           <div className="mt-10 flex flex-col items-center gap-4 py-10 text-center">
             <PackageSearch size={36} className="text-[#B68D40]" />
-            <p className="text-sm text-gray-500">You haven't placed any orders yet.</p>
+            <p className="text-sm text-gray-500">You haven&apos;t placed any orders yet.</p>
             <Link href="/collections" className="rounded-full bg-[#111111] px-6 py-3 text-sm text-white">
               Browse Collections
             </Link>

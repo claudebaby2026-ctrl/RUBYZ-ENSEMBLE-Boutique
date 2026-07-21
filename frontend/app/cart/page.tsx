@@ -131,7 +131,7 @@ export default function CartPage() {
             </button>
             {!authLoading && !user && items.length > 0 && (
               <p className="mt-3 text-center text-xs text-gray-400">
-                You'll need an account to place an order.
+                You&apos;ll need an account to place an order.
               </p>
             )}
           </div>

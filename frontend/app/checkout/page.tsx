@@ -24,6 +24,15 @@ declare global {
   }
 }
 
+// Shape of the object Razorpay's checkout modal passes to the `handler`
+// option once a payment succeeds — this is what we forward to POST /orders
+// as payment proof for server-side signature verification.
+type RazorpaySuccessResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, hydrated, subtotal, clearCart } = useCart();
@@ -143,9 +152,9 @@ export default function CheckoutPage() {
     try {
       const coupon = await validateCoupon(code);
       setAppliedCoupon(coupon);
-    } catch (e: any) {
+    } catch (e) {
       setAppliedCoupon(null);
-      setCouponError(e?.message || "Could not apply this coupon.");
+      setCouponError(e instanceof Error ? e.message : "Could not apply this coupon.");
     } finally {
       setCouponLoading(false);
     }
@@ -202,7 +211,7 @@ export default function CheckoutPage() {
           contact: form.phone,
         },
         theme: { color: "#B68D40" },
-        handler: async (response: any) => {
+        handler: async (response: RazorpaySuccessResponse) => {
           try {
             const order = await createOrder({
               customerName: form.name,
@@ -226,7 +235,7 @@ export default function CheckoutPage() {
             });
             setOrderId(order.id);
             clearCart();
-          } catch (e: any) {
+          } catch (e) {
             // A 400 here means the server rejected the order after
             // re-checking stock/prices (or the coupon) against the DB —
             // most commonly because someone else bought the last unit, or
@@ -234,7 +243,7 @@ export default function CheckoutPage() {
             // open. Payment was already captured by Razorpay in this case;
             // it will be auto-refunded, and the message says so.
             setIsStockError(e instanceof ApiError && e.status === 400);
-            setError(e?.message || "Could not confirm your order. Please contact us if you were charged.");
+            setError(e instanceof Error ? e.message : "Could not confirm your order. Please contact us if you were charged.");
           } finally {
             setSubmitting(false);
           }
@@ -252,9 +261,9 @@ export default function CheckoutPage() {
       });
 
       rzp.open();
-    } catch (e: any) {
+    } catch (e) {
       setIsStockError(e instanceof ApiError && e.status === 400);
-      setError(e?.message || "Could not start payment. Please try again.");
+      setError(e instanceof Error ? e.message : "Could not start payment. Please try again.");
       setSubmitting(false);
     }
   };

@@ -180,12 +180,12 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
       // Next.js's default fetch caching for these calls.
       cache: "no-store",
     });
-  } catch (networkErr: any) {
+  } catch (networkErr) {
     // fetch() itself threw — the API is unreachable (wrong host/port, DNS
     // failure, backend not running, etc). Surface the URL so it's obvious
     // at a glance whether NEXT_PUBLIC_API_URL is pointing at the right place.
     throw new Error(
-      `Could not reach API at ${url} (${networkErr?.message || "network error"}). ` +
+      `Could not reach API at ${url} (${networkErr instanceof Error ? networkErr.message : "network error"}). ` +
         `Check that the backend is running and NEXT_PUBLIC_API_URL is correct.`
     );
   }
