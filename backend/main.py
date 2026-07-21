@@ -21,9 +21,16 @@ from app.routers import (
     orders,
     payments,
     products,
+    shipping,
+    shipping_defaults,
     uploads,
 )
-from app.seed_data import seed_attributes, seed_if_empty, seed_owner
+from app.seed_data import (
+    seed_attributes,
+    seed_if_empty,
+    seed_owner,
+    seed_shipping_defaults,
+)
 
 # Import models so SQLAlchemy metadata knows about them before create_all
 from app.models import attribute as _attribute_models  # noqa: F401
@@ -32,6 +39,7 @@ from app.models import homepage as _homepage_models  # noqa: F401
 from app.models import like as _like_models  # noqa: F401
 from app.models import order as _order_models  # noqa: F401
 from app.models import product as _product_models  # noqa: F401
+from app.models import shipping_defaults as _shipping_defaults_models  # noqa: F401
 from app.models import user as _user_models  # noqa: F401
 
 app = FastAPI(title="RUBYZ Ensemble API", version="2.0.0")
@@ -66,6 +74,7 @@ def on_startup() -> None:
         seed_if_empty(db)
         seed_owner(db)
         seed_attributes(db)
+        seed_shipping_defaults(db)
     finally:
         db.close()
 
@@ -80,6 +89,8 @@ app.include_router(likes.router)
 app.include_router(attributes.router)
 app.include_router(coupons.router)
 app.include_router(homepage.router)
+app.include_router(shipping.router)
+app.include_router(shipping_defaults.router)
 
 @app.head("/health")    
 @app.get("/health")

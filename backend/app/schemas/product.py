@@ -26,6 +26,14 @@ class ProductBase(BaseModel):
     is_featured: bool = Field(default=False, alias="isFeatured")
     is_new: bool = Field(default=False, alias="isNew")
     is_bestseller: bool = Field(default=False, alias="isBestseller")
+    # Optional per-product Shiprocket shipping override. Left out of the
+    # Add Product flow entirely; only ever set via Edit Product's
+    # collapsed "Shipping override" section. None means "use the
+    # category/store-wide default" — never treated as zero.
+    weight: Optional[float] = None
+    length: Optional[float] = None
+    breadth: Optional[float] = None
+    height: Optional[float] = None
 
 
 class ProductCreate(ProductBase):
@@ -57,6 +65,10 @@ class ProductUpdate(BaseModel):
     is_featured: Optional[bool] = Field(default=None, alias="isFeatured")
     is_new: Optional[bool] = Field(default=None, alias="isNew")
     is_bestseller: Optional[bool] = Field(default=None, alias="isBestseller")
+    weight: Optional[float] = None
+    length: Optional[float] = None
+    breadth: Optional[float] = None
+    height: Optional[float] = None
 
 
 class ProductOut(ProductBase):

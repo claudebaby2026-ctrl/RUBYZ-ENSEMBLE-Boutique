@@ -19,6 +19,9 @@ import {
   getCustomers, type Customer,
   getCoupons, createCoupon, updateCoupon, deleteCoupon, type Coupon,
   getHomepageConfig, updateHomepageConfig, type HomepageConfig,
+  retryShipment, humanizeShipmentStatus,
+  getShippingDefaults, updateShippingDefaults, type ShippingDefaultRow,
+  ApiError,
 } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
 import { AttributeSelect } from "@/components/ui/attribute-select";
@@ -37,6 +40,7 @@ const NAV = [
   { id: "analytics", label: "Analytics", icon: BarChart3 },
   { id: "coupons", label: "Coupons", icon: Ticket },
   { id: "homepage", label: "Homepage Editor", icon: Layout },
+  { id: "shipping-defaults", label: "Shipping Defaults", icon: FileSpreadsheet },
 ];
 
 function slugify(text: string) {
@@ -457,6 +461,22 @@ function formatOrderTimestamp(iso: string): string {
   return `${day}, ${time}`;
 }
 
+function ShipmentPill({ status }: { status?: string }) {
+  const normalized = (status || "not_created").toLowerCase();
+  const bg = ({
+    not_created: "#999",
+    pending: "#B68D40",
+    created: "#5B7FBA",
+    failed: "#D94F70",
+    delivered: "#3A9D5D",
+  } as Record<string, string>)[normalized] || "#5B7FBA";
+  return (
+    <span className="rounded-full px-2.5 py-1 text-[11px] text-white" style={{ background: bg }}>
+      {humanizeShipmentStatus(status)}
+    </span>
+  );
+}
+
 function OrdersTable({
   title,
   subtitle,
@@ -464,6 +484,8 @@ function OrdersTable({
   selected,
   onSelect,
   emptyLabel,
+  onRetryShipment,
+  retryingId,
 }: {
   title: string;
   subtitle?: string;
@@ -471,6 +493,8 @@ function OrdersTable({
   selected: Order | null;
   onSelect: (order: Order) => void;
   emptyLabel: string;
+  onRetryShipment: (order: Order) => void;
+  retryingId: string | null;
 }) {
   return (
     <div className="overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
@@ -484,27 +508,49 @@ function OrdersTable({
         <p className="p-5 text-sm text-gray-400">{emptyLabel}</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[520px] text-sm">
+          <table className="w-full min-w-[680px] text-sm">
             <thead className="bg-[#FBFAF8] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
               <tr>
                 <th className="p-3">Order</th><th className="p-3">Customer</th><th className="p-3">Amount</th>
-                <th className="p-3">Placed</th><th className="p-3">Status</th>
+                <th className="p-3">Placed</th><th className="p-3">Status</th><th className="p-3">Shipment</th>
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
-                <tr
-                  key={order.id}
-                  onClick={() => onSelect(order)}
-                  className={`cursor-pointer border-t border-black/5 ${selected?.id === order.id ? "bg-[#FBFAF8]" : ""}`}
-                >
-                  <td className="p-3">{order.id}</td>
-                  <td className="p-3">{order.customerName}</td>
-                  <td className="p-3">₹{order.total}</td>
-                  <td className="p-3 text-gray-500">{formatOrderTimestamp(order.createdAt)}</td>
-                  <td className="p-3"><StatusPill status={order.status} /></td>
-                </tr>
-              ))}
+              {orders.map((order) => {
+                const canRetry = order.shipmentStatus === "not_created" || order.shipmentStatus === "failed";
+                return (
+                  <tr
+                    key={order.id}
+                    onClick={() => onSelect(order)}
+                    className={`cursor-pointer border-t border-black/5 ${selected?.id === order.id ? "bg-[#FBFAF8]" : ""}`}
+                  >
+                    <td className="p-3">{order.id}</td>
+                    <td className="p-3">{order.customerName}</td>
+                    <td className="p-3">₹{order.total}</td>
+                    <td className="p-3 text-gray-500">{formatOrderTimestamp(order.createdAt)}</td>
+                    <td className="p-3"><StatusPill status={order.status} /></td>
+                    <td className="p-3">
+                      <div className="flex flex-col items-start gap-1">
+                        <ShipmentPill status={order.shipmentStatus} />
+                        {order.awbCode && (
+                          <span className="text-[11px] text-gray-400">
+                            AWB {order.awbCode}{order.courierName ? ` · ${order.courierName}` : ""}
+                          </span>
+                        )}
+                        {canRetry && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onRetryShipment(order); }}
+                            disabled={retryingId === order.id}
+                            className="mt-0.5 rounded-full border border-black/10 px-2.5 py-1 text-[11px] text-[#111111] disabled:opacity-50"
+                          >
+                            {retryingId === order.id ? "Retrying…" : "Create Shipment"}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -517,6 +563,8 @@ function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [retryingId, setRetryingId] = useState<string | null>(null);
+  const [retryError, setRetryError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -545,6 +593,24 @@ function Orders() {
     if (selected?.id === order.id) setSelected(updated);
   };
 
+  const retry = async (order: Order) => {
+    setRetryingId(order.id);
+    setRetryError(null);
+    try {
+      const result = await retryShipment(order.id);
+      setOrders((current) =>
+        current.map((o) => (o.id === order.id ? { ...o, ...result } : o))
+      );
+      setSelected((current) => (current?.id === order.id ? { ...current, ...result } : current));
+    } catch (e: any) {
+      // 502 with a detail string means Shiprocket rejected/failed the
+      // request — surface it so the owner knows to check server logs.
+      setRetryError(e instanceof ApiError ? e.message : "Could not create the shipment. Please try again.");
+    } finally {
+      setRetryingId(null);
+    }
+  };
+
   const todayOrders = orders.filter((o) => isSameLocalDay(new Date(o.createdAt), new Date()));
 
   return (
@@ -555,6 +621,7 @@ function Orders() {
           <p className="mt-1 text-sm text-gray-500">Every order from the storefront appears here automatically.</p>
         </div>
       </div>
+      {retryError && <p className="mt-4 text-sm text-[#D94F70]">{retryError}</p>}
       {loading ? (
         <p className="mt-8 text-sm text-gray-400">Loading orders…</p>
       ) : orders.length === 0 ? (
@@ -568,6 +635,8 @@ function Orders() {
               selected={selected}
               onSelect={setSelected}
               emptyLabel="No orders placed today yet."
+              onRetryShipment={retry}
+              retryingId={retryingId}
             />
             <OrdersTable
               title="All Orders"
@@ -576,6 +645,8 @@ function Orders() {
               selected={selected}
               onSelect={setSelected}
               emptyLabel="No orders yet."
+              onRetryShipment={retry}
+              retryingId={retryingId}
             />
           </div>
           <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
@@ -596,9 +667,26 @@ function Orders() {
                 <p className="mt-5 text-sm text-gray-600"><strong>Items:</strong> {selected.items.map((i) => `${i.name} x${i.quantity}`).join(", ")}</p>
                 <p className="mt-2 text-sm text-gray-600"><strong>Mode:</strong> {selected.mode}</p>
                 <p className="mt-2 text-sm text-gray-600"><strong>Total:</strong> ₹{selected.total}</p>
+                <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
+                  <strong>Shipment:</strong> <ShipmentPill status={selected.shipmentStatus} />
+                </div>
+                {selected.awbCode && (
+                  <p className="mt-2 text-sm text-gray-600">
+                    <strong>AWB:</strong> {selected.awbCode}{selected.courierName ? ` · ${selected.courierName}` : ""}
+                  </p>
+                )}
                 <div className="mt-6 flex flex-wrap gap-2">
                   <button onClick={() => advance(selected)} className="rounded-full bg-[#111111] px-4 py-2 text-xs text-white">Advance Status</button>
                   <button onClick={() => reject(selected)} className="rounded-full border border-[#D94F70] px-4 py-2 text-xs text-[#D94F70]">Reject</button>
+                  {(selected.shipmentStatus === "not_created" || selected.shipmentStatus === "failed") && (
+                    <button
+                      onClick={() => retry(selected)}
+                      disabled={retryingId === selected.id}
+                      className="rounded-full border border-black/10 px-4 py-2 text-xs text-[#111111] disabled:opacity-50"
+                    >
+                      {retryingId === selected.id ? "Retrying…" : "Create Shipment"}
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -638,6 +726,15 @@ function EditProductModal({
   const [sizes, setSizes] = useState<string[]>(product.sizes ?? []);
   const [images, setImages] = useState<string[]>(product.images ?? []);
   const [saving, setSaving] = useState(false);
+  const [showShipping, setShowShipping] = useState(false);
+  // Blank string means "unset / use category default" — never coerced to
+  // 0, since 0 would be a real (wrong) override.
+  const [shipping, setShipping] = useState({
+    weight: product.weight != null ? String(product.weight) : "",
+    length: product.length != null ? String(product.length) : "",
+    breadth: product.breadth != null ? String(product.breadth) : "",
+    height: product.height != null ? String(product.height) : "",
+  });
 
   const save = async () => {
     setSaving(true);
@@ -656,6 +753,10 @@ function EditProductModal({
         care,
         sizes,
         images,
+        weight: shipping.weight.trim() === "" ? null : Number(shipping.weight),
+        length: shipping.length.trim() === "" ? null : Number(shipping.length),
+        breadth: shipping.breadth.trim() === "" ? null : Number(shipping.breadth),
+        height: shipping.height.trim() === "" ? null : Number(shipping.height),
       });
       onSaved();
       onClose();
@@ -749,6 +850,61 @@ function EditProductModal({
           <div>
             <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Care Instructions</label>
             <div className="mt-1"><TagListInput tags={care} onChange={setCare} placeholder="e.g. Dry clean only — press Enter" /></div>
+          </div>
+          <div className="rounded-[1rem] border border-black/10 p-3">
+            <button
+              type="button"
+              onClick={() => setShowShipping((v) => !v)}
+              className="flex w-full items-center justify-between text-xs uppercase tracking-[0.24em] text-gray-500"
+            >
+              Shipping override (optional)
+              <ChevronRight size={14} className={`transition-transform ${showShipping ? "rotate-90" : ""}`} />
+            </button>
+            {showShipping && (
+              <div className="mt-3 space-y-2">
+                <p className="text-xs text-gray-400">
+                  Leave blank to use the category or store-wide default from Shipping Defaults.
+                </p>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <div>
+                    <label className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Weight (kg)</label>
+                    <input
+                      value={shipping.weight}
+                      onChange={(e) => setShipping({ ...shipping, weight: e.target.value })}
+                      placeholder="—"
+                      className="mt-1 w-full rounded-[0.7rem] border border-black/10 px-2.5 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Length (cm)</label>
+                    <input
+                      value={shipping.length}
+                      onChange={(e) => setShipping({ ...shipping, length: e.target.value })}
+                      placeholder="—"
+                      className="mt-1 w-full rounded-[0.7rem] border border-black/10 px-2.5 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Breadth (cm)</label>
+                    <input
+                      value={shipping.breadth}
+                      onChange={(e) => setShipping({ ...shipping, breadth: e.target.value })}
+                      placeholder="—"
+                      className="mt-1 w-full rounded-[0.7rem] border border-black/10 px-2.5 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Height (cm)</label>
+                    <input
+                      value={shipping.height}
+                      onChange={(e) => setShipping({ ...shipping, height: e.target.value })}
+                      placeholder="—"
+                      className="mt-1 w-full rounded-[0.7rem] border border-black/10 px-2.5 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-3">
@@ -1360,6 +1516,111 @@ function HomepageEditor({ products }: { products: Product[] }) {
   );
 }
 
+function ShippingDefaultsEditor() {
+  const [rows, setRows] = useState<ShippingDefaultRow[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getShippingDefaults()
+      .then((data) => { if (!cancelled) setRows(data.rows); })
+      .catch((err) => { if (!cancelled) setError(err.message); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const updateRow = (index: number, field: keyof ShippingDefaultRow, value: string) => {
+    if (!rows) return;
+    const next = [...rows];
+    next[index] = { ...next[index], [field]: field === "category" ? value : Number(value) || 0 };
+    setRows(next);
+  };
+
+  const save = async () => {
+    if (!rows) return;
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      const updated = await updateShippingDefaults({ rows });
+      setRows(updated.rows);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading || !rows) {
+    return (
+      <div>
+        <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Shipping Defaults</h1>
+        <p className="mt-8 text-sm text-gray-400">Loading…</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Shipping Defaults</h1>
+      <p className="mt-1 text-sm text-gray-500">
+        Fallback weight/dimensions used for shipping-rate lookups when a product doesn&apos;t have its own override.
+        The &quot;__default__&quot; row is the store-wide fallback used when a category has no row of its own.
+      </p>
+
+      <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[560px] text-sm">
+            <thead className="bg-[#FBFAF8] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+              <tr>
+                <th className="p-3">Category</th>
+                <th className="p-3">Weight (kg)</th>
+                <th className="p-3">Length (cm)</th>
+                <th className="p-3">Breadth (cm)</th>
+                <th className="p-3">Height (cm)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr key={row.category} className="border-t border-black/5">
+                  <td className="p-3 font-medium text-[#111111]">
+                    {row.category === "__default__" ? "Store-wide fallback" : row.category}
+                  </td>
+                  {(["weight", "length", "breadth", "height"] as const).map((field) => (
+                    <td key={field} className="p-3">
+                      <input
+                        value={row[field]}
+                        onChange={(e) => updateRow(i, field, e.target.value)}
+                        className="w-20 rounded-[0.6rem] border border-black/10 px-2 py-1.5 text-sm"
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
+
+      <button
+        onClick={save}
+        disabled={saving}
+        className="mt-6 flex items-center gap-2 rounded-full bg-[#111111] px-6 py-2.5 text-sm text-white disabled:opacity-50"
+      >
+        {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <Check size={14} /> : <Save size={14} />}
+        {saved ? "Saved" : "Save Changes"}
+      </button>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading: authLoading, logout } = useAuth();
@@ -1535,6 +1796,7 @@ export default function DashboardPage() {
           {active === "analytics" && <Analytics products={products} />}
           {active === "coupons" && <Coupons />}
           {active === "homepage" && <HomepageEditor products={products} />}
+          {active === "shipping-defaults" && <ShippingDefaultsEditor />}
         </main>
       </div>
     </div>

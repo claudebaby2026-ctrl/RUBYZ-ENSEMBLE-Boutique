@@ -8,7 +8,7 @@ import { CheckCircle2, Loader2, AlertTriangle, Tag, X } from "lucide-react";
 import { useCart } from "@/lib/useCart";
 import { useAuth } from "@/lib/useAuth";
 import { DELIVERY_FEE } from "@/lib/cart";
-import { createOrder, createRazorpayOrder, validateCoupon, ApiError, type Coupon } from "@/lib/api";
+import { createOrder, createRazorpayOrder, getShippingRate, validateCoupon, ApiError, type Coupon } from "@/lib/api";
 
 const MODE_KEY = "rubyz_delivery_mode";
 
@@ -29,7 +29,7 @@ export default function CheckoutPage() {
   const { items, hydrated, subtotal, clearCart } = useCart();
   const { user, loading: authLoading } = useAuth();
   const [mode, setMode] = useState<"Delivery" | "Pickup">("Delivery");
-  const [form, setForm] = useState({ name: "", phone: "", email: "", address: "" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", pincode: "", city: "", state: "" });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isStockError, setIsStockError] = useState(false);
@@ -38,6 +38,12 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  // Live courier rate for the current pincode, replacing the flat
+  // DELIVERY_FEE when Shiprocket has one. `null` means "not fetched yet /
+  // fell back" — the flat fee is used in that case, silently (no error
+  // shown to the customer; see the effect below).
+  const [liveRate, setLiveRate] = useState<{ fee: number; courierName?: string | null } | null>(null);
+  const [rateLoading, setRateLoading] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(MODE_KEY);
@@ -73,7 +79,47 @@ export default function CheckoutPage() {
     }
   }, [hydrated, items.length, orderId, router]);
 
-  const deliveryFee = mode === "Delivery" ? DELIVERY_FEE : 0;
+  const pincodeValid = /^\d{6}$/.test(form.pincode.trim());
+
+  // Debounced live rate lookup: whenever the pincode looks complete (and
+  // we're in Delivery mode with items in the cart), ask the backend for a
+  // real courier rate. This must never block or error out checkout — on
+  // any failure we simply keep using the flat DELIVERY_FEE, silently.
+  useEffect(() => {
+    if (mode !== "Delivery" || !pincodeValid || items.length === 0) {
+      setLiveRate(null);
+      return;
+    }
+    let cancelled = false;
+    setRateLoading(true);
+    const timer = setTimeout(() => {
+      getShippingRate({
+        pincode: form.pincode.trim(),
+        items: items.map((item) => ({
+          productId: item.productId,
+          category: item.category || "",
+          quantity: item.quantity,
+        })),
+      })
+        .then((quote) => {
+          if (cancelled) return;
+          setLiveRate(quote.live ? { fee: quote.fee, courierName: quote.courierName } : null);
+        })
+        .catch(() => {
+          // Silent fallback — the flat fee below already covers this case.
+          if (!cancelled) setLiveRate(null);
+        })
+        .finally(() => {
+          if (!cancelled) setRateLoading(false);
+        });
+    }, 500);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [mode, pincodeValid, form.pincode, items]);
+
+  const deliveryFee = mode === "Delivery" ? (liveRate?.fee ?? DELIVERY_FEE) : 0;
   const discount = appliedCoupon
     ? Math.min(
         appliedCoupon.discount_type === "flat"
@@ -84,7 +130,10 @@ export default function CheckoutPage() {
     : 0;
   const total = subtotal - discount + deliveryFee;
 
-  const valid = form.name.trim().length > 1 && form.phone.trim().length >= 8 && (mode === "Pickup" || form.address.trim().length > 4);
+  const valid =
+    form.name.trim().length > 1 &&
+    form.phone.trim().length >= 8 &&
+    (mode === "Pickup" || (form.address.trim().length > 4 && pincodeValid));
 
   const applyCoupon = async () => {
     const code = couponInput.trim();
@@ -160,6 +209,9 @@ export default function CheckoutPage() {
               phone: form.phone,
               email: form.email || undefined,
               address: mode === "Delivery" ? form.address : "Store pickup",
+              pincode: mode === "Delivery" ? form.pincode.trim() : undefined,
+              city: mode === "Delivery" ? form.city.trim() || undefined : undefined,
+              state: mode === "Delivery" ? form.state.trim() || undefined : undefined,
               mode,
               items: orderItemsPayload(),
               total,
@@ -262,13 +314,40 @@ export default function CheckoutPage() {
                 className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
               />
               {mode === "Delivery" && (
-                <textarea
-                  placeholder="Delivery address"
-                  rows={4}
-                  value={form.address}
-                  onChange={(e) => setForm({ ...form, address: e.target.value })}
-                  className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
-                />
+                <>
+                  <textarea
+                    placeholder="Delivery address"
+                    rows={4}
+                    value={form.address}
+                    onChange={(e) => setForm({ ...form, address: e.target.value })}
+                    className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
+                  />
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <input
+                      placeholder="Pincode"
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={form.pincode}
+                      onChange={(e) => setForm({ ...form, pincode: e.target.value.replace(/\D/g, "") })}
+                      className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
+                    />
+                    <input
+                      placeholder="City (optional)"
+                      value={form.city}
+                      onChange={(e) => setForm({ ...form, city: e.target.value })}
+                      className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
+                    />
+                    <input
+                      placeholder="State (optional)"
+                      value={form.state}
+                      onChange={(e) => setForm({ ...form, state: e.target.value })}
+                      className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
+                    />
+                  </div>
+                  {form.pincode.length > 0 && !pincodeValid && (
+                    <p className="text-xs text-[#D94F70]">Enter a valid 6-digit pincode.</p>
+                  )}
+                </>
               )}
               <div className="flex gap-3">
                 <button
@@ -296,7 +375,18 @@ export default function CheckoutPage() {
                   <span>₹{(item.price * item.quantity).toLocaleString()}</span>
                 </div>
               ))}
-              <div className="flex justify-between"><span>Delivery</span><span>{deliveryFee ? `₹${deliveryFee}` : "Free"}</span></div>
+              <div className="flex justify-between">
+                <span>
+                  Delivery
+                  {mode === "Delivery" && rateLoading && (
+                    <Loader2 size={11} className="ml-1.5 inline animate-spin align-middle text-gray-400" />
+                  )}
+                  {liveRate?.courierName && (
+                    <span className="ml-1.5 text-xs text-gray-400">via {liveRate.courierName}</span>
+                  )}
+                </span>
+                <span>{deliveryFee ? `₹${deliveryFee}` : "Free"}</span>
+              </div>
               {appliedCoupon && (
                 <div className="flex justify-between text-[#3A9D5D]">
                   <span>Coupon ({appliedCoupon.code})</span>
@@ -362,7 +452,7 @@ export default function CheckoutPage() {
             </button>
             {!valid && (
               <p className="mt-3 text-center text-xs text-gray-400">
-                Fill in your name, phone{mode === "Delivery" ? " and address" : ""} to continue.
+                Fill in your name, phone{mode === "Delivery" ? ", address and a valid pincode" : ""} to continue.
               </p>
             )}
           </div>

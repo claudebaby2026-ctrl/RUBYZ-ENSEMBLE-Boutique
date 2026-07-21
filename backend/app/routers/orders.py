@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.crud import order as order_crud
@@ -9,8 +9,19 @@ from app.database import get_db
 from app.models.user import User
 from app.schemas.order import OrderCreate, OrderOut, OrderStatusUpdate
 from app.security import get_current_owner, get_current_user
+from app.services.shipment_creation import create_shipment_background, order_is_shippable
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+
+
+@router.get("/me", response_model=List[OrderOut])
+def list_my_orders(
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+):
+    # Customer-only — returns the signed-in customer's own orders, newest
+    # first. Placed before any /orders/{id}-style route so a literal "me"
+    # path segment is never swallowed by a path-param route.
+    return [OrderOut.from_model(o) for o in order_crud.get_orders_for_user(db, current_user.id)]
 
 
 @router.get("", response_model=List[OrderOut])
@@ -34,6 +45,7 @@ def list_today_orders(
 @router.post("", response_model=OrderOut, status_code=201)
 def create_order(
     payload: OrderCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -49,6 +61,15 @@ def create_order(
     except OrderError as exc:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    # Shipment creation happens in the background, never synchronously in
+    # the checkout request — a Shiprocket failure must never affect the
+    # already-paid order. Skipped entirely for Pickup-mode orders or
+    # orders made up entirely of Tailoring Services items (see
+    # app/services/shipment_creation.py).
+    if order_is_shippable(order, db):
+        background_tasks.add_task(create_shipment_background, order.id)
+
     return OrderOut.from_model(order)
 
 

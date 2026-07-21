@@ -28,6 +28,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
       size,
       stock: product.stock,
       quantity,
+      category: product.category,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);

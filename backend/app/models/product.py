@@ -28,3 +28,13 @@ class Product(Base):
     is_featured = Column(Boolean, default=False)
     is_new = Column(Boolean, default=False)
     is_bestseller = Column(Boolean, default=False)
+    # --- Optional per-product Shiprocket shipping override ---
+    # Nullable, no default: absence means "fall through to the category/
+    # store-wide shipping default" (see app/models/shipping_defaults.py),
+    # NOT "zero weight/dimensions". Only ever set via the Edit Product
+    # form's collapsed "Shipping override" section — never required, and
+    # never surfaced in the Add Product flow.
+    weight = Column(Float, nullable=True)  # kg
+    length = Column(Float, nullable=True)  # cm
+    breadth = Column(Float, nullable=True)  # cm
+    height = Column(Float, nullable=True)  # cm

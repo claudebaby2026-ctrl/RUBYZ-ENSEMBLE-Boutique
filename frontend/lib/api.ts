@@ -42,7 +42,27 @@ export type Order = {
   razorpayPaymentId?: string | null;
   createdAt: string;
   items: { id: number; name: string; quantity: number; price: number }[];
+  // --- Shiprocket shipment tracking ---
+  // shipmentStatus defaults to "not_created" before any shipment attempt.
+  // Once a webhook updates it, the backend stores it lowercase-with-
+  // underscores (e.g. "out_for_delivery"); before that it may be one of
+  // "not_created" / "pending" / "created" / "failed". Callers that render
+  // this to a customer should handle both forms — see humanizeShipmentStatus.
+  shipmentStatus?: string;
+  awbCode?: string | null;
+  courierName?: string | null;
 };
+
+// Turns a raw shipment_status value (either the pre-webhook enum or a
+// lowercase-with-underscores string straight from a Shiprocket webhook)
+// into something readable, without needing the backend to normalize it.
+export function humanizeShipmentStatus(status?: string | null): string {
+  if (!status) return "Not shipped yet";
+  return status
+    .split("_")
+    .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : word))
+    .join(" ");
+}
 
 // ---- Payments (Razorpay) ----
 
@@ -104,6 +124,35 @@ export type Customer = {
   ordersCount: number;
   totalSpent: number;
   lastOrderAt: string | null;
+};
+
+// ---- Shipping (Shiprocket) ----
+
+export type ShippingDefaultRow = {
+  category: string;
+  weight: number;
+  length: number;
+  breadth: number;
+  height: number;
+};
+
+export type ShippingDefaults = {
+  rows: ShippingDefaultRow[];
+};
+
+export type RateQuoteItem = {
+  productId?: number;
+  category: string;
+  quantity: number;
+};
+
+export type RateQuote = {
+  fee: number;
+  // True when this is the live Shiprocket-computed rate; false when it's
+  // the flat DELIVERY_FEE fallback (Shiprocket unconfigured/unreachable/
+  // erroring, or the cart has nothing shippable in it).
+  live: boolean;
+  courierName?: string | null;
 };
 
 // ---- Homepage editor ----
@@ -239,11 +288,23 @@ export function getOrders(): Promise<Order[]> {
   return request<Order[]>(`/orders`);
 }
 
+// Customer-only — the signed-in customer's own orders, newest first.
+// Backs the "My Orders" page.
+export function getMyOrders(): Promise<Order[]> {
+  return request<Order[]>(`/orders/me`);
+}
+
 export function createOrder(payload: {
   customerName: string;
   phone: string;
   email?: string;
   address?: string;
+  // Structured billing address — required by Shiprocket for shipment
+  // creation. Only meaningful (and only sent) for Delivery-mode orders;
+  // the checkout page omits these for Pickup.
+  pincode?: string;
+  city?: string;
+  state?: string;
   mode: string;
   items: { productId?: number; name: string; quantity: number; price: number }[];
   total: number;
@@ -257,6 +318,43 @@ export function createOrder(payload: {
   razorpaySignature: string;
 }): Promise<Order> {
   return request<Order>(`/orders`, { method: "POST", body: JSON.stringify(payload) });
+}
+
+// Owner-only manual retry for a failed/not-yet-created shipment. On
+// success the backend returns the new tracking fields directly (not a
+// full Order) so the dashboard can patch just that row; on failure it
+// throws an ApiError with status 502 and a human-readable detail.
+export function retryShipment(
+  displayId: string
+): Promise<{ shipmentStatus: string; awbCode: string | null; courierName: string | null }> {
+  return request(`/orders/${encodeURIComponent(displayId)}/create-shipment`, { method: "POST" });
+}
+
+// Public — used by checkout to get a live courier rate for the cart +
+// pincode, replacing the flat delivery fee when available. Always resolves
+// (never throws for a normal unconfigured/unreachable Shiprocket state —
+// the backend itself falls back to the flat fee), so callers can treat a
+// non-2xx here as unexpected.
+export function getShippingRate(payload: {
+  pincode: string;
+  items: RateQuoteItem[];
+}): Promise<RateQuote> {
+  return request<RateQuote>(`/shipping/rate`, { method: "POST", body: JSON.stringify(payload) });
+}
+
+// ---- Shipping Defaults (owner-only) ----
+
+export function getShippingDefaults(): Promise<ShippingDefaults> {
+  return request<ShippingDefaults>(`/shipping-defaults`);
+}
+
+// Full replace, same style as updateHomepageConfig — always send every row
+// back together.
+export function updateShippingDefaults(payload: ShippingDefaults): Promise<ShippingDefaults> {
+  return request<ShippingDefaults>(`/shipping-defaults`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
 }
 
 // Step 1 of checkout: ask the backend to price the cart (server-side,

@@ -17,6 +17,12 @@ export type CartItem = {
   size: string;
   stock?: number;
   quantity: number;
+  // Product category at the time it was added — used by checkout's live
+  // shipping-rate lookup (POST /shipping/rate needs a category per item to
+  // exclude Tailoring Services and pick the right per-category default).
+  // Optional/undefined for carts added before this field existed; checkout
+  // falls back gracefully when it's missing (see app/checkout/page.tsx).
+  category?: string;
 };
 
 // The cart is namespaced per signed-in account (falling back to a shared

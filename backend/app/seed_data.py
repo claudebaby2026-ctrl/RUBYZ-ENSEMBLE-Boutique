@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.crud.attribute import create_attribute
+from app.crud.shipping_defaults import seed_defaults as _seed_shipping_defaults
 from app.models.product import Product
 from app.models.user import User
 from app.security import hash_password
@@ -219,3 +220,12 @@ def seed_owner(db: Session) -> None:
         db.add(owner)
         db.commit()
         print(f"[seed] Created owner account: {settings.OWNER_EMAIL}")
+
+
+def seed_shipping_defaults(db: Session) -> None:
+    """Ensure every category (plus the store-wide fallback) has a shipping
+    defaults row, seeded with the placeholder values from
+    SHIPROCKET_INTEGRATION_SPEC.md. Safe to call on every startup — purely
+    additive, exactly like seed_attributes above, so it never overwrites an
+    owner's corrections made from the dashboard."""
+    _seed_shipping_defaults(db)

@@ -117,3 +117,47 @@ def run_migrations(engine: Engine) -> None:
                     "ix_orders_razorpay_payment_id ON orders (razorpay_payment_id)"
                 )
             )
+
+    # --- Shiprocket integration ---
+    # Structured billing address fields on orders.
+    for column, coltype in (
+        ("billing_pincode", "VARCHAR"),
+        ("billing_city", "VARCHAR"),
+        ("billing_state", "VARCHAR"),
+        ("shiprocket_order_id", "VARCHAR"),
+        ("shiprocket_shipment_id", "VARCHAR"),
+        ("awb_code", "VARCHAR"),
+        ("courier_name", "VARCHAR"),
+    ):
+        if not _has_column(engine, "orders", column):
+            with engine.begin() as conn:
+                conn.execute(text(f"ALTER TABLE orders ADD COLUMN {column} {coltype}"))
+
+    if not _has_column(engine, "orders", "shipment_status"):
+        with engine.begin() as conn:
+            conn.execute(
+                text(
+                    "ALTER TABLE orders ADD COLUMN shipment_status VARCHAR "
+                    "DEFAULT 'not_created'"
+                )
+            )
+            conn.execute(
+                text(
+                    "UPDATE orders SET shipment_status = 'not_created' "
+                    "WHERE shipment_status IS NULL"
+                )
+            )
+
+    # Optional per-product shipping override columns.
+    for column in ("weight", "length", "breadth", "height"):
+        if not _has_column(engine, "products", column):
+            with engine.begin() as conn:
+                conn.execute(
+                    text(f"ALTER TABLE products ADD COLUMN {column} FLOAT")
+                )
+
+    # shipping_defaults table itself is created by Base.metadata.create_all
+    # on brand-new databases (see app/models/shipping_defaults.py); nothing
+    # to hand-roll here for the table's existence on an upgrade, since
+    # create_all also creates missing tables (not just missing columns) on
+    # every startup. The seeded rows are handled in app/seed_data.py.

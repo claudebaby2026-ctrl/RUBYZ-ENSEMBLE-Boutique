@@ -79,5 +79,36 @@ class Settings:
     def RAZORPAY_ENABLED(self) -> bool:
         return bool(self.RAZORPAY_KEY_ID and self.RAZORPAY_KEY_SECRET)
 
+    # --- Shipping (Shiprocket) ---
+    # There is no Shiprocket sandbox — these must be real (free-tier is
+    # fine) seller-account credentials. Test against throwaway/cancellable
+    # orders. Get SHIPROCKET_PICKUP_LOCATION from the Shiprocket panel
+    # (Settings -> Company/Pickup Addresses) — it must match the pickup
+    # location "nickname" exactly, or shipment creation calls fail.
+    SHIPROCKET_EMAIL: str = os.getenv("SHIPROCKET_EMAIL", "")
+    SHIPROCKET_PASSWORD: str = os.getenv("SHIPROCKET_PASSWORD", "")
+    SHIPROCKET_PICKUP_LOCATION: str = os.getenv("SHIPROCKET_PICKUP_LOCATION", "")
+    # The serviceability/rate-check endpoint needs the pickup location's
+    # *pincode*, not its nickname (SHIPROCKET_PICKUP_LOCATION above). Get
+    # this from the Shiprocket panel: Settings -> Company/Pickup Addresses
+    # -> your pickup location's "Pin Code" column. If unset, live rate
+    # lookups at checkout are skipped and the flat DELIVERY_FEE is used
+    # instead (see app/services/shiprocket.py::get_serviceability) —
+    # shipment creation itself still works without this.
+    SHIPROCKET_PICKUP_PINCODE: str = os.getenv("SHIPROCKET_PICKUP_PINCODE", "")
+    # Shared secret configured in both this app and Shiprocket's webhook
+    # settings (Settings -> API -> webhook config) — used to verify that
+    # incoming POST /webhooks/shiprocket requests actually come from
+    # Shiprocket. See app/routers/shipping.py.
+    SHIPROCKET_WEBHOOK_TOKEN: str = os.getenv("SHIPROCKET_WEBHOOK_TOKEN", "")
+
+    @property
+    def SHIPROCKET_ENABLED(self) -> bool:
+        return bool(
+            self.SHIPROCKET_EMAIL
+            and self.SHIPROCKET_PASSWORD
+            and self.SHIPROCKET_PICKUP_LOCATION
+        )
+
 
 settings = Settings()

@@ -33,6 +33,14 @@ export type Product = {
   isFeatured?: boolean;
   isNew?: boolean;
   isBestseller?: boolean;
+  // Optional per-product Shiprocket shipping override (kg / cm). Never set
+  // from Add Product — only ever edited via Edit Product's collapsed
+  // "Shipping override" section. Undefined/null means "use the
+  // category/store-wide default", never treated as zero.
+  weight?: number | null;
+  length?: number | null;
+  breadth?: number | null;
+  height?: number | null;
 };
 
 // Static site taxonomy — not product data. Product records themselves are

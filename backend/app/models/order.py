@@ -44,6 +44,28 @@ class Order(Base):
     # order instead of hitting this constraint as an error, and
     # app/migrations.py for how existing databases get the index added.
     razorpay_payment_id = Column(String, unique=True, index=True, nullable=True)
+    # --- Structured billing address (Shiprocket needs these as discrete
+    # fields — the free-text `address` column above can't be reliably
+    # parsed into pincode/city/state). Populated at checkout when
+    # mode == "Delivery"; nullable so pickup-mode/pre-existing orders still
+    # load fine.
+    billing_pincode = Column(String, nullable=True)
+    billing_city = Column(String, nullable=True)
+    billing_state = Column(String, nullable=True)
+    # --- Shiprocket shipment tracking ---
+    # shipment_status: "not_created" (default) -> "pending" (background
+    # task scheduled/running) -> "created" (Shiprocket accepted it) or
+    # "failed" (background task or manual retry errored — see
+    # app/routers/orders.py and app/routers/shipping.py). This is
+    # deliberately a separate column from `status` (fulfillment status,
+    # e.g. Pending/Confirmed/Shipped) — see crud/shipment.py for how a
+    # Shiprocket webhook update maps onto `status` where sensible, instead
+    # of the owner having to cross-reference two independent status values.
+    shiprocket_order_id = Column(String, nullable=True)
+    shiprocket_shipment_id = Column(String, nullable=True)
+    awb_code = Column(String, nullable=True)
+    courier_name = Column(String, nullable=True)
+    shipment_status = Column(String, default="not_created", nullable=False)
     # When the order was placed. `default` guarantees every ORM insert sets
     # this (needed because databases migrated by app/migrations.py may not
     # have a DB-level DEFAULT on this column — see there for why), while

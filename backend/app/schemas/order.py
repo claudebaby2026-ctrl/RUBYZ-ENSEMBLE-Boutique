@@ -25,6 +25,13 @@ class OrderCreate(BaseModel):
     phone: str
     email: Optional[str] = None
     address: Optional[str] = None
+    # Structured billing address — required by Shiprocket for shipment
+    # creation (the free-text `address` above can't be reliably parsed
+    # into these). Optional here (e.g. Pickup mode doesn't need them), but
+    # the frontend requires `pincode` whenever mode == "Delivery".
+    pincode: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
     mode: str = "Delivery"
     items: List[OrderItemCreate]
     total: int
@@ -84,6 +91,13 @@ class OrderOut(BaseModel):
     razorpayPaymentId: Optional[str] = None
     createdAt: datetime
     items: List[OrderItemOut]
+    # --- Shiprocket shipment tracking ---
+    # Included here (rather than a second endpoint) so both the owner
+    # dashboard's Orders table and the customer-facing GET /orders/me
+    # response are enough on their own to render tracking status.
+    shipmentStatus: str = "not_created"
+    awbCode: Optional[str] = None
+    courierName: Optional[str] = None
 
     @classmethod
     def from_model(cls, order) -> "OrderOut":
@@ -102,4 +116,7 @@ class OrderOut(BaseModel):
             razorpayPaymentId=order.razorpay_payment_id,
             createdAt=order.created_at,
             items=[OrderItemOut.model_validate(i) for i in order.items],
+            shipmentStatus=order.shipment_status or "not_created",
+            awbCode=order.awb_code,
+            courierName=order.courier_name,
         )

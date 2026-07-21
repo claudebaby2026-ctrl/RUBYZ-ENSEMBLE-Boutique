@@ -80,6 +80,16 @@ def get_orders(db: Session) -> List[Order]:
     )
 
 
+def get_orders_for_user(db: Session, user_id: int) -> List[Order]:
+    return (
+        db.query(Order)
+        .options(joinedload(Order.items))
+        .filter(Order.user_id == user_id)
+        .order_by(Order.id.desc())
+        .all()
+    )
+
+
 def get_order_by_display_id(db: Session, display_id: str) -> Optional[Order]:
     return (
         db.query(Order)
@@ -280,6 +290,9 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
         phone=order.phone,
         email=order.email,
         address=order.address,
+        billing_pincode=order.pincode,
+        billing_city=order.city,
+        billing_state=order.state,
         mode=order.mode,
         status="Pending",
         total=priced.total,

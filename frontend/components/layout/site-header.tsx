@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, Heart, Menu, User, LogOut, X } from "lucide-react";
+import { Search, ShoppingBag, Heart, Menu, User, LogOut, X, PackageSearch } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { brand } from "@/lib/content";
@@ -115,13 +115,21 @@ export function SiteHeader() {
                     <p className="truncate px-3 py-2 text-xs text-gray-500">
                       Signed in as <span className="text-[#111111]">{user.name}</span>
                     </p>
-                    {user.role === "owner" && (
+                    {user.role === "owner" ? (
                       <Link
                         href="/dashboard"
                         onClick={() => setMenuOpen(false)}
                         className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#F8F5F1]"
                       >
                         Owner Dashboard
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/orders"
+                        onClick={() => setMenuOpen(false)}
+                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#F8F5F1]"
+                      >
+                        My Orders
                       </Link>
                     )}
                     <button
@@ -218,13 +226,21 @@ export function SiteHeader() {
                 <p className="mt-4 px-4 text-xs text-gray-500">
                   Signed in as <span className="text-[#111111]">{user.name}</span>
                 </p>
-                {user.role === "owner" && (
+                {user.role === "owner" ? (
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileNavOpen(false)}
                     className="rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#F8F5F1]"
                   >
                     Owner Dashboard
+                  </Link>
+                ) : (
+                  <Link
+                    href="/orders"
+                    onClick={() => setMobileNavOpen(false)}
+                    className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#F8F5F1]"
+                  >
+                    <PackageSearch size={16} /> My Orders
                   </Link>
                 )}
                 <button
