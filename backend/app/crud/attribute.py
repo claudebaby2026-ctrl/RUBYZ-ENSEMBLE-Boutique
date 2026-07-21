@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
+from app.crud.shipping_defaults import ensure_category_row
 from app.models.attribute import Attribute
 
 
@@ -28,6 +29,11 @@ def create_attribute(db: Session, type: str, value: str) -> Attribute:
     db.add(attribute)
     db.commit()
     db.refresh(attribute)
+    if type == "category":
+        # Give the new category a shipping_defaults row immediately so it
+        # shows up on the dashboard's Shipping Defaults page instead of
+        # silently riding the __default__ fallback forever.
+        ensure_category_row(db, value)
     return attribute
 
 
