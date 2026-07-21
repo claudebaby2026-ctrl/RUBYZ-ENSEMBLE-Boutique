@@ -207,8 +207,27 @@ def price_cart(
     return _PricedCart(subtotal, discount, total, products, requested_qty, coupon)
 
 
-def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None) -> Order:
+def create_order(
+    db: Session,
+    order: OrderCreate,
+    user_id: Optional[int] = None,
+    *,
+    verify_signature: bool = True,
+) -> Order:
     """Verify the Razorpay payment, then create the order.
+
+    `verify_signature` defaults to True for the normal POST /orders path,
+    where `order.razorpaySignature` is the checkout.js value proving *this
+    browser* completed payment (HMAC of order_id+payment_id, keyed with
+    RAZORPAY_KEY_SECRET). Pass verify_signature=False only from the
+    payment.captured webhook (app/routers/payments.py::razorpay_webhook),
+    which has no such value to check — checkout.js never hands it to
+    anything but the frontend — and instead authenticates itself via its
+    own HMAC over the whole webhook body, keyed with a *different* secret
+    (RAZORPAY_WEBHOOK_SECRET). That check happens before create_order() is
+    ever called, so skipping the signature check here isn't skipping
+    verification — it's not re-running a check that was already done a
+    different, equally valid way.
 
     SECURITY: the client-submitted `price` on each item and the overall
     `total` are NEVER trusted — a customer could edit those in devtools
@@ -254,7 +273,7 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
     # or tampered signature never gets this far. Safe to do before either
     # idempotency check: verification has no side effects, so verifying a
     # retry's already-valid signature a second time is harmless.
-    if not verify_razorpay_signature(
+    if verify_signature and not verify_razorpay_signature(
         order.razorpayOrderId, order.razorpayPaymentId, order.razorpaySignature
     ):
         raise PaymentVerificationError()

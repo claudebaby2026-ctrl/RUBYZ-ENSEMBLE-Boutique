@@ -43,6 +43,7 @@ test image uploads to the cloud instead of disk).
 | `OWNER_EMAIL`, `OWNER_PASSWORD`, `OWNER_NAME` | Seeded owner account, created on first boot if no owner exists | `owner@rubyzensemble.in` / `RubyzOwner@123` |
 | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL` | Cloudflare R2 image storage — **all five** required together | If any is missing, image uploads fall back to local disk (`backend/app/static/uploads`), served from `/static/uploads/...` |
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payment gateway — use **Test Mode** keys locally | If unset, `/payments/create-razorpay-order` returns a 500 |
+| `RAZORPAY_WEBHOOK_SECRET` | Verifies `POST /payments/webhooks/razorpay` (Razorpay Dashboard → Settings → Webhooks → your webhook's secret — **not** the same value as `RAZORPAY_KEY_SECRET`) | If unset, the webhook route returns a 503; checkout itself still works, you just lose the browser-drops-after-payment fallback |
 
 Change `OWNER_PASSWORD` from the default immediately in any environment
 that isn't purely local/throwaway.

@@ -79,6 +79,17 @@ class Settings:
     def RAZORPAY_ENABLED(self) -> bool:
         return bool(self.RAZORPAY_KEY_ID and self.RAZORPAY_KEY_SECRET)
 
+    # Separate secret configured in the Razorpay Dashboard (Settings ->
+    # Webhooks) when adding the payment.captured webhook endpoint. NOT the
+    # same value as RAZORPAY_KEY_SECRET — used only to HMAC-verify the
+    # X-Razorpay-Signature header on incoming webhook POSTs (see
+    # app/routers/payments.py's webhook route).
+    RAZORPAY_WEBHOOK_SECRET: str = os.getenv("RAZORPAY_WEBHOOK_SECRET", "")
+
+    @property
+    def RAZORPAY_WEBHOOK_ENABLED(self) -> bool:
+        return bool(self.RAZORPAY_WEBHOOK_SECRET)
+
     # --- Shipping (Shiprocket) ---
     # There is no Shiprocket sandbox — these must be real (free-tier is
     # fine) seller-account credentials. Test against throwaway/cancellable

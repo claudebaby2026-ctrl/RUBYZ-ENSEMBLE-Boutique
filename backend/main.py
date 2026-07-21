@@ -38,6 +38,7 @@ from app.models import coupon as _coupon_models  # noqa: F401
 from app.models import homepage as _homepage_models  # noqa: F401
 from app.models import like as _like_models  # noqa: F401
 from app.models import order as _order_models  # noqa: F401
+from app.models import pending_checkout as _pending_checkout_models  # noqa: F401
 from app.models import product as _product_models  # noqa: F401
 from app.models import shipping_defaults as _shipping_defaults_models  # noqa: F401
 from app.models import user as _user_models  # noqa: F401

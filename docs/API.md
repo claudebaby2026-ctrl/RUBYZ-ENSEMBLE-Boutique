@@ -84,11 +84,20 @@ A `400` from `POST /orders` after Razorpay already captured payment
 expected to be rare but possible — the payment auto-refunds via
 Razorpay in that case; the frontend surfaces this to the customer.
 
+If the browser never makes it back to `POST /orders` at all after
+payment (closed tab, dropped connection, killed app), the money is
+still captured but no order exists yet on our side. `POST
+/payments/create-razorpay-order` snapshots the cart at step 1 for
+exactly this case, and `POST /payments/webhooks/razorpay` (see below)
+creates the order from that snapshot once Razorpay's `payment.captured`
+webhook arrives.
+
 ## Payments (`/payments`)
 
 | Method & path | Auth | Notes |
 |---|---|---|
 | `POST /payments/create-razorpay-order` | Customer | See checkout flow above. Returns `500` if Razorpay isn't configured, `502` if Razorpay's API itself errors. |
+| `POST /payments/webhooks/razorpay` | Public, signature-verified | Reconciliation fallback for `payment.captured` events — creates the order if the customer's browser never made it back to `POST /orders` after Razorpay captured payment (e.g. tab closed, network drop). Verified via the `X-Razorpay-Signature` header, HMAC-SHA256 over the raw body keyed with `RAZORPAY_WEBHOOK_SECRET` (a different secret from `RAZORPAY_KEY_SECRET`). Returns `503` if unconfigured, `401` on a bad/missing signature. Idempotent against `POST /orders` already having created the order (same `razorpayPaymentId` uniqueness check), and against Razorpay's own retries on non-2xx (this route always returns `200` for anything it can't act on — unmatched event, no pending checkout, already exists). Configure in the Razorpay Dashboard: Settings → Webhooks → add `payment.captured` pointed at this URL. |
 
 ## Coupons (`/coupons`)
 

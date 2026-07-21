@@ -61,6 +61,19 @@ class RazorpayOrderCreate(BaseModel):
     mode: str = "Delivery"
     items: List[OrderItemCreate]
     couponCode: Optional[str] = None
+    # Optional customer/address fields. Not required by the existing
+    # frontend flow (which only sends these later, to POST /orders) — but
+    # if present, they're snapshotted into PendingCheckout so the
+    # payment.captured webhook can create a real order even if the
+    # browser never makes it back to POST /orders. See
+    # app/crud/pending_checkout.py.
+    customerName: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    address: Optional[str] = None
+    pincode: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
 
 
 class RazorpayOrderOut(BaseModel):
