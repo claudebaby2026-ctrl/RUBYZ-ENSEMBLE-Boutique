@@ -61,6 +61,32 @@ def get_fallback(db: Session) -> ShippingDefault | None:
     return get_for_category(db, STORE_WIDE_FALLBACK_KEY)
 
 
+def ensure_category_row(db: Session, category: str) -> None:
+    """Upsert a shipping_defaults row for a category as soon as it exists
+    anywhere else (attributes table / a product), so the dashboard's
+    Shipping Defaults page always has a row to show and the owner isn't
+    silently stuck on the __default__ fallback for it. Copies the current
+    __default__ row's values as a starting point (or the hardcoded
+    fallback in _SEED_ROWS if __default__ itself hasn't been seeded yet).
+    No-op if a row for this category already exists — never overwrites an
+    owner's own numbers.
+    """
+    category = (category or "").strip()
+    if not category or category == STORE_WIDE_FALLBACK_KEY:
+        return
+    if get_for_category(db, category) is not None:
+        return
+    fallback = get_fallback(db)
+    if fallback is not None:
+        weight, length, breadth, height = (
+            fallback.weight, fallback.length, fallback.breadth, fallback.height,
+        )
+    else:
+        weight, length, breadth, height = _SEED_ROWS[STORE_WIDE_FALLBACK_KEY]
+    db.add(ShippingDefault(category=category, weight=weight, length=length, breadth=breadth, height=height))
+    db.commit()
+
+
 def replace_all(db: Session, payload: ShippingDefaultsUpdate) -> List[ShippingDefault]:
     """Full replace, same style as HomepageConfig's PUT — the dashboard's
     "Shipping Defaults" section always sends every row back together."""
