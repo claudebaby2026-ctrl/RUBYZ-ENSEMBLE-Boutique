@@ -35,7 +35,15 @@ class Order(Base):
     # payment was verified server-side, never just client-reported.
     payment_status = Column(String, default="paid", nullable=False)
     razorpay_order_id = Column(String, nullable=True)
-    razorpay_payment_id = Column(String, nullable=True)
+    # unique=True enforces the payment-replay fix at the DB level: a given
+    # Razorpay payment can only ever back one Order row. Nullable is kept
+    # (older/non-Razorpay rows may have it null) — a unique index treats
+    # multiple NULLs as distinct on both SQLite and Postgres, so it never
+    # blocks a second null. See app/crud/order.py::create_order for the
+    # app-level idempotency check that makes retries return the existing
+    # order instead of hitting this constraint as an error, and
+    # app/migrations.py for how existing databases get the index added.
+    razorpay_payment_id = Column(String, unique=True, index=True, nullable=True)
     # When the order was placed. `default` guarantees every ORM insert sets
     # this (needed because databases migrated by app/migrations.py may not
     # have a DB-level DEFAULT on this column — see there for why), while

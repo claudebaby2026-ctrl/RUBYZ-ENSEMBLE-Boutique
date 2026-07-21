@@ -21,6 +21,16 @@ def _has_column(engine: Engine, table: str, column: str) -> bool:
     return any(col["name"] == column for col in inspector.get_columns(table))
 
 
+def _has_index(engine: Engine, table: str, index_name: str) -> bool:
+    inspector = inspect(engine)
+    if table not in inspector.get_table_names():
+        # Table doesn't exist yet — create_all will make it (via the
+        # column's index=True/unique=True) with the index already in
+        # place, nothing to migrate.
+        return True
+    return any(ix["name"] == index_name for ix in inspector.get_indexes(table))
+
+
 def run_migrations(engine: Engine) -> None:
     if not _has_column(engine, "orders", "created_at"):
         is_sqlite = engine.dialect.name == "sqlite"
@@ -80,3 +90,30 @@ def run_migrations(engine: Engine) -> None:
     if not _has_column(engine, "orders", "razorpay_payment_id"):
         with engine.begin() as conn:
             conn.execute(text("ALTER TABLE orders ADD COLUMN razorpay_payment_id VARCHAR"))
+
+    # Payment-replay fix: a given Razorpay payment must only ever back one
+    # order. This is the same index name SQLAlchemy's declarative model
+    # (Column(..., unique=True, index=True)) auto-generates, so brand new
+    # databases (create_all) and pre-existing ones patched here converge on
+    # the exact same index instead of ending up with two redundant ones.
+    #
+    # A plain UNIQUE INDEX is enough — both SQLite and Postgres treat NULLs
+    # as distinct for uniqueness purposes, so non-Razorpay/legacy rows with
+    # a null razorpay_payment_id are never blocked by each other. The
+    # syntax below is identical on SQLite and Postgres, so no dialect
+    # branch is needed (like the `discount` column above).
+    #
+    # Note: if a database somehow already has duplicate non-null
+    # razorpay_payment_id values (which shouldn't happen pre-fix, since
+    # nothing wrote duplicates on purpose — the bug this closes is a
+    # missing *guard*, not intentional duplicate writes), this CREATE
+    # UNIQUE INDEX will fail loudly rather than silently leaving the gap
+    # open, which is the right failure mode for a data-integrity issue.
+    if not _has_index(engine, "orders", "ix_orders_razorpay_payment_id"):
+        with engine.begin() as conn:
+            conn.execute(
+                text(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS "
+                    "ix_orders_razorpay_payment_id ON orders (razorpay_payment_id)"
+                )
+            )

@@ -18,6 +18,14 @@ sys.path.insert(0, os.path.dirname(__file__))
 from fastapi.testclient import TestClient  # noqa: E402
 from main import app  # noqa: E402
 
+import app.crud.order as _order_crud  # noqa: E402
+
+# Order creation now requires a verified Razorpay payment (razorpayOrderId/
+# razorpayPaymentId/razorpaySignature). This script predates that and has
+# no real Razorpay credentials to compute a genuine signature with, so we
+# stub verification the same way test_order_integrity.py does.
+_order_crud.verify_razorpay_signature = lambda *a, **k: True
+
 client = TestClient(app)
 client.__enter__()
 
@@ -113,6 +121,9 @@ order_payload = {
     # Deliberately wrong client-side total/price — server must ignore both.
     "total": 1,
     "couponCode": "save20",
+    "razorpayOrderId": "order_coupon_test_1",
+    "razorpayPaymentId": "pay_coupon_test_1",
+    "razorpaySignature": "sig_irrelevant_because_mocked",
 }
 res = client.post("/orders", json=order_payload, headers=cust_hdrs)
 expect(res.status_code == 201, "order with valid coupon created")
@@ -133,6 +144,8 @@ expect(res.status_code == 400, "SAVE20 now over its usage_limit -> validate retu
 cust2_hdrs = customer_headers("coupon-customer-2@example.com")
 order_payload2 = dict(order_payload)
 order_payload2["items"] = [{"productId": product["id"], "name": product["name"], "quantity": 1, "price": 1}]
+order_payload2["razorpayOrderId"] = "order_coupon_test_2"
+order_payload2["razorpayPaymentId"] = "pay_coupon_test_2"
 res = client.post("/orders", json=order_payload2, headers=cust2_hdrs)
 expect(res.status_code == 400, "order creation blocked when coupon is over its usage limit")
 expect(
@@ -154,6 +167,9 @@ order_payload3 = {
     "items": [{"productId": product2["id"], "name": product2["name"], "quantity": 1, "price": 200}],
     "total": 200,
     "couponCode": "FLAT500",
+    "razorpayOrderId": "order_coupon_test_3",
+    "razorpayPaymentId": "pay_coupon_test_3",
+    "razorpaySignature": "sig_irrelevant_because_mocked",
 }
 res = client.post("/orders", json=order_payload3, headers=cust2_hdrs)
 expect(res.status_code == 201, "order with flat coupon larger than subtotal still succeeds")
@@ -169,6 +185,9 @@ order_payload4 = {
     "items": [{"productId": product2["id"], "name": product2["name"], "quantity": 1, "price": 200}],
     "total": 200,
     "couponCode": "DOES-NOT-EXIST",
+    "razorpayOrderId": "order_coupon_test_4",
+    "razorpayPaymentId": "pay_coupon_test_4",
+    "razorpaySignature": "sig_irrelevant_because_mocked",
 }
 res = client.post("/orders", json=order_payload4, headers=cust2_hdrs)
 expect(res.status_code == 400, "unknown coupon code -> order rejected with 400")
@@ -180,6 +199,9 @@ order_payload5 = {
     "mode": "Pickup",
     "items": [{"productId": product2["id"], "name": product2["name"], "quantity": 1, "price": 200}],
     "total": 200,
+    "razorpayOrderId": "order_coupon_test_5",
+    "razorpayPaymentId": "pay_coupon_test_5",
+    "razorpaySignature": "sig_irrelevant_because_mocked",
 }
 res = client.post("/orders", json=order_payload5, headers=cust2_hdrs)
 expect(res.status_code == 201, "order without a coupon still succeeds")

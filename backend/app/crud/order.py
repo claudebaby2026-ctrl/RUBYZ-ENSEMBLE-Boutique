@@ -89,6 +89,22 @@ def get_order_by_display_id(db: Session, display_id: str) -> Optional[Order]:
     )
 
 
+def get_order_by_razorpay_payment_id(db: Session, razorpay_payment_id: str) -> Optional[Order]:
+    """Look up an existing order created from this exact Razorpay payment.
+
+    Used by create_order() to make order creation idempotent: the same
+    successful-payment payload submitted twice (retry after a timeout,
+    double-click, deliberate replay) must produce exactly one Order, not
+    two, and not a 400 error on the retry either.
+    """
+    return (
+        db.query(Order)
+        .options(joinedload(Order.items))
+        .filter(Order.razorpay_payment_id == razorpay_payment_id)
+        .first()
+    )
+
+
 class _PricedCart:
     __slots__ = ("subtotal", "discount", "total", "products", "requested_qty", "coupon")
 
@@ -201,15 +217,50 @@ def create_order(db: Session, order: OrderCreate, user_id: Optional[int] = None)
     effectively single-writer) makes the second request block until the
     first commits, so it sees the already-decremented stock and correctly
     fails instead of overselling.
+
+    IDEMPOTENCY: a given razorpayPaymentId must only ever produce one
+    order — the same successful-payment payload can otherwise arrive
+    twice (a client retry after a timeout, a double-click, or a
+    deliberate replay) and would, without this check, create two orders
+    and decrement stock twice for a single payment. If an order already
+    exists for this payment, that existing order is returned as-is (a
+    legitimate retry should look like success to the client, not a 400).
+
+    This is checked twice:
+      1. Once up front, before any pricing/stock work, so the common case
+         (a retry arriving after the first request already committed)
+         short-circuits immediately without touching stock at all.
+      2. Once again after price_cart() has taken its row lock(s) on the
+         affected Product rows. Two duplicate requests for the same
+         payment necessarily target the same products, so the second
+         request's price_cart() call only proceeds past its lock once the
+         first request has committed (or rolled back) — which means this
+         second check is the one that actually closes the race: without
+         it, two concurrent duplicate requests could both pass check #1
+         before either had committed, then both fall through to create an
+         order and decrement stock a second time.
     """
     # Verify the payment BEFORE touching stock/coupons/DB rows. A forged
-    # or tampered signature never gets this far.
+    # or tampered signature never gets this far. Safe to do before either
+    # idempotency check: verification has no side effects, so verifying a
+    # retry's already-valid signature a second time is harmless.
     if not verify_razorpay_signature(
         order.razorpayOrderId, order.razorpayPaymentId, order.razorpaySignature
     ):
         raise PaymentVerificationError()
 
+    existing = get_order_by_razorpay_payment_id(db, order.razorpayPaymentId)
+    if existing:
+        return existing
+
     priced = price_cart(db, order.items, order.mode, order.couponCode, lock=True)
+
+    # Re-check now that price_cart() holds a row lock on every Product this
+    # order touches (see docstring above for why this closes the race that
+    # check #1 alone can't).
+    existing = get_order_by_razorpay_payment_id(db, order.razorpayPaymentId)
+    if existing:
+        return existing
 
     order_items: List[OrderItem] = [
         OrderItem(
