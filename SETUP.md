@@ -1,64 +1,110 @@
-# RUBYZ Ensemble Boutique — Full-Stack Setup
+# Local Development Setup
 
-## What changed
-- **Database is now the single source of truth.** All mock/demo product and
-  order arrays are gone. Data lives in SQLite via SQLAlchemy (`backend/rubyz.db`,
-  auto-created on first run and seeded once with the original catalog).
-- **Modular FastAPI backend**: `app/models`, `app/schemas`, `app/crud`,
-  `app/routers`, `app/services`, `app/database.py`, `app/config.py`.
-- **Full product CRUD** from the owner dashboard (`/dashboard` → Add Product,
-  Inventory tab edit/delete) — all wired to real REST endpoints.
-- **Next.js frontend talks to FastAPI** through `frontend/lib/api.ts` — no
-  more static imports of product data.
-- **Neon Postgres migration is a one-line change**: set `DATABASE_URL` in
-  `backend/.env` to your Neon connection string. No code changes needed.
+This document is about running the app **locally**. Production already has
+every environment variable configured (Render for the backend, Cloudflare
+Workers for the frontend, Neon Postgres, Cloudflare R2, live Razorpay keys)
+— none of this is needed to deploy, only to develop against your own copy.
 
-> If you have an existing `backend/rubyz.db` from before this pass, delete
-> it (or point `DATABASE_URL` at a fresh database) before starting the
-> server — the `products` and `orders` tables gained new columns
-> (`images`, `email`, `address`) that a pre-existing SQLite file won't have.
+## Prerequisites
 
-## Run it
+- Node.js 20+
+- npm
+- Python 3.11+
+- pip
 
-### Backend
+## Backend
+
 ```bash
 cd backend
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # edit if needed
-uvicorn main:app --reload --port 8000
+cp .env.example .env   # fill in values — see table below
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
-API docs: http://localhost:8000/docs
 
-### Frontend
+Interactive API docs: http://localhost:8000/docs
+
+With no `.env` at all, the backend still boots: it falls back to a local
+SQLite file (`backend/rubyz.db`), local-disk image storage, and a
+zero-config JWT secret. You only need to fill in `.env` for the pieces
+you're actually testing (e.g. Razorpay keys to test checkout, R2 creds to
+test image uploads to the cloud instead of disk).
+
+### Environment variables (`backend/.env`)
+
+| Variable | Purpose | If unset, locally |
+|---|---|---|
+| `DATABASE_URL` | Postgres connection string | Falls back to `sqlite:///./rubyz.db` |
+| `CORS_ORIGINS` | Comma-separated allowed origins | `*` |
+| `DELIVERY_FEE` | Flat delivery fee in ₹, must match `frontend/lib/cart.ts`'s `DELIVERY_FEE` | `150` |
+| `JWT_SECRET` | Signs auth tokens | Insecure dev-only fallback — **must** be overridden anywhere real, but production already has this handled |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Token lifetime | `10080` (7 days) |
+| `OWNER_EMAIL`, `OWNER_PASSWORD`, `OWNER_NAME` | Seeded owner account, created on first boot if no owner exists | `owner@rubyzensemble.in` / `RubyzOwner@123` |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL` | Cloudflare R2 image storage — **all five** required together | If any is missing, image uploads fall back to local disk (`backend/app/static/uploads`), served from `/static/uploads/...` |
+| `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payment gateway — use **Test Mode** keys locally | If unset, `/payments/create-razorpay-order` returns a 500 |
+
+Change `OWNER_PASSWORD` from the default immediately in any environment
+that isn't purely local/throwaway.
+
+## Frontend
+
 ```bash
 cd frontend
 npm install
-cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:8000
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
 npm run dev
 ```
-Storefront: http://localhost:3000
-Owner dashboard: http://localhost:3000/dashboard
 
-## API endpoints
-- `GET /products` — list all products (optional `?category=`)
-- `GET /products/slug/{slug}` — single product by slug
-- `GET /products/{id}` — single product by id
-- `POST /products` — create (owner only, accepts an `images` array of URLs)
-- `PUT /products/{id}` / `PATCH /products/{id}` — update (owner only)
-- `DELETE /products/{id}` — delete (owner only)
-- `POST /uploads/image` — owner-only image upload (multipart `file` field), returns `{ "url": "/static/uploads/<name>.jpg" }`; uploaded files are served back from `/static/uploads/...`
-- `GET /orders`, `POST /orders` (accepts `email`/`address`), `PATCH /orders/{id}/status`
-- `GET /admin/dashboard` — live stats (orders, revenue, low stock) computed from the DB
+- Storefront: http://localhost:3000
+- Owner dashboard: http://localhost:3000/dashboard — log in with the
+  seeded owner account above
 
-## Product photos
-- The owner dashboard's **Add Product** and **Inventory → Edit** screens upload real photos via `POST /uploads/image`; files are saved to `backend/app/static/uploads/` and served publicly from `/static/uploads/...`.
-- Products can have multiple photos (stored as a JSON `images` list). The storefront (product cards, product detail gallery, cart, dashboard inventory) all render the actual uploaded photo, falling back to a neutral placeholder only when a product has none.
+## Database & migrations
 
-## Cart & checkout
-- The cart is now real, shared client-side state (`frontend/lib/cart.ts` + `frontend/lib/useCart.ts`), persisted to `localStorage` and kept in sync across the header badge, `/cart`, and `/checkout` via a custom event (same pattern as the existing auth state).
-- Product detail pages let you pick a size/quantity and add to cart; `/cart` supports quantity changes, removal, and a delivery/pickup toggle with live totals; `/checkout` captures name/phone/email/address and calls the real `POST /orders` endpoint, which now also decrements product stock and updates `sold` counts.
-- **Payment is intentionally still a stub.** The "Pay via Razorpay" button places the order in the database (status `Pending`) but does not call Razorpay — wire up `checkout.js` / order creation with Razorpay's SDK at the point marked in `frontend/app/checkout/page.tsx`.
+There's no Alembic. `backend/app/migrations.py` hand-rolls the handful of
+`ALTER TABLE` statements needed for columns added after the initial
+launch, and runs automatically on startup (see `main.py::on_startup`).
+Both SQLite and Postgres go through the same code path. On a brand-new
+database, `Base.metadata.create_all` alone already creates the current
+schema — the migrations only matter for upgrading an existing database.
 
-## Known limitations / next steps
-- Customers/Coupons/Homepage Editor tabs remain placeholders — no backing data model was requested for these yet.
-- Razorpay payment capture itself isn't implemented (see above) — everything else in the purchase flow is.
+On first run, startup also seeds (in `main.py::on_startup`):
+
+- the initial product catalog (`backend/app/seed_data.py`) — **only** if
+  the `products` table is completely empty; once anything exists, the
+  database is the single source of truth and this is a no-op
+- default taxonomy values for category/occasion/color/fabric — runs every
+  startup, but is purely additive (never resets or removes an owner's
+  changes)
+- the owner account — created once if no `owner`-role user exists yet
+
+## Testing
+
+Two ad-hoc integration scripts — not wired into a test framework/CI, run
+directly:
+
+```bash
+python backend/test_coupons.py                       # coupon-at-checkout flow
+python -m pytest backend/test_order_integrity.py      # payment idempotency, oversell protection, price-tamper protection
+```
+
+Both spin up a throwaway on-disk SQLite database and monkeypatch Razorpay
+signature verification, so no real Razorpay credentials or network access
+are needed to run them.
+
+## Deployment
+
+- **Backend** → Render, deployed from `backend/`. Database is Neon
+  Postgres; image storage is Cloudflare R2; Razorpay is live (not Test
+  Mode). None of this needs local reproduction — it's already configured
+  in Render's environment.
+- **Frontend** → Cloudflare Workers, via OpenNext:
+  ```bash
+  cd frontend
+  npm run cf:deploy    # runs opennextjs-cloudflare build && ... deploy
+  ```
+  `NEXT_PUBLIC_API_URL` for production is set in
+  `frontend/wrangler.jsonc` under `vars`, currently pointing at
+  `https://rubyz-ensemble-boutique.onrender.com`. To preview a Cloudflare
+  Workers build locally before deploying, use `npm run cf:preview`.
