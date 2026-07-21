@@ -99,6 +99,29 @@ order-mutation endpoint.
 See [SETUP.md](SETUP.md) for full local development instructions
 (backend + frontend, environment variables, running the test scripts).
 
+## CI
+
+Every push/PR to `main` runs [.github/workflows/ci.yml](.github/workflows/ci.yml),
+two independent jobs in parallel:
+
+- **Backend tests** — installs `backend/requirements-dev.txt` (the
+  production `requirements.txt` plus `pytest`/`httpx`) and runs the full
+  checkout-integrity test suite: `test_coupons.py`, `test_order_integrity.py`
+  (payment-replay idempotency, no-overselling under concurrent checkout,
+  server-side price recomputation), and `test_razorpay_webhook.py`. None of
+  this needs real Razorpay credentials or a live database — every test runs
+  against a throwaway on-disk SQLite file and monkeypatches signature
+  verification, exactly as described in [SETUP.md](SETUP.md).
+- **Frontend lint + build** — `npm ci`, `npm run lint`, then a plain
+  `npm run build` (not `cf:deploy`/`cf:preview`) to confirm the app actually
+  compiles.
+
+This is verification-only CI. It does not deploy anything — Render and
+Cloudflare Workers deploys continue to happen exactly as they do today,
+outside of GitHub Actions. A PR merged into `main` is expected to have both
+jobs passing; if you're adding a checkout/payment/coupon change, add or
+update a test in the same PR rather than relying on manual testing alone.
+
 ## API reference
 
 See [docs/API.md](docs/API.md) for the full endpoint list, grouped by

@@ -1,0 +1,5 @@
+# Dev/test-only dependencies — not needed in production (Render installs
+# only requirements.txt). Installed by CI to run the pytest suite.
+-r requirements.txt
+pytest==8.3.4
+httpx==0.27.2

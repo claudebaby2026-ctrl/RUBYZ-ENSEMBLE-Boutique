@@ -82,17 +82,26 @@ On first run, startup also seeds (in `main.py::on_startup`):
 
 ## Testing
 
-Two ad-hoc integration scripts — not wired into a test framework/CI, run
-directly:
+These run automatically in CI on every push/PR to `main` (see the
+[CI section of the root README](README.md#ci)). To run them locally first,
+install the extra test-only dependencies (not needed for `uvicorn` itself):
 
 ```bash
-python backend/test_coupons.py                       # coupon-at-checkout flow
-python -m pytest backend/test_order_integrity.py      # payment idempotency, oversell protection, price-tamper protection
+cd backend
+pip install -r requirements-dev.txt   # adds pytest + httpx on top of requirements.txt
 ```
 
-Both spin up a throwaway on-disk SQLite database and monkeypatch Razorpay
-signature verification, so no real Razorpay credentials or network access
-are needed to run them.
+Then:
+
+```bash
+python test_coupons.py                       # coupon-at-checkout flow (ad-hoc script)
+pytest test_order_integrity.py -v            # payment idempotency, oversell protection, price-tamper protection
+pytest test_razorpay_webhook.py -v           # payment.captured webhook: happy path, idempotency, signature checks
+```
+
+All three spin up a throwaway on-disk SQLite database and monkeypatch
+Razorpay signature verification/API calls, so no real Razorpay credentials
+or network access are needed to run them.
 
 ## Deployment
 
