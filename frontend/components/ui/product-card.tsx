@@ -4,6 +4,8 @@ import { Star } from "lucide-react";
 import type { Product } from "@/lib/content";
 import { resolveImageUrl } from "@/lib/api";
 import { LikeButton } from "@/components/product/like-button";
+import { OutOfStockRibbon, StockBadge } from "@/components/product/stock-badge";
+import { getDiscountPercent, getStockStatus } from "@/lib/stock";
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -21,6 +23,8 @@ function Stars({ rating }: { rating: number }) {
 
 export function ProductCard({ product }: { product: Product }) {
   const image = resolveImageUrl(product.images?.[0]);
+  const outOfStock = getStockStatus(product) === "out-of-stock";
+  const discount = getDiscountPercent(product);
   return (
     <motion.article
       whileHover={{ y: -4, scale: 1.01 }}
@@ -28,18 +32,23 @@ export function ProductCard({ product }: { product: Product }) {
       className="group overflow-hidden rounded-[1.5rem] border border-black/5 bg-white p-3 shadow-[0_12px_40px_rgba(17,17,17,0.04)]"
     >
       <div className="relative overflow-hidden rounded-[1.2rem] bg-[#F8F5F1] p-4">
+        <OutOfStockRibbon product={product} />
         <div className="absolute right-3 top-3">
           <LikeButton productId={product.id} />
         </div>
         {image ? (
-          <img src={image} alt={product.name} className="h-64 w-full rounded-[1rem] object-cover" />
+          <img
+            src={image}
+            alt={product.name}
+            className={`h-64 w-full rounded-[1rem] object-cover ${outOfStock ? "grayscale-[70%] opacity-70" : ""}`}
+          />
         ) : (
           <div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
         )}        <div className="mt-3 flex items-center justify-between">
           <span className="rounded-full bg-[#111111] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white">
             {product.badge}
           </span>
-          <span className="text-[11px] uppercase tracking-[0.24em] text-[#B68D40]">{product.availability}</span>
+          <StockBadge product={product} className="text-[11px] uppercase tracking-[0.24em]" />
         </div>
       </div>
 
@@ -55,7 +64,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="mt-3 flex items-center gap-2 text-sm">
           <span className="font-semibold text-[#111111]">₹{product.price}</span>
           <span className="text-xs text-gray-400 line-through">₹{product.mrp}</span>
-          <span className="text-xs text-[#D94F70]">{Math.round((1 - product.price / product.mrp) * 100)}% OFF</span>
+          {discount !== null && <span className="text-xs text-[#D94F70]">{discount}% OFF</span>}
         </div>
       </div>
     </motion.article>

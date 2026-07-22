@@ -8,8 +8,11 @@ import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { getAttributes } from "@/lib/api";
 import type { Product } from "@/lib/content";
 
-const MIN_PRICE = 1500;
-const MAX_PRICE = 12000;
+// Fallback bounds only for the (should-be-impossible) case of an empty
+// catalog — real bounds are derived from the actual products below so the
+// slider always matches what's really in stock.
+const FALLBACK_MIN_PRICE = 0;
+const FALLBACK_MAX_PRICE = 10000;
 
 type SortOption = "Featured" | "Price: Low to High" | "Price: High to Low";
 
@@ -22,11 +25,27 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   // link lands here with the term already applied.
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  // Seeds the category filter from ?category= so the homepage's "Shop by
+  // Category" cards land here pre-filtered instead of on the full catalog.
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
+    const category = searchParams.get("category");
+    return category ? [category] : [];
+  });
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   const [selectedOccasions, setSelectedOccasions] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
+
+  // Derived from the real catalog rather than hardcoded, so the slider's
+  // bounds always reflect what's actually for sale.
+  const MIN_PRICE = products.length ? Math.min(...products.map((p) => p.price)) : FALLBACK_MIN_PRICE;
+  const MAX_PRICE = products.length ? Math.max(...products.map((p) => p.price)) : FALLBACK_MAX_PRICE;
+
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
+  // Keep the slider's ceiling in sync if `products` loads/changes after
+  // mount (e.g. first render before data arrives).
+  useEffect(() => {
+    setMaxPrice(MAX_PRICE);
+  }, [MAX_PRICE]);
   const [sort, setSort] = useState<SortOption>("Featured");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -61,8 +80,12 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     // header while already on this page (client-side navigation doesn't
     // remount the component, so the initial useState value won't update).
     setQuery(searchParams.get("q") ?? "");
+    const category = searchParams.get("category");
+    if (category) {
+      setSelectedCategories((current) => (current.includes(category) ? current : [category]));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.get("q")]);
+  }, [searchParams.get("q"), searchParams.get("category")]);
 
   useEffect(() => {
     let cancelled = false;

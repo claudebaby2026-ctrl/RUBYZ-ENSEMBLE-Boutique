@@ -18,6 +18,7 @@ from app.routers import (
     coupons,
     homepage,
     likes,
+    newsletter,
     orders,
     payments,
     products,
@@ -37,6 +38,7 @@ from app.models import attribute as _attribute_models  # noqa: F401
 from app.models import coupon as _coupon_models  # noqa: F401
 from app.models import homepage as _homepage_models  # noqa: F401
 from app.models import like as _like_models  # noqa: F401
+from app.models import newsletter as _newsletter_models  # noqa: F401
 from app.models import order as _order_models  # noqa: F401
 from app.models import pending_checkout as _pending_checkout_models  # noqa: F401
 from app.models import product as _product_models  # noqa: F401
@@ -87,6 +89,7 @@ app.include_router(payments.router)
 app.include_router(admin.router)
 app.include_router(uploads.router)
 app.include_router(likes.router)
+app.include_router(newsletter.router)
 app.include_router(attributes.router)
 app.include_router(coupons.router)
 app.include_router(homepage.router)

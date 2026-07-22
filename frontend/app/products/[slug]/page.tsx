@@ -5,6 +5,8 @@ import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { AddToCartPanel } from "@/components/product/add-to-cart-panel";
 import { LikeButton } from "@/components/product/like-button";
 import { ProductImageGallery } from "@/components/product/product-image-gallery";
+import { StockBadge } from "@/components/product/stock-badge";
+import { getDiscountPercent } from "@/lib/stock";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +26,23 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   }
 
   const allProducts = await getProducts();
-  const related = allProducts.filter((item) => item.id !== product.id).slice(0, 4);
+  // Prefer pieces that actually share a category or occasion with this
+  // product over an arbitrary "first four others" slice, so "Related
+  // Pieces" is genuinely related rather than coincidentally adjacent.
+  const related = allProducts
+    .filter((item) => item.id !== product.id)
+    .map((item) => ({
+      item,
+      score:
+        Number(item.category === product.category) * 2 +
+        Number(item.occasion === product.occasion),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map(({ item }) => item);
   const images = (product.images ?? []).map((img) => resolveImageUrl(img)).filter(Boolean) as string[];
   const mainImage = images[0];
+  const discount = getDiscountPercent(product);
 
   return (
     <main className="bg-[#FBFAF8]">
@@ -63,6 +79,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <p className="text-3xl text-[#111111]">₹{product.price}</p>
               </div>
               <p className="text-sm text-gray-400 line-through">₹{product.mrp}</p>
+              {discount !== null && (
+                <span className="rounded-full bg-[#D94F70]/10 px-2.5 py-1 text-xs font-semibold text-[#D94F70]">{discount}% OFF</span>
+              )}
             </div>
 
             <AddToCartPanel product={product} image={images[0]} />
@@ -76,7 +95,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[#111111]">Availability</p>
-                  <p className="mt-1 text-sm text-gray-600">{product.availability}</p>
+                  <p className="mt-1 text-sm">
+                    <StockBadge product={product} />
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[#111111]">Sizes</p>

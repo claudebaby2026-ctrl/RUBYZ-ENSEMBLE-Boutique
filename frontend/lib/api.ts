@@ -409,6 +409,13 @@ export function getLikedProductIds(): Promise<number[]> {
   return request<number[]>(`/likes/ids`);
 }
 
+export function subscribeToNewsletter(email: string): Promise<{ subscribed: boolean; already_subscribed: boolean }> {
+  return request(`/newsletter/subscribe`, {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
 export function likeProduct(productId: number): Promise<{ liked: boolean }> {
   return request(`/likes/${productId}`, { method: "POST" });
 }

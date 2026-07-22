@@ -1,5 +1,6 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
+import { NewsletterForm } from "@/components/ui/newsletter-form";
 import { categories, occasions, reviews, brand, type Product } from "@/lib/content";
 import { getProducts, getHomepageConfig } from "@/lib/api";
 import Link from "next/link";
@@ -58,7 +59,15 @@ export default async function HomePage() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
           {categories.map((category) => (
-            <Link key={category.name} href="/collections" className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1 sm:rounded-[1.5rem]">
+            <Link
+              key={category.name}
+              // "Tailoring Services" is its own dedicated page rather than a
+              // filterable product category; everything else deep-links into
+              // Collections pre-filtered to that category instead of
+              // dumping the shopper on the unfiltered catalog.
+              href={category.name === "Tailoring Services" ? "/tailoring" : `/collections?category=${encodeURIComponent(category.name)}`}
+              className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1 sm:rounded-[1.5rem]"
+            >
               <div className="h-32 bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] p-3 sm:h-48 sm:p-6">
                 <div className="flex h-full flex-col justify-between rounded-[1rem] border border-white/60 bg-white/40 p-3 sm:p-5">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-[#B68D40] sm:text-xs sm:tracking-[0.28em]">Featured</p>
@@ -222,10 +231,7 @@ export default async function HomePage() {
             Join Our Fashion Community
           </h2>
           <p className="mt-3 text-sm text-gray-400">Early access to new collections and styling notes.</p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <input placeholder="Your email" className="flex-1 rounded-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white placeholder-gray-500" />
-            <button className="rounded-full bg-[#B68D40] px-6 py-3 text-sm font-medium text-[#111111]">Subscribe</button>
-          </div>
+          <NewsletterForm />
         </div>
       </section>
     </main>

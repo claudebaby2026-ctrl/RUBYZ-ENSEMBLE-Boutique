@@ -7,6 +7,7 @@ import { Check, Minus, MessageCircle, Plus, ShoppingBag } from "lucide-react";
 import type { Product } from "@/lib/content";
 import { brand } from "@/lib/content";
 import { useCart } from "@/lib/useCart";
+import { getStockStatus } from "@/lib/stock";
 
 export function AddToCartPanel({ product, image }: { product: Product; image?: string }) {
   const router = useRouter();
@@ -16,6 +17,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const outOfStock = (product.stock ?? 1) <= 0;
+  const lowStock = getStockStatus(product) === "low-stock";
 
   const handleAdd = () => {
     if (outOfStock) return;
@@ -76,6 +78,10 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
           </button>
         </div>
       </div>
+
+      {lowStock && typeof product.stock === "number" && (
+        <p className="mt-4 text-sm font-medium text-[#B3261E]">Only {product.stock} left — order soon.</p>
+      )}
 
       <div className="mt-8 flex flex-wrap gap-3">
         <button
