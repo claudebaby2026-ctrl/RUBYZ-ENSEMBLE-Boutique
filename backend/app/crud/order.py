@@ -9,7 +9,7 @@ from app.crud import coupon as coupon_crud
 from app.crud.coupon import CouponValidationError
 from app.models.order import Order, OrderItem
 from app.models.product import Product
-from app.schemas.order import OrderCreate, OrderItemCreate
+from app.schemas.order import ManualOrderCreate, OrderCreate, OrderItemCreate
 from app.services.payments import verify_razorpay_signature
 
 
@@ -336,6 +336,74 @@ def create_order(
     # `qty <= product.stock` above under a row lock, so this can no longer
     # go negative — the old max(0, ...) clamp masked oversells instead of
     # preventing them.
+    for product_id, qty in priced.requested_qty.items():
+        product = priced.products[product_id]
+        product.stock = (product.stock or 0) - qty
+        product.sold = (product.sold or 0) + qty
+        product.availability = "In stock" if product.stock > 0 else "Out of stock"
+
+    db.commit()
+    db.refresh(db_order)
+    return db_order
+
+
+def create_manual_order(db: Session, order: ManualOrderCreate) -> Order:
+    """Create an order the owner is logging manually — e.g. after
+
+    confirming availability and taking payment over WhatsApp, rather than
+    through the old automated Razorpay checkout.
+
+    No payment proof exists to verify here (there's no Razorpay flow
+    involved at all), so unlike create_order() above this never calls
+    verify_razorpay_signature. What it does keep, unchanged, is the part
+    that actually matters for preventing oversold stock: price_cart(...,
+    lock=True) re-validates and row-locks stock exactly the same way, so a
+    manual order placed from the dashboard and an (if ever re-enabled)
+    automated order can never both oversell the same limited-stock item.
+    This is the same integrity guarantee, just triggered by the owner's
+    dashboard action instead of a payment webhook/callback.
+
+    payment_status is set to "Manual" (rather than "paid") so the orders
+    table can visibly distinguish these from the old Razorpay-verified
+    rows, since "paid" specifically used to mean "signature-verified by
+    Razorpay" — that claim would no longer be true here.
+    """
+    priced = price_cart(db, order.items, order.mode, order.couponCode, lock=True)
+
+    order_items: List[OrderItem] = [
+        OrderItem(
+            product_id=item.productId,
+            name=item.name,
+            quantity=item.quantity,
+            price=priced.products[item.productId].price,
+        )
+        for item in order.items
+    ]
+
+    display_id = f"#{uuid.uuid4().hex[:6].upper()}"
+    db_order = Order(
+        display_id=display_id,
+        user_id=None,
+        customer_name=order.customerName,
+        phone=order.phone,
+        email=order.email,
+        address=order.address,
+        billing_pincode=order.pincode,
+        billing_city=order.city,
+        billing_state=order.state,
+        mode=order.mode,
+        status="Pending",
+        total=priced.total,
+        coupon_code=priced.coupon.code if priced.coupon else None,
+        discount=priced.discount,
+        payment_status="Manual",
+    )
+    db_order.items = order_items
+    db.add(db_order)
+
+    if priced.coupon:
+        coupon_crud.increment_usage(db, priced.coupon)
+
     for product_id, qty in priced.requested_qty.items():
         product = priced.products[product_id]
         product.stock = (product.stock or 0) - qty

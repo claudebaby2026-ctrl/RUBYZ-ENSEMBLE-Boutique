@@ -7,7 +7,7 @@ from app.crud import order as order_crud
 from app.crud.order import OrderError
 from app.database import get_db
 from app.models.user import User
-from app.schemas.order import OrderCreate, OrderOut, OrderStatusUpdate
+from app.schemas.order import ManualOrderCreate, OrderCreate, OrderOut, OrderStatusUpdate
 from app.security import get_current_owner, get_current_user
 from app.services.shipment_creation import create_shipment_background, order_is_shippable
 
@@ -69,6 +69,27 @@ def create_order(
     # app/services/shipment_creation.py).
     if order_is_shippable(order, db):
         background_tasks.add_task(create_shipment_background, order.id)
+
+    return OrderOut.from_model(order)
+
+
+@router.post("/manual", response_model=OrderOut, status_code=201)
+def create_manual_order(
+    payload: ManualOrderCreate,
+    db: Session = Depends(get_db),
+    current_owner: User = Depends(get_current_owner),
+):
+    # Owner-only: logs an order the owner has already confirmed with the
+    # customer over WhatsApp (or in person) — no payment gateway or
+    # shipment automation involved. Stock is still validated and
+    # decremented through the same row-locked price_cart() path as the
+    # old automated checkout, so this is what keeps online and in-person
+    # inventory from double-selling a limited-stock item.
+    try:
+        order = order_crud.create_manual_order(db, payload)
+    except OrderError as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return OrderOut.from_model(order)
 

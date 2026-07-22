@@ -53,6 +53,31 @@ class OrderCreate(BaseModel):
     razorpaySignature: str
 
 
+class ManualOrderCreate(BaseModel):
+    """Body for POST /orders/manual — owner-only. Used when the owner has
+
+    confirmed a sale over WhatsApp (or in person) and is logging it into
+    the system themselves, instead of the old customer-facing Razorpay
+    checkout. No payment proof is collected here — the owner has already
+    settled payment with the customer through whatever channel they used
+    (WhatsApp, cash, UPI) before logging the order. Stock is still
+    validated and decremented exactly like the automated path (see
+    create_manual_order), so this is what keeps online and in-person
+    inventory in sync and prevents overselling limited stock.
+    """
+
+    customerName: str
+    phone: str
+    email: Optional[str] = None
+    address: Optional[str] = None
+    pincode: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    mode: str = "Delivery"
+    items: List[OrderItemCreate]
+    couponCode: Optional[str] = None
+
+
 class RazorpayOrderCreate(BaseModel):
     """Body for POST /payments/create-razorpay-order. Mirrors the parts of
     OrderCreate needed to compute the amount to charge — everything else

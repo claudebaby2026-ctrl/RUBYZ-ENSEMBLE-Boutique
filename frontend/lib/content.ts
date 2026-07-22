@@ -1,6 +1,11 @@
 export const brand = {
   name: "RUBYZ Ensemble",
   tagline: "Luxury ethnic fashion from Bhubaneswar",
+  // Digits-only, country code first — the format wa.me links require.
+  // Same number as legalEntity.phone ("+91 78730 11110"), reused here so
+  // every WhatsApp deep link (product enquiry, checkout hand-off) points
+  // at one place instead of being hardcoded per call site.
+  whatsappNumber: "917873011110",
   colors: {
     ink: "#111111",
     gold: "#B68D40",

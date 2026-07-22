@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check, Minus, MessageCircle, Plus, ShoppingBag } from "lucide-react";
 import type { Product } from "@/lib/content";
+import { brand } from "@/lib/content";
 import { useCart } from "@/lib/useCart";
 
 export function AddToCartPanel({ product, image }: { product: Product; image?: string }) {
@@ -86,7 +87,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
           {outOfStock ? "Out of Stock" : added ? "Added to Cart" : "Add to Cart"}
         </button>
         <a
-          href={`https://wa.me/917873011110?text=${encodeURIComponent(`Hi! I'm interested in ${product.name} (₹${product.price}).`)}`}
+          href={`https://wa.me/${brand.whatsappNumber}?text=${encodeURIComponent(`Hi! I'm interested in ${product.name} (₹${product.price}).`)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm font-medium text-[#111111]"

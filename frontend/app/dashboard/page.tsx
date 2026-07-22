@@ -22,6 +22,7 @@ import {
   getHomepageConfig, updateHomepageConfig, type HomepageConfig,
   retryShipment, humanizeShipmentStatus,
   getShippingDefaults, updateShippingDefaults, type ShippingDefaultRow,
+  createManualOrder,
   ApiError,
 } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
@@ -565,12 +566,186 @@ function OrdersTable({
   );
 }
 
+function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated: (order: Order) => void }) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [mode, setMode] = useState<"Delivery" | "Pickup">("Delivery");
+  const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", pincode: "", city: "", state: "" });
+  const [lines, setLines] = useState<{ productId: number; size: string; quantity: number }[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getProducts().then(setProducts).finally(() => setLoadingProducts(false));
+  }, []);
+
+  const addLine = () => {
+    const first = products[0];
+    if (!first) return;
+    setLines((current) => [...current, { productId: first.id, size: (first.sizes?.[0]) || "Free Size", quantity: 1 }]);
+  };
+
+  const updateLine = (index: number, patch: Partial<{ productId: number; size: string; quantity: number }>) => {
+    setLines((current) => current.map((line, i) => (i === index ? { ...line, ...patch } : line)));
+  };
+
+  const removeLine = (index: number) => {
+    setLines((current) => current.filter((_, i) => i !== index));
+  };
+
+  const total = lines.reduce((sum, line) => {
+    const product = products.find((p) => p.id === line.productId);
+    return sum + (product ? product.price * line.quantity : 0);
+  }, 0);
+
+  const pincodeValid = /^\d{6}$/.test(form.pincode.trim());
+  const valid =
+    form.name.trim().length > 1 &&
+    form.phone.trim().length >= 8 &&
+    lines.length > 0 &&
+    (mode === "Pickup" || (form.address.trim().length > 4 && pincodeValid));
+
+  const submit = async () => {
+    if (!valid || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const order = await createManualOrder({
+        customerName: form.name,
+        phone: form.phone,
+        email: form.email || undefined,
+        address: mode === "Delivery" ? form.address : "Store pickup",
+        pincode: mode === "Delivery" ? form.pincode.trim() : undefined,
+        city: mode === "Delivery" ? form.city.trim() || undefined : undefined,
+        state: mode === "Delivery" ? form.state.trim() || undefined : undefined,
+        mode,
+        items: lines.map((line) => {
+          const product = products.find((p) => p.id === line.productId);
+          return {
+            productId: line.productId,
+            name: `${product?.name ?? "Item"} (${line.size})`,
+            quantity: line.quantity,
+            price: product?.price ?? 0,
+          };
+        }),
+      });
+      onCreated(order);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not log this order.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.4rem] bg-white p-6 shadow-xl">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Log an Order</h2>
+          <button onClick={onClose} className="rounded-full p-1.5 text-gray-400 hover:text-[#111111]" aria-label="Close">
+            <X size={18} />
+          </button>
+        </div>
+        <p className="mt-1 text-sm text-gray-500">
+          For an order confirmed over WhatsApp or in person. This decrements stock immediately, same as an
+          automated order would.
+        </p>
+
+        <div className="mt-5 space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+            <input placeholder="Phone number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+          </div>
+          <input placeholder="Email (optional)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+          <div className="flex gap-2">
+            <button onClick={() => setMode("Delivery")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Delivery" ? "bg-[#111111] text-white" : "border border-black/10"}`}>Delivery</button>
+            <button onClick={() => setMode("Pickup")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Pickup" ? "bg-[#111111] text-white" : "border border-black/10"}`}>Pickup</button>
+          </div>
+          {mode === "Delivery" && (
+            <>
+              <textarea placeholder="Delivery address" rows={2} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="w-full rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+              <div className="grid grid-cols-3 gap-3">
+                <input placeholder="Pincode" inputMode="numeric" maxLength={6} value={form.pincode} onChange={(e) => setForm({ ...form, pincode: e.target.value.replace(/\D/g, "") })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+                <input placeholder="City" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+                <input placeholder="State" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="mt-6">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-[#111111]">Items</p>
+            <button onClick={addLine} disabled={loadingProducts || products.length === 0} className="text-xs uppercase tracking-[0.18em] text-[#B68D40] hover:underline disabled:opacity-50">
+              + Add item
+            </button>
+          </div>
+          {loadingProducts ? (
+            <p className="mt-3 text-sm text-gray-400">Loading products…</p>
+          ) : lines.length === 0 ? (
+            <p className="mt-3 text-sm text-gray-400">No items added yet.</p>
+          ) : (
+            <div className="mt-3 space-y-2">
+              {lines.map((line, index) => {
+                const product = products.find((p) => p.id === line.productId);
+                const sizes = product?.sizes?.length ? product.sizes : ["Free Size"];
+                return (
+                  <div key={index} className="flex flex-wrap items-center gap-2 rounded-[0.8rem] border border-black/10 p-2.5">
+                    <select
+                      value={line.productId}
+                      onChange={(e) => {
+                        const p = products.find((prod) => prod.id === Number(e.target.value));
+                        updateLine(index, { productId: Number(e.target.value), size: p?.sizes?.[0] || "Free Size" });
+                      }}
+                      className="min-w-0 flex-1 rounded-[0.6rem] border border-black/10 px-2 py-1.5 text-sm"
+                    >
+                      {products.map((p) => <option key={p.id} value={p.id}>{p.name} — ₹{p.price}</option>)}
+                    </select>
+                    <select value={line.size} onChange={(e) => updateLine(index, { size: e.target.value })} className="rounded-[0.6rem] border border-black/10 px-2 py-1.5 text-sm">
+                      {sizes.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <input
+                      type="number"
+                      min={1}
+                      value={line.quantity}
+                      onChange={(e) => updateLine(index, { quantity: Math.max(1, Number(e.target.value) || 1) })}
+                      className="w-16 rounded-[0.6rem] border border-black/10 px-2 py-1.5 text-sm"
+                    />
+                    <button onClick={() => removeLine(index)} className="rounded-full p-1.5 text-gray-400 hover:text-[#D94F70]" aria-label="Remove item">
+                      <X size={14} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {lines.length > 0 && (
+            <p className="mt-3 text-right text-sm font-semibold text-[#111111]">Total: ₹{total.toLocaleString()}</p>
+          )}
+        </div>
+
+        {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
+
+        <button
+          onClick={submit}
+          disabled={!valid || submitting}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {submitting && <Loader2 size={14} className="animate-spin" />}
+          {submitting ? "Logging Order…" : "Log Order"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [retryingId, setRetryingId] = useState<string | null>(null);
   const [retryError, setRetryError] = useState<string | null>(null);
+  const [showLogOrder, setShowLogOrder] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -624,9 +799,24 @@ function Orders() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Orders</h1>
-          <p className="mt-1 text-sm text-gray-500">Every order from the storefront appears here automatically.</p>
+          <p className="mt-1 text-sm text-gray-500">Log orders confirmed over WhatsApp or in person here.</p>
         </div>
+        <button
+          onClick={() => setShowLogOrder(true)}
+          className="flex items-center gap-2 rounded-full bg-[#111111] px-5 py-2.5 text-sm font-medium text-white"
+        >
+          <Plus size={16} /> Log Order
+        </button>
       </div>
+      {showLogOrder && (
+        <LogOrderModal
+          onClose={() => setShowLogOrder(false)}
+          onCreated={(order) => {
+            setOrders((current) => [order, ...current]);
+            setShowLogOrder(false);
+          }}
+        />
+      )}
       {retryError && <p className="mt-4 text-sm text-[#D94F70]">{retryError}</p>}
       {loading ? (
         <p className="mt-8 text-sm text-gray-400">Loading orders…</p>

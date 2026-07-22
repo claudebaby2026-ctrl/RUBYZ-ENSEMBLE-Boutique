@@ -320,6 +320,26 @@ export function createOrder(payload: {
   return request<Order>(`/orders`, { method: "POST", body: JSON.stringify(payload) });
 }
 
+// Owner-only: logs an order the owner has already confirmed with the
+// customer over WhatsApp (or in person). No payment proof is sent — the
+// backend still re-validates stock/price/coupon from the DB and
+// decrements stock exactly like the old automated checkout did, just
+// without any Razorpay involvement. See POST /orders/manual.
+export function createManualOrder(payload: {
+  customerName: string;
+  phone: string;
+  email?: string;
+  address?: string;
+  pincode?: string;
+  city?: string;
+  state?: string;
+  mode: string;
+  items: { productId?: number; name: string; quantity: number; price: number }[];
+  couponCode?: string;
+}): Promise<Order> {
+  return request<Order>(`/orders/manual`, { method: "POST", body: JSON.stringify(payload) });
+}
+
 // Owner-only manual retry for a failed/not-yet-created shipment. On
 // success the backend returns the new tracking fields directly (not a
 // full Order) so the dashboard can patch just that row; on failure it

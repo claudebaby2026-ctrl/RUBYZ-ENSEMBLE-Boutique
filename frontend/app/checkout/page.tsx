@@ -1,37 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import Script from "next/script";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2, AlertTriangle, Tag, X } from "lucide-react";
+import { CheckCircle2, Loader2, Tag, X } from "lucide-react";
 import { useCart } from "@/lib/useCart";
 import { useAuth } from "@/lib/useAuth";
 import { DELIVERY_FEE } from "@/lib/cart";
-import { createOrder, createRazorpayOrder, getShippingRate, validateCoupon, ApiError, type Coupon } from "@/lib/api";
+import { brand } from "@/lib/content";
+import { validateCoupon, type Coupon } from "@/lib/api";
 
 const MODE_KEY = "rubyz_delivery_mode";
-
-// Minimal shape of the `window.Razorpay` constructor injected by
-// https://checkout.razorpay.com/v1/checkout.js — the full type is much
-// bigger, this just covers what we use below.
-declare global {
-  interface Window {
-    Razorpay?: new (options: Record<string, unknown>) => {
-      open: () => void;
-      on: (event: string, handler: (response: unknown) => void) => void;
-    };
-  }
-}
-
-// Shape of the object Razorpay's checkout modal passes to the `handler`
-// option once a payment succeeds — this is what we forward to POST /orders
-// as payment proof for server-side signature verification.
-type RazorpaySuccessResponse = {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-};
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -39,20 +18,11 @@ export default function CheckoutPage() {
   const { user, loading: authLoading } = useAuth();
   const [mode, setMode] = useState<"Delivery" | "Pickup">("Delivery");
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", pincode: "", city: "", state: "" });
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isStockError, setIsStockError] = useState(false);
-  const [orderId, setOrderId] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
-  // Live courier rate for the current pincode, replacing the flat
-  // DELIVERY_FEE when Shiprocket has one. `null` means "not fetched yet /
-  // fell back" — the flat fee is used in that case, silently (no error
-  // shown to the customer; see the effect below).
-  const [liveRate, setLiveRate] = useState<{ fee: number; courierName?: string | null } | null>(null);
-  const [rateLoading, setRateLoading] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(MODE_KEY);
@@ -82,53 +52,19 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     // Nothing left to check out — bounce back to the cart, unless we just
-    // placed an order (in which case the cart has been intentionally cleared).
-    if (hydrated && items.length === 0 && !orderId) {
+    // sent the order to WhatsApp (in which case the cart has been
+    // intentionally cleared).
+    if (hydrated && items.length === 0 && !sent) {
       router.replace("/cart");
     }
-  }, [hydrated, items.length, orderId, router]);
+  }, [hydrated, items.length, sent, router]);
 
   const pincodeValid = /^\d{6}$/.test(form.pincode.trim());
 
-  // Debounced live rate lookup: whenever the pincode looks complete (and
-  // we're in Delivery mode with items in the cart), ask the backend for a
-  // real courier rate. This must never block or error out checkout — on
-  // any failure we simply keep using the flat DELIVERY_FEE, silently.
-  useEffect(() => {
-    if (mode !== "Delivery" || !pincodeValid || items.length === 0) {
-      setLiveRate(null);
-      return;
-    }
-    let cancelled = false;
-    setRateLoading(true);
-    const timer = setTimeout(() => {
-      getShippingRate({
-        pincode: form.pincode.trim(),
-        items: items.map((item) => ({
-          productId: item.productId,
-          category: item.category || "",
-          quantity: item.quantity,
-        })),
-      })
-        .then((quote) => {
-          if (cancelled) return;
-          setLiveRate(quote.live ? { fee: quote.fee, courierName: quote.courierName } : null);
-        })
-        .catch(() => {
-          // Silent fallback — the flat fee below already covers this case.
-          if (!cancelled) setLiveRate(null);
-        })
-        .finally(() => {
-          if (!cancelled) setRateLoading(false);
-        });
-    }, 500);
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [mode, pincodeValid, form.pincode, items]);
-
-  const deliveryFee = mode === "Delivery" ? (liveRate?.fee ?? DELIVERY_FEE) : 0;
+  // No live courier-rate lookup anymore — the owner confirms delivery
+  // details directly over WhatsApp, so this is just the flat estimate
+  // shown up front for the customer's reference.
+  const deliveryFee = mode === "Delivery" ? DELIVERY_FEE : 0;
   const discount = appliedCoupon
     ? Math.min(
         appliedCoupon.discount_type === "flat"
@@ -166,112 +102,45 @@ export default function CheckoutPage() {
     setCouponError(null);
   };
 
-  const orderItemsPayload = () =>
-    items.map((item) => ({
-      productId: item.productId,
-      name: `${item.name} (${item.size})`,
-      quantity: item.quantity,
-      price: item.price,
-    }));
-
-  // Two-step Razorpay flow:
-  //  1. Ask the backend to price this cart from the DB and open a
-  //     matching Razorpay order (POST /payments/create-razorpay-order).
-  //  2. Launch the Razorpay checkout modal for that order. Only once the
-  //     customer actually completes payment does its `handler` callback
-  //     fire — at which point we call POST /orders with the payment proof
-  //     (order id, payment id, signature), which the backend verifies
-  //     server-side before creating the order and decrementing stock.
-  const placeOrder = async () => {
-    if (!valid || submitting) return;
-    if (!window.Razorpay) {
-      setError("Payment gateway is still loading — please try again in a moment.");
-      return;
+  // Builds the itemized order summary the owner sees in WhatsApp — this is
+  // a request for the owner to confirm (nothing is charged, reserved, or
+  // written to the database yet). The owner checks real stock and, once
+  // confirmed with the customer, logs it from the dashboard's Orders tab,
+  // which is what actually decrements stock.
+  const buildWhatsAppMessage = () => {
+    const lines = [
+      `Hi! I'd like to place an order from ${brand.name}.`,
+      "",
+      ...items.map((item) => `• ${item.name} (${item.size}) x${item.quantity} — ₹${item.price * item.quantity}`),
+      "",
+      `Subtotal: ₹${subtotal.toLocaleString()}`,
+    ];
+    if (appliedCoupon) lines.push(`Coupon (${appliedCoupon.code}): −₹${discount.toLocaleString()}`);
+    lines.push(`${mode === "Delivery" ? `Delivery: ₹${deliveryFee}` : "Pickup: in-store"}`);
+    lines.push(`Estimated total: ₹${total.toLocaleString()}`);
+    lines.push("");
+    lines.push(`Name: ${form.name}`);
+    lines.push(`Phone: ${form.phone}`);
+    if (form.email) lines.push(`Email: ${form.email}`);
+    if (mode === "Delivery") {
+      lines.push(`Delivery address: ${form.address}, ${form.city ? `${form.city}, ` : ""}${form.state ? `${form.state} ` : ""}${form.pincode}`.trim());
+    } else {
+      lines.push("Mode: Store pickup");
     }
-    setSubmitting(true);
-    setError(null);
-    setIsStockError(false);
-    try {
-      const rpOrder = await createRazorpayOrder({
-        mode,
-        items: orderItemsPayload(),
-        couponCode: appliedCoupon?.code,
-      });
+    return lines.join("\n");
+  };
 
-      const rzp = new window.Razorpay({
-        key: rpOrder.keyId,
-        amount: rpOrder.amount,
-        currency: rpOrder.currency,
-        order_id: rpOrder.razorpayOrderId,
-        name: "RUBYZ Ensemble",
-        description: "Order payment",
-        prefill: {
-          name: form.name,
-          email: form.email || undefined,
-          contact: form.phone,
-        },
-        theme: { color: "#B68D40" },
-        handler: async (response: RazorpaySuccessResponse) => {
-          try {
-            const order = await createOrder({
-              customerName: form.name,
-              phone: form.phone,
-              email: form.email || undefined,
-              address: mode === "Delivery" ? form.address : "Store pickup",
-              pincode: mode === "Delivery" ? form.pincode.trim() : undefined,
-              city: mode === "Delivery" ? form.city.trim() || undefined : undefined,
-              state: mode === "Delivery" ? form.state.trim() || undefined : undefined,
-              mode,
-              items: orderItemsPayload(),
-              total,
-              // The server never trusts this total/discount — it only
-              // reads the code and re-validates + recomputes the discount
-              // itself (see POST /orders). This is purely what the
-              // customer already saw.
-              couponCode: appliedCoupon?.code,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            });
-            setOrderId(order.id);
-            clearCart();
-          } catch (e) {
-            // A 400 here means the server rejected the order after
-            // re-checking stock/prices (or the coupon) against the DB —
-            // most commonly because someone else bought the last unit, or
-            // the coupon expired / hit its usage limit, while checkout was
-            // open. Payment was already captured by Razorpay in this case;
-            // it will be auto-refunded, and the message says so.
-            setIsStockError(e instanceof ApiError && e.status === 400);
-            setError(e instanceof Error ? e.message : "Could not confirm your order. Please contact us if you were charged.");
-          } finally {
-            setSubmitting(false);
-          }
-        },
-        modal: {
-          // Customer closed the checkout modal without paying — just
-          // reset the button, nothing was charged or created.
-          ondismiss: () => setSubmitting(false),
-        },
-      });
-
-      rzp.on("payment.failed", () => {
-        setError("Payment failed. Please try again or use a different payment method.");
-        setSubmitting(false);
-      });
-
-      rzp.open();
-    } catch (e) {
-      setIsStockError(e instanceof ApiError && e.status === 400);
-      setError(e instanceof Error ? e.message : "Could not start payment. Please try again.");
-      setSubmitting(false);
-    }
+  const sendToWhatsApp = () => {
+    if (!valid) return;
+    const url = `https://wa.me/${brand.whatsappNumber}?text=${encodeURIComponent(buildWhatsAppMessage())}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    clearCart();
+    setSent(true);
   };
 
   if (!hydrated || authLoading || !user) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center bg-[#FBFAF8]">
-        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Loading checkout…
         </div>
@@ -279,14 +148,15 @@ export default function CheckoutPage() {
     );
   }
 
-  if (orderId) {
+  if (sent) {
     return (
       <main className="bg-[#FBFAF8]">
         <section className="mx-auto max-w-2xl px-5 py-20 text-center lg:px-8">
           <CheckCircle2 size={40} className="mx-auto mb-4 text-[#3A9D5D]" />
-          <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Order Confirmed</h1>
+          <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Sent to WhatsApp</h1>
           <p className="mt-3 text-sm text-gray-600">
-            Your order <strong>{orderId}</strong> has been placed. Our team will reach out on {form.phone} to confirm {mode.toLowerCase()}.
+            We&apos;ve opened WhatsApp with your order details. Please send the message so our team can confirm
+            availability and pricing with you directly — nothing has been charged yet.
           </p>
           <Link href="/" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm text-white">
             Continue Shopping
@@ -298,11 +168,14 @@ export default function CheckoutPage() {
 
   return (
     <main className="bg-[#FBFAF8]">
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">
             <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Checkout</h1>
+            <p className="mt-2 text-sm text-gray-500">
+              We don&apos;t take payment on the site — fill in your details below and we&apos;ll send your order
+              to WhatsApp, where our team confirms availability and pricing with you directly.
+            </p>
             <div className="mt-6 space-y-4">
               <input
                 placeholder="Full name"
@@ -385,15 +258,7 @@ export default function CheckoutPage() {
                 </div>
               ))}
               <div className="flex justify-between">
-                <span>
-                  Delivery
-                  {mode === "Delivery" && rateLoading && (
-                    <Loader2 size={11} className="ml-1.5 inline animate-spin align-middle text-gray-400" />
-                  )}
-                  {liveRate?.courierName && (
-                    <span className="ml-1.5 text-xs text-gray-400">via {liveRate.courierName}</span>
-                  )}
-                </span>
+                <span>Delivery</span>
                 <span>{deliveryFee ? `₹${deliveryFee}` : "Free"}</span>
               </div>
               {appliedCoupon && (
@@ -402,7 +267,8 @@ export default function CheckoutPage() {
                   <span>−₹{discount.toLocaleString()}</span>
                 </div>
               )}
-              <div className="mt-3 flex justify-between border-t border-black/5 pt-3 text-base font-semibold text-[#111111]"><span>Total</span><span>₹{total.toLocaleString()}</span></div>
+              <div className="mt-3 flex justify-between border-t border-black/5 pt-3 text-base font-semibold text-[#111111]"><span>Estimated Total</span><span>₹{total.toLocaleString()}</span></div>
+              <p className="text-xs text-gray-400">Final pricing and delivery is confirmed by our team over WhatsApp.</p>
             </div>
 
             <div className="mt-6">
@@ -438,26 +304,12 @@ export default function CheckoutPage() {
               {couponError && <p className="mt-2 text-xs text-[#D94F70]">{couponError}</p>}
             </div>
 
-            {error && (
-              <div className="mt-4 flex items-start gap-2 rounded-2xl border border-[#D94F70]/20 bg-[#D94F70]/5 p-4 text-sm text-[#D94F70]">
-                <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-                <div>
-                  <p>{error}</p>
-                  {isStockError && (
-                    <Link href="/cart" className="mt-1 inline-block font-medium underline underline-offset-2">
-                      Back to cart to adjust quantities
-                    </Link>
-                  )}
-                </div>
-              </div>
-            )}
             <button
-              onClick={placeOrder}
-              disabled={!valid || submitting}
-              className="mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-[#B68D40] px-6 py-3 text-sm font-medium text-[#111111] disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={sendToWhatsApp}
+              disabled={!valid}
+              className="mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {submitting && <Loader2 size={14} className="animate-spin" />}
-              {submitting ? "Placing Order…" : "Pay via Razorpay"}
+              Send Order via WhatsApp
             </button>
             {!valid && (
               <p className="mt-3 text-center text-xs text-gray-400">
