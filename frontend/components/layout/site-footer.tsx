@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Camera, MessageCircle, PhoneCall } from "lucide-react";
 import { brand, footerLinks, legalLinks } from "@/lib/content";
+import { garmentTypeLinks } from "@/lib/seo-categories";
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-black/5 bg-[#111111] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.1fr_0.9fr_0.8fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.1fr_0.7fr_0.7fr_0.8fr] lg:px-8">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">RUBYZ Ensemble</p>
           <h2 className="mt-3 text-2xl text-white" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -22,6 +23,22 @@ export function SiteFooter() {
             {footerLinks.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="transition hover:text-white">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Direct internal links to the highest-intent garment-type SEO
+            pages (lehenga/anarkali/chikankari/sarees) — see SEO plan §2,
+            which calls these out as needing nav/footer link equity. */}
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Shop</p>
+          <ul className="mt-4 space-y-3 text-sm text-gray-300">
+            {garmentTypeLinks.map((link) => (
+              <li key={link.slug}>
+                <Link href={`/collections/${link.slug}`} className="transition hover:text-white">
                   {link.label}
                 </Link>
               </li>

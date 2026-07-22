@@ -1,3 +1,9 @@
+// Canonical site origin — reused anywhere we need to build an absolute URL
+// (canonical tags, JSON-LD @id/url fields, sitemap entries) instead of
+// hardcoding the domain in multiple files. Matches app/layout.tsx's
+// metadataBase.
+export const SITE_URL = "https://rubyzensemble.in";
+
 export const brand = {
   name: "RUBYZ Ensemble",
   tagline: "Luxury ethnic fashion from Bhubaneswar",

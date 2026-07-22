@@ -3,6 +3,7 @@ import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { NewsletterForm } from "@/components/ui/newsletter-form";
 import { categories, occasions, reviews, brand, type Product } from "@/lib/content";
 import { getProducts, getHomepageConfig } from "@/lib/api";
+import { slugForCategoryName } from "@/lib/seo-categories";
 import Link from "next/link";
 import { ArrowRight, Camera, Check, Gem, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
 
@@ -62,10 +63,16 @@ export default async function HomePage() {
             <Link
               key={category.name}
               // "Tailoring Services" is its own dedicated page rather than a
-              // filterable product category; everything else deep-links into
-              // Collections pre-filtered to that category instead of
-              // dumping the shopper on the unfiltered catalog.
-              href={category.name === "Tailoring Services" ? "/tailoring" : `/collections?category=${encodeURIComponent(category.name)}`}
+              // filterable product category; every other category now has a
+              // real server-rendered landing page at /collections/[slug]
+              // (see lib/seo-categories.ts) instead of the client-filtered
+              // ?category= query string, so this card links to an
+              // indexable URL with unique on-page copy.
+              href={
+                category.name === "Tailoring Services"
+                  ? "/tailoring"
+                  : `/collections/${slugForCategoryName(category.name) ?? ""}`
+              }
               className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1 sm:rounded-[1.5rem]"
             >
               <div className="h-32 bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] p-3 sm:h-48 sm:p-6">

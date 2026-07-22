@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug, getProducts, resolveImageUrl } from "@/lib/api";
@@ -6,14 +7,64 @@ import { AddToCartPanel } from "@/components/product/add-to-cart-panel";
 import { LikeButton } from "@/components/product/like-button";
 import { ProductImageGallery } from "@/components/product/product-image-gallery";
 import { StockBadge } from "@/components/product/stock-badge";
-import { getDiscountPercent } from "@/lib/stock";
+import { getDiscountPercent, getStockStatus } from "@/lib/stock";
+import { SITE_URL } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
-export function generateMetadata() {
+// Truncates to a max length on a word boundary and appends an ellipsis,
+// so meta descriptions don't cut off mid-word.
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  return `${cut.slice(0, cut.lastIndexOf(" "))}…`;
+}
+
+// Was previously a hardcoded "Product Details" string on every product —
+// the single biggest on-page SEO gap (see SEO plan §3): every product page
+// had identical metadata, so Google had no way to tell "Rose Embroidered
+// Anarkali" apart from any other product in search results or link
+// previews. Now built per-product from real data.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+
+  if (!product) {
+    return { title: "Product Not Found" };
+  }
+
+  // layout.tsx's title.template ("%s | RUBYZ Ensemble") already appends the
+  // brand, so the per-product title just needs the product name itself —
+  // avoids double-appending "RUBYZ Ensemble".
+  const title = product.name;
+  const description = truncate(
+    `${product.description} ₹${product.price}. Shop luxury ethnic wear at RUBYZ Ensemble, Bhubaneswar.`,
+    155
+  );
+  const canonical = `${SITE_URL}/products/${product.slug}`;
+  const image = resolveImageUrl(product.images?.[0]);
+
   return {
-    title: "Product Details",
-    description: "Luxury boutique product details with fabric, care and availability information.",
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: "website",
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
   };
 }
 
@@ -43,9 +94,57 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const images = (product.images ?? []).map((img) => resolveImageUrl(img)).filter(Boolean) as string[];
   const mainImage = images[0];
   const discount = getDiscountPercent(product);
+  const canonicalUrl = `${SITE_URL}/products/${product.slug}`;
+
+  // Product structured data (SEO plan §4b) — reuses getStockStatus() so
+  // availability here always matches the stock badge shown on the page
+  // instead of duplicating that logic. No aggregateRating is included
+  // since reviews aren't yet tied to real per-product data (see §4b note
+  // on avoiding fake ratings, which is a Google Merchant Center policy
+  // violation).
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: images,
+    description: product.description,
+    sku: String(product.id),
+    brand: { "@type": "Brand", name: "RUBYZ Ensemble" },
+    offers: {
+      "@type": "Offer",
+      url: canonicalUrl,
+      priceCurrency: "INR",
+      price: product.price,
+      availability:
+        getStockStatus(product) === "out-of-stock"
+          ? "https://schema.org/OutOfStock"
+          : "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: product.category, item: `${SITE_URL}/collections` },
+      { "@type": "ListItem", position: 3, name: product.name, item: canonicalUrl },
+    ],
+  };
 
   return (
     <main className="bg-[#FBFAF8]">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[1.5rem] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:rounded-[2rem] sm:p-5">
@@ -54,7 +153,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <LikeButton productId={product.id} className="rounded-full border border-black/10 p-2" />
             </div>
             {mainImage ? (
-              <ProductImageGallery images={images} alt={product.name} />
+              <ProductImageGallery images={images} alt={product.name} fabric={product.fabric} />
             ) : (
               <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
             )}
