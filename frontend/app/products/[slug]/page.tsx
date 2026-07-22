@@ -32,7 +32,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     <main className="bg-[#FBFAF8]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[2rem] border border-black/5 bg-white p-5 shadow-[0_20px_60px_rgba(17,17,17,0.06)]">
+          <div className="rounded-[1.5rem] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:rounded-[2rem] sm:p-5">
             <div className="mb-4 flex items-center justify-between">
               <span className="rounded-full bg-[#111111] px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white">{product.badge}</span>
               <LikeButton productId={product.id} className="rounded-full border border-black/10 p-2" />
@@ -40,7 +40,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {mainImage ? (
               <ProductImageGallery images={images} alt={product.name} />
             ) : (
-              <div className="h-[440px] rounded-[1.4rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+              <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
             )}
           </div>
 
@@ -102,7 +102,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           </div>
           <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#111111] hover:text-[#B68D40]">View All</Link>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {related.map((item) => (
             <AnimatedProductCard key={item.id} product={item} />
           ))}

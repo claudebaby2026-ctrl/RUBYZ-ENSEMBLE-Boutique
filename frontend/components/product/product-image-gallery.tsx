@@ -9,12 +9,12 @@ export function ProductImageGallery({ images, alt }: { images: string[]; alt: st
   return (
     <div>
       {mainImage ? (
-        <img src={mainImage} alt={alt} className="h-[440px] w-full rounded-[1.4rem] object-cover" />
+        <img src={mainImage} alt={alt} className="h-[320px] w-full rounded-[1.1rem] object-cover sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
       ) : (
-        <div className="h-[440px] rounded-[1.4rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+        <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
       )}
       {images.length > 1 && (
-        <div className="mt-4 grid grid-cols-4 gap-3">
+        <div className="mt-3 grid grid-cols-4 gap-2 sm:mt-4 sm:gap-3">
           {images.slice(0, 4).map((src, index) => (
             <button
               key={src + index}

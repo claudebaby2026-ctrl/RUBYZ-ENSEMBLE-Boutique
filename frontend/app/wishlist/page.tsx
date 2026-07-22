@@ -68,7 +68,7 @@ export default function WishlistPage() {
             </Link>
           </div>
         ) : (
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 xl:grid-cols-3">
             {products.map((product) => (
               <AnimatedProductCard key={product.id} product={product} />
             ))}

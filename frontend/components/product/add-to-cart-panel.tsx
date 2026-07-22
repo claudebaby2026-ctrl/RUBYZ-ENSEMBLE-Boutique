@@ -61,7 +61,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
         <div className="mt-2 flex items-center gap-3">
           <button
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            className="rounded-full border border-black/10 p-2"
+            className="rounded-full border border-black/10 p-2.5"
             aria-label="Decrease quantity"
           >
             <Minus size={14} />
@@ -69,7 +69,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
           <span className="w-6 text-center text-sm">{quantity}</span>
           <button
             onClick={() => setQuantity((q) => Math.min(q + 1, product.stock ?? 99))}
-            className="rounded-full border border-black/10 p-2"
+            className="rounded-full border border-black/10 p-2.5"
             aria-label="Increase quantity"
           >
             <Plus size={14} />

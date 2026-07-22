@@ -47,7 +47,7 @@ export default async function HomePage() {
         <AnimatedHero heading={heroHeading} subheading={heroSubheading} />
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Curated Edits</p>
@@ -56,17 +56,17 @@ export default async function HomePage() {
             </h2>
           </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
           {categories.map((category) => (
-            <Link key={category.name} href="/collections" className="group overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1">
-              <div className="h-48 bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] p-6">
-                <div className="flex h-full flex-col justify-between rounded-[1rem] border border-white/60 bg-white/40 p-5">
-                  <p className="text-xs uppercase tracking-[0.28em] text-[#B68D40]">Featured</p>
+            <Link key={category.name} href="/collections" className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1 sm:rounded-[1.5rem]">
+              <div className="h-32 bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] p-3 sm:h-48 sm:p-6">
+                <div className="flex h-full flex-col justify-between rounded-[1rem] border border-white/60 bg-white/40 p-3 sm:p-5">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#B68D40] sm:text-xs sm:tracking-[0.28em]">Featured</p>
                   <div>
-                    <h3 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+                    <h3 className="text-base text-[#111111] sm:text-xl" style={{ fontFamily: "Playfair Display, serif" }}>
                       {category.name}
                     </h3>
-                    <p className="mt-2 text-sm text-gray-600">{category.tag}</p>
+                    <p className="mt-1 text-xs text-gray-600 sm:mt-2 sm:text-sm">{category.tag}</p>
                   </div>
                 </div>
               </div>
@@ -75,7 +75,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#F8F5F1] py-16">
+      <section className="bg-[#F8F5F1] py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mb-8 flex items-end justify-between">
             <div>
@@ -88,7 +88,7 @@ export default async function HomePage() {
               View All
             </Link>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
             {featuredProducts.map((product) => (
               <AnimatedProductCard key={product.id} product={product} />
             ))}
@@ -96,7 +96,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Most Loved</p>
@@ -105,14 +105,14 @@ export default async function HomePage() {
             </h2>
           </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {bestSellers.map((product) => (
             <AnimatedProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
 
-      <section className="bg-[#111111] py-16 text-white">
+      <section className="bg-[#111111] py-10 sm:py-16 text-white">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Inspired Looks</p>
           <h2 className="mb-8 text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -136,21 +136,21 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <h2 className="mb-8 text-center text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
           Shop by Occasion
         </h2>
-        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-7">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-7">
           {occasions.map((occasion) => (
-            <div key={occasion} className="rounded-[1rem] border border-black/5 bg-white p-4 text-center shadow-sm">
-              <Gem size={18} className="mx-auto mb-3 text-[#B68D40]" />
+            <div key={occasion} className="rounded-[1rem] border border-black/5 bg-white p-3 text-center shadow-sm sm:p-4">
+              <Gem size={18} className="mx-auto mb-2 text-[#B68D40] sm:mb-3" />
               <p className="text-sm text-[#111111]">{occasion}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="bg-[#F8F5F1] py-16">
+      <section className="bg-[#F8F5F1] py-10 sm:py-16">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
           {[
             { icon: Sparkles, title: "Premium Fabrics" },
@@ -166,7 +166,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Made for You</p>
@@ -186,7 +186,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#F8F5F1] py-16">
+      <section className="bg-[#F8F5F1] py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <h2 className="mb-8 text-center text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
             Customer Reviews
@@ -202,21 +202,21 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="mb-8 flex items-center justify-center gap-2">
           <Camera size={18} className="text-[#D94F70]" />
           <h2 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
             @{brand.name.toLowerCase().replace(/\s+/g, "")}
           </h2>
         </div>
-        <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
           {Array.from({ length: 12 }).map((_, index) => (
             <div key={index} className="aspect-square rounded-[1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
           ))}
         </div>
       </section>
 
-      <section className="bg-[#111111] py-16 text-white">
+      <section className="bg-[#111111] py-10 sm:py-16 text-white">
         <div className="mx-auto max-w-xl px-5 text-center lg:px-8">
           <h2 className="text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
             Join Our Fashion Community

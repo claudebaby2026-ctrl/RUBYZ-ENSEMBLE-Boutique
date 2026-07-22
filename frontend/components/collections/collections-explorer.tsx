@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
@@ -27,6 +28,23 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [sort, setSort] = useState<SortOption>("Featured");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Lock body scroll while the mobile filter drawer is open.
+  useEffect(() => {
+    if (filtersOpen) {
+      const original = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = original;
+      };
+    }
+  }, [filtersOpen]);
 
   // Filter option lists come from the taxonomy API (the same table the
   // owner dashboard's "add new" dropdowns write to), so any category,
@@ -118,6 +136,15 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     selectedColors.length > 0 ||
     maxPrice < MAX_PRICE;
 
+  // Count of active filter *facets* (excludes the search box, which has its
+  // own visible input) — drives the badge on the mobile Filters button.
+  const activeFilterCount =
+    selectedCategories.length +
+    selectedFabrics.length +
+    selectedOccasions.length +
+    selectedColors.length +
+    (maxPrice < MAX_PRICE ? 1 : 0);
+
   const clearFilters = () => {
     setQuery("");
     setSelectedCategories([]);
@@ -126,6 +153,95 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     setSelectedColors([]);
     setMaxPrice(MAX_PRICE);
   };
+
+  // Shared between the desktop sidebar and the mobile drawer so the two
+  // never drift out of sync.
+  const filterFields = (
+    <div className="space-y-6">
+      <div>
+        <p className="text-sm font-semibold text-[#111111]">Category</p>
+        <div className="mt-3 space-y-2 text-sm text-gray-600">
+          {categoryOptions.map((category) => (
+            <label key={category} className="flex items-center gap-2 py-0.5">
+              <input
+                type="checkbox"
+                checked={selectedCategories.includes(category)}
+                onChange={() => setSelectedCategories((current) => toggle(current, category))}
+                className="h-4 w-4 accent-[#B68D40]"
+              />
+              {category}
+            </label>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-[#111111]">Price</p>
+        <div className="mt-3">
+          <input
+            type="range"
+            min={MIN_PRICE}
+            max={MAX_PRICE}
+            step={100}
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(Number(e.target.value))}
+            className="w-full accent-[#B68D40]"
+          />
+          <div className="mt-2 flex justify-between text-sm text-gray-600">
+            <span>₹{MIN_PRICE.toLocaleString()}</span>
+            <span>Up to ₹{maxPrice.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-[#111111]">Fabric</p>
+        <div className="mt-3 space-y-2 text-sm text-gray-600">
+          {fabricOptions.map((fabric) => (
+            <label key={fabric} className="flex items-center gap-2 py-0.5">
+              <input
+                type="checkbox"
+                checked={selectedFabrics.includes(fabric)}
+                onChange={() => setSelectedFabrics((current) => toggle(current, fabric))}
+                className="h-4 w-4 accent-[#B68D40]"
+              />
+              {fabric}
+            </label>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-[#111111]">Occasion</p>
+        <div className="mt-3 space-y-2 text-sm text-gray-600">
+          {occasionOptions.map((occasion) => (
+            <label key={occasion} className="flex items-center gap-2 py-0.5">
+              <input
+                type="checkbox"
+                checked={selectedOccasions.includes(occasion)}
+                onChange={() => setSelectedOccasions((current) => toggle(current, occasion))}
+                className="h-4 w-4 accent-[#B68D40]"
+              />
+              {occasion}
+            </label>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-[#111111]">Color</p>
+        <div className="mt-3 space-y-2 text-sm text-gray-600">
+          {colorOptions.map((color) => (
+            <label key={color} className="flex items-center gap-2 py-0.5">
+              <input
+                type="checkbox"
+                checked={selectedColors.includes(color)}
+                onChange={() => setSelectedColors((current) => toggle(current, color))}
+                className="h-4 w-4 accent-[#B68D40]"
+              />
+              {color}
+            </label>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -153,7 +269,8 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[260px_1fr]">
-        <aside className="h-fit rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm">
+        {/* Desktop sidebar — always visible from lg upward. */}
+        <aside className="hidden h-fit rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm lg:block">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={16} className="text-[#B68D40]" />
@@ -165,86 +282,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
               </button>
             )}
           </div>
-          <div className="mt-6 space-y-6">
-            <div>
-              <p className="text-sm font-semibold text-[#111111]">Category</p>
-              <div className="mt-3 space-y-2 text-sm text-gray-600">
-                {categoryOptions.map((category) => (
-                  <label key={category} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(category)}
-                      onChange={() => setSelectedCategories((current) => toggle(current, category))}
-                    />
-                    {category}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[#111111]">Price</p>
-              <div className="mt-3">
-                <input
-                  type="range"
-                  min={MIN_PRICE}
-                  max={MAX_PRICE}
-                  step={100}
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(Number(e.target.value))}
-                  className="w-full accent-[#B68D40]"
-                />
-                <div className="mt-2 flex justify-between text-sm text-gray-600">
-                  <span>₹{MIN_PRICE.toLocaleString()}</span>
-                  <span>Up to ₹{maxPrice.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[#111111]">Fabric</p>
-              <div className="mt-3 space-y-2 text-sm text-gray-600">
-                {fabricOptions.map((fabric) => (
-                  <label key={fabric} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={selectedFabrics.includes(fabric)}
-                      onChange={() => setSelectedFabrics((current) => toggle(current, fabric))}
-                    />
-                    {fabric}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[#111111]">Occasion</p>
-              <div className="mt-3 space-y-2 text-sm text-gray-600">
-                {occasionOptions.map((occasion) => (
-                  <label key={occasion} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={selectedOccasions.includes(occasion)}
-                      onChange={() => setSelectedOccasions((current) => toggle(current, occasion))}
-                    />
-                    {occasion}
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[#111111]">Color</p>
-              <div className="mt-3 space-y-2 text-sm text-gray-600">
-                {colorOptions.map((color) => (
-                  <label key={color} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={selectedColors.includes(color)}
-                      onChange={() => setSelectedColors((current) => toggle(current, color))}
-                    />
-                    {color}
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
+          <div className="mt-6">{filterFields}</div>
         </aside>
 
         <div>
@@ -256,19 +294,35 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                 <>Showing {filtered.length} luxurious piece{filtered.length === 1 ? "" : "s"}</>
               )}
             </p>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortOption)}
-              className="rounded-full border border-black/10 bg-[#F8F5F1] px-3 py-2 text-sm"
-            >
-              <option>Featured</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-            </select>
+            <div className="flex items-center gap-2">
+              {/* Mobile/tablet-only trigger — the sidebar above is hidden below lg,
+                  so this is the only way to reach filters on a phone. */}
+              <button
+                onClick={() => setFiltersOpen(true)}
+                className="relative flex items-center gap-2 rounded-full border border-black/10 bg-[#F8F5F1] px-4 py-2 text-sm lg:hidden"
+              >
+                <SlidersHorizontal size={15} className="text-[#B68D40]" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#111111] px-1 text-[10px] font-semibold text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortOption)}
+                className="rounded-full border border-black/10 bg-[#F8F5F1] px-3 py-2 text-sm"
+              >
+                <option>Featured</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+              </select>
+            </div>
           </div>
 
           {filtered.length === 0 ? (
-            <div className="rounded-[1.5rem] border border-dashed border-black/10 bg-white p-16 text-center">
+            <div className="rounded-[1.5rem] border border-dashed border-black/10 bg-white p-10 text-center sm:p-16">
               <p className="text-lg text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
                 No pieces match your search
               </p>
@@ -280,7 +334,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
               )}
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 xl:grid-cols-3">
               {filtered.map((product) => (
                 <AnimatedProductCard key={product.id} product={product} />
               ))}
@@ -288,6 +342,53 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
           )}
         </div>
       </div>
+
+      {/* Mobile filter drawer — portaled to <body>, slides in from the left,
+          mirrors the same filter fields as the desktop sidebar. */}
+      {mounted && filtersOpen && createPortal(
+        <div className="lg:hidden">
+          <button
+            aria-label="Close filters overlay"
+            onClick={() => setFiltersOpen(false)}
+            className="fixed inset-0 z-40 bg-black/40"
+          />
+          <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[86vw] max-w-sm flex-col bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-black/5 px-5 py-5">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal size={16} className="text-[#B68D40]" />
+                <p className="text-sm font-semibold uppercase tracking-[0.28em]">Filters</p>
+              </div>
+              <button
+                onClick={() => setFiltersOpen(false)}
+                className="rounded-full border border-black/10 p-2"
+                aria-label="Close filters"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-6">{filterFields}</div>
+
+            <div className="flex gap-3 border-t border-black/5 px-5 py-4">
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="flex-1 rounded-full border border-black/10 px-4 py-3 text-sm font-medium text-[#111111]"
+                >
+                  Clear all
+                </button>
+              )}
+              <button
+                onClick={() => setFiltersOpen(false)}
+                className="flex-1 rounded-full bg-[#111111] px-4 py-3 text-sm font-medium text-white"
+              >
+                Show {filtered.length} result{filtered.length === 1 ? "" : "s"}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }
