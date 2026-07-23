@@ -99,7 +99,14 @@ export const footerLinks = [
 export const legalEntity = {
   legalName: "Rubyz Ensemble",
   gstin: "[GSTIN, if registered]",
-  address: "Plot 42, Janpath Lane, Bhubaneswar, Odisha, India",
+  streetAddress: "Home-Town Road, Plot no 93, near Prayash Park, Satya Nagar",
+  addressLocality: "Bhubaneswar",
+  addressRegion: "Odisha",
+  postalCode: "751007",
+  addressCountry: "India",
+  get address() {
+    return `${this.streetAddress}, ${this.addressLocality}, ${this.addressRegion} ${this.postalCode}, ${this.addressCountry}`;
+  },
   email: "hello@rubyzensemble.in",
   phone: "+91 78730 11110",
 };
