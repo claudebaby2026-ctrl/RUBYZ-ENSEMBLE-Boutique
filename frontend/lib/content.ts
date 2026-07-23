@@ -99,7 +99,7 @@ export const footerLinks = [
 export const legalEntity = {
   legalName: "Rubyz Ensemble",
   gstin: "[GSTIN, if registered]",
-  streetAddress: "Home-Town Road, Plot no 93, near Prayash Park, Satya Nagar",
+  streetAddress: "RUBYZ-ENSEMBLE Boutique, Home-Town Road, Plot no 93, near Prayash Park, Satya Nagar",
   addressLocality: "Bhubaneswar",
   addressRegion: "Odisha",
   postalCode: "751007",
