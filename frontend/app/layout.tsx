@@ -67,6 +67,11 @@ const clothingStoreJsonLd = {
     addressRegion: "Odisha",
     addressCountry: "IN",
   },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 20.281671804720553,
+    longitude: 85.84590634595567,
+  },
   priceRange: "₹₹-₹₹₹",
   openingHoursSpecification: [
     {
