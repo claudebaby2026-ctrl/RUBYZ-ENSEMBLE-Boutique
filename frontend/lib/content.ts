@@ -97,7 +97,7 @@ export const footerLinks = [
 // actual legal name and GSTIN before going live / submitting these pages
 // for Razorpay or Shiprocket verification.
 export const legalEntity = {
-  legalName: "[Legal / registered business name of RUBYZ Ensemble]",
+  legalName: "Rubyz Ensemble",
   gstin: "[GSTIN, if registered]",
   address: "Plot 42, Janpath Lane, Bhubaneswar, Odisha, India",
   email: "hello@rubyzensemble.in",
