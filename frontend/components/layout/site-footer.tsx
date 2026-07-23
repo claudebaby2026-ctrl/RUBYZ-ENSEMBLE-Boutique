@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Camera, MessageCircle, PhoneCall } from "lucide-react";
-import { brand, footerLinks, legalLinks } from "@/lib/content";
+import { brand, footerLinks, legalEntity, legalLinks } from "@/lib/content";
 import { garmentTypeLinks } from "@/lib/seo-categories";
 
 export function SiteFooter() {
@@ -49,18 +49,18 @@ export function SiteFooter() {
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Visit</p>
           <p className="mt-4 text-sm leading-7 text-gray-300">
-            Plot 42, Janpath Lane, Bhubaneswar<br />
-            +91 78730 11110<br />
-            hello@rubyzensemble.in
+            {legalEntity.streetAddress}, {legalEntity.addressLocality}<br />
+            {legalEntity.phone}<br />
+            {legalEntity.email}
           </p>
           <div className="mt-6 flex gap-3">
-            <a href="https://instagram.com" aria-label="Instagram" className="rounded-full border border-white/20 p-2 text-white">
+            <a href="https://www.instagram.com/rubyzensemble_" aria-label="Instagram" className="rounded-full border border-white/20 p-2 text-white">
               <Camera size={16} />
             </a>
-            <a href="https://wa.me/919876543210" aria-label="WhatsApp" className="rounded-full border border-white/20 p-2 text-white">
+            <a href={`https://wa.me/${brand.whatsappNumber}`} aria-label="WhatsApp" className="rounded-full border border-white/20 p-2 text-white">
               <MessageCircle size={16} />
             </a>
-            <a href="tel:+919876543210" aria-label="Phone" className="rounded-full border border-white/20 p-2 text-white">
+            <a href={`tel:${legalEntity.phone.replace(/\s+/g, "")}`} aria-label="Phone" className="rounded-full border border-white/20 p-2 text-white">
               <PhoneCall size={16} />
             </a>
           </div>
