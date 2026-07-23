@@ -11,7 +11,7 @@ export default function ShippingPolicyPage() {
     <LegalPage
       eyebrow="Legal"
       title="Shipping Policy"
-      updated="19 July 2026"
+      updated="24 July 2026"
       intro={
         <p>
           This policy explains how we process, pack and ship your order from {brand.name}. It applies to every
@@ -23,9 +23,10 @@ export default function ShippingPolicyPage() {
           heading: "1. Order processing time",
           body: (
             <p>
-              Ready-to-ship items are typically packed and handed over to our courier partner within 1–2 business
-              days of order confirmation. Items that involve custom tailoring or alterations may take longer — the
-              expected timeline will be shared with you at the time of order.
+              Orders are placed via WhatsApp from our checkout page and are confirmed once we reply confirming
+              stock, final amount and delivery details. Ready-to-ship items are typically packed and handed over to
+              our courier partner within 1–2 business days of that confirmation. Items that involve custom tailoring
+              or alterations may take longer — the expected timeline will be shared with you at the time of order.
             </p>
           ),
         },

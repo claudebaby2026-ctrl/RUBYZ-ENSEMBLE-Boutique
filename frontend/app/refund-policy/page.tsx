@@ -11,7 +11,7 @@ export default function RefundPolicyPage() {
     <LegalPage
       eyebrow="Legal"
       title="Cancellation & Refund Policy"
-      updated="19 July 2026"
+      updated="24 July 2026"
       intro={
         <p>
           We want you to love what you order from {brand.name}. This policy explains how cancellations, returns,
@@ -23,9 +23,10 @@ export default function RefundPolicyPage() {
           heading: "1. Cancelling an order",
           body: (
             <p>
-              You may cancel an order free of charge any time before it has been dispatched, by contacting us at{" "}
+              You may cancel an order free of charge any time before it has been dispatched, by messaging us on the
+              same WhatsApp chat used to place the order, or by contacting us at{" "}
               <a href={`mailto:${legalEntity.email}`} className="underline">{legalEntity.email}</a> or{" "}
-              {legalEntity.phone} with your order ID. Once an order has been dispatched, it can no longer be
+              {legalEntity.phone} with your order details. Once an order has been dispatched, it can no longer be
               cancelled — but you may be eligible to return it after delivery, per the terms below.
             </p>
           ),
@@ -84,9 +85,10 @@ export default function RefundPolicyPage() {
           body: (
             <p>
               Once a returned item is received and inspected (typically within 2–3 business days), approved refunds
-              are processed within 5–7 business days to your original payment method via Razorpay. For payments made
-              by other means, refunds are made via bank transfer to the account you provide. Delivery charges are
-              non-refundable unless the return is due to our error or a defective item.
+              are processed within 5–7 business days. Since payment is arranged directly with us over WhatsApp/phone
+              rather than through an online payment gateway, refunds are made via UPI or bank transfer to an account
+              you provide, or reversed by the same method you originally paid with, wherever that&apos;s possible.
+              Delivery charges are non-refundable unless the return is due to our error or a defective item.
             </p>
           ),
         },

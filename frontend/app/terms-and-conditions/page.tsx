@@ -11,7 +11,7 @@ export default function TermsPage() {
     <LegalPage
       eyebrow="Legal"
       title="Terms & Conditions"
-      updated="19 July 2026"
+      updated="24 July 2026"
       intro={
         <p>
           These Terms & Conditions govern your access to and use of rubyzensemble.in, operated by {legalEntity.legalName}
@@ -43,22 +43,41 @@ export default function TermsPage() {
         {
           heading: "3. Orders and acceptance",
           body: (
-            <p>
-              Placing an order is an offer to purchase, which we may accept or decline (for example, in cases of
-              pricing errors, suspected fraud, or unavailability of stock). An order is confirmed only once payment
-              has been successfully processed and you receive confirmation from us.
-            </p>
+            <>
+              <p>
+                We do not take orders or payment directly through the website. Adding items to your cart and filling
+                in your details at checkout prepares an itemised order message which you send to us on WhatsApp at{" "}
+                {legalEntity.phone}. Sending that message is an offer to purchase, which we may accept or decline —
+                for example, in cases of pricing errors, suspected fraud, or unavailability of stock.
+              </p>
+              <p>
+                An order is confirmed only once we reply on WhatsApp confirming stock, final amount and delivery
+                details, and we record it as a confirmed order on our end. Nothing is charged, reserved, or
+                guaranteed simply because your cart or WhatsApp message was sent.
+              </p>
+            </>
           ),
         },
         {
           heading: "4. Payments",
           body: (
-            <p>
-              Payments are processed securely through Razorpay. We do not store your card, UPI, or net-banking
-              details — these are handled directly by Razorpay under its own security standards and terms. In the
-              event a payment is deducted but an order is not confirmed, please contact us with your transaction
-              reference so we can assist.
-            </p>
+            <>
+              <p>
+                We do not use a payment gateway on this website, and no card, UPI or net-banking details are
+                collected or processed through rubyzensemble.in. Once your order is confirmed on WhatsApp, payment
+                is arranged directly between you and us, by UPI, bank transfer, or cash on delivery, as agreed in
+                that conversation.
+              </p>
+              <p>
+                Only make payment through the means agreed directly with us over WhatsApp or by phone at{" "}
+                {legalEntity.phone}, and only after your order has been confirmed. We are not responsible for
+                payments made to any other number, account, or person claiming to represent {brand.name}. If you
+                have any doubt about the authenticity of a WhatsApp number or payment request, please verify with us
+                using the contact details on our{" "}
+                <a href="/contact" className="underline">Contact page</a>{" "}
+                before paying.
+              </p>
+            </>
           ),
         },
         {

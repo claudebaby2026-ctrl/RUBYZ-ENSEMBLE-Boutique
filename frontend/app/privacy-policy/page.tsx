@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
     <LegalPage
       eyebrow="Legal"
       title="Privacy Policy"
-      updated="19 July 2026"
+      updated="24 July 2026"
       intro={
         <p>
           {legalEntity.legalName} (&ldquo;{brand.name}&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;) respects your
@@ -31,6 +31,11 @@ export default function PrivacyPolicyPage() {
                 <li>Delivery and billing address</li>
                 <li>Order history and items you&apos;ve liked or added to your wishlist</li>
                 <li>Any measurements or preferences you share with us for tailoring requests</li>
+                <li>
+                  Order details you send us on WhatsApp to place an order — the items, sizes and quantities in your
+                  cart, your name, phone number and delivery address, and any coupon applied — which are pre-filled
+                  into a message from our checkout page for you to review and send
+                </li>
                 <li>Messages you send us via the contact form, email, phone or WhatsApp</li>
               </ul>
               <p>
@@ -60,13 +65,21 @@ export default function PrivacyPolicyPage() {
               <p>We do not sell your personal information. We share it only where necessary to run the business:</p>
               <ul className="list-disc space-y-1 pl-5">
                 <li>
-                  <span className="text-[#111111]">Payment processing</span> — payments are handled by Razorpay, our
-                  payment gateway partner. We do not store your card, UPI or net-banking credentials on our servers;
-                  these are collected and processed directly by Razorpay in accordance with{" "}
-                  <a href="https://razorpay.com/privacy/" target="_blank" rel="noreferrer" className="underline">
-                    Razorpay&apos;s Privacy Policy
+                  <span className="text-[#111111]">Order placement over WhatsApp</span> — when you tap &ldquo;Place
+                  order on WhatsApp&rdquo; at checkout, your name, phone number, delivery address and order summary
+                  are sent as a WhatsApp message to our business number. That message is transmitted and stored by
+                  WhatsApp/Meta in accordance with{" "}
+                  <a
+                    href="https://www.whatsapp.com/legal/privacy-policy"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline"
+                  >
+                    WhatsApp&apos;s Privacy Policy
                   </a>
-                  .
+                  . We do not collect or process any card, UPI or net-banking credentials through this website — we
+                  do not use a payment gateway, and payment is arranged directly with us over WhatsApp/phone after
+                  your order is confirmed.
                 </li>
                 <li>
                   <span className="text-[#111111]">Shipping and logistics</span> — your name, phone number and
