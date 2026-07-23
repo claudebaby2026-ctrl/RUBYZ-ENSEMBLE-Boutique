@@ -65,12 +65,41 @@ export default async function CategoryLandingPage({
     ],
   };
 
+  // CollectionPage + ItemList schema (SEO improvement) — the breadcrumb
+  // above tells Google where this page sits in the site, but nothing
+  // previously told it that the page itself is a listing of multiple
+  // products. This mirrors the same product fields already used in the
+  // Product schema on app/products/[slug]/page.tsx, capped at the first 20
+  // so the payload doesn't balloon on large categories.
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `${config.label} Collection`,
+    description: config.description,
+    url: `${SITE_URL}/collections/${config.slug}`,
+    isPartOf: { "@type": "WebSite", name: "RUBYZ Ensemble", url: SITE_URL },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: matched.slice(0, 20).map((product, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${SITE_URL}/products/${product.slug}`,
+        name: product.name,
+      })),
+    },
+  };
+
   return (
     <main className="bg-[#FBFAF8]">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <nav className="mb-6 text-xs uppercase tracking-[0.24em] text-gray-400">

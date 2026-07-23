@@ -35,7 +35,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.7,
     }));
-  } catch {
+  } catch (error) {
+    // Surfaced in build/deploy logs so a down backend at build time gets
+    // noticed and the sitemap gets regenerated once it recovers, instead of
+    // silently shipping a sitemap with zero product URLs.
+    console.error("sitemap: failed to fetch products, omitting product routes for this build", error);
     productRoutes = [];
   }
 

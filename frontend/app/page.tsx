@@ -158,10 +158,18 @@ export default async function HomePage() {
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-7">
           {occasions.map((occasion) => (
-            <div key={occasion} className="rounded-[1rem] border border-black/5 bg-white p-3 text-center shadow-sm sm:p-4">
+            // Was a static, unlinked tag — now a real internal link into the
+            // filtered collections view so these keywords (Wedding, Eid,
+            // Diwali, etc.) actually pass link equity and are crawlable
+            // rather than being dead-end decoration.
+            <Link
+              key={occasion}
+              href={`/collections?occasion=${encodeURIComponent(occasion)}`}
+              className="group rounded-[1rem] border border-black/5 bg-white p-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-[#B68D40]/50 sm:p-4"
+            >
               <Gem size={18} className="mx-auto mb-2 text-[#B68D40] sm:mb-3" />
-              <p className="text-sm text-[#111111]">{occasion}</p>
-            </div>
+              <p className="text-sm text-[#111111] group-hover:text-[#B68D40]">{occasion}</p>
+            </Link>
           ))}
         </div>
       </section>

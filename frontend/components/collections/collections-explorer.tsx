@@ -32,7 +32,13 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     return category ? [category] : [];
   });
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
-  const [selectedOccasions, setSelectedOccasions] = useState<string[]>([]);
+  // Seeds the occasion filter from ?occasion= so the homepage's "Shop by
+  // Occasion" tags (Wedding, Eid, Diwali, etc.) land here pre-filtered
+  // instead of on the unfiltered full catalog.
+  const [selectedOccasions, setSelectedOccasions] = useState<string[]>(() => {
+    const occasion = searchParams.get("occasion");
+    return occasion ? [occasion] : [];
+  });
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
 
   // Derived from the real catalog rather than hardcoded, so the slider's

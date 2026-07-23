@@ -35,11 +35,19 @@ export const metadata: Metadata = {
     description: "Luxury ethnic fashion boutique in Bhubaneswar",
     type: "website",
     locale: "en_IN",
+    // Site-wide fallback so the homepage and any page without its own
+    // generateMetadata() (e.g. /collections, /about) still shows a preview
+    // image on WhatsApp/Instagram/Pinterest shares instead of a blank card.
+    // Product and category pages override this with their own image via
+    // their own generateMetadata(). Replace public/og-image.jpg with real
+    // brand photography when available — this is a placeholder.
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "RUBYZ Ensemble — Luxury Ethnic Fashion" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "RUBYZ Ensemble",
     description: "Luxury ethnic fashion boutique in Bhubaneswar",
+    images: ["/og-image.jpg"],
   },
 };
 
