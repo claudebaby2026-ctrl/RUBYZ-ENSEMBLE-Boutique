@@ -74,7 +74,7 @@ def on_startup() -> None:
     run_migrations(engine)
     db = SessionLocal()
     try:
-        seed_if_empty(db)
+        #seed_if_empty(db) # disabled before going customer-facing — don't reseed demo products
         seed_owner(db)
         seed_attributes(db)
         seed_shipping_defaults(db)
