@@ -55,12 +55,7 @@ export const metadata: Metadata = {
 // ClothingStore subtype (rather than generic Organization) since that's
 // what makes the site eligible for the local "map pack" on "boutique near
 // me" style searches.
-//
-// NOTE: `geo` (lat/long) is intentionally omitted rather than filled with
-// placeholder coordinates — fake geo data is worse than none for local
-// ranking. Once the Google Business Profile listing (SEO plan §6) is
-// confirmed, add:
-//   geo: { "@type": "GeoCoordinates", latitude: <real lat>, longitude: <real lng> }
+
 const clothingStoreJsonLd = {
   "@context": "https://schema.org",
   "@type": "ClothingStore",
@@ -70,9 +65,10 @@ const clothingStoreJsonLd = {
   email: legalEntity.email,
   address: {
     "@type": "PostalAddress",
-    streetAddress: legalEntity.address.split(",").slice(0, -2).join(",").trim(),
-    addressLocality: "Bhubaneswar",
-    addressRegion: "Odisha",
+    streetAddress: legalEntity.streetAddress,
+    addressLocality: legalEntity.addressLocality,
+    addressRegion: legalEntity.addressRegion,
+    postalCode: legalEntity.postalCode,
     addressCountry: "IN",
   },
   geo: {
