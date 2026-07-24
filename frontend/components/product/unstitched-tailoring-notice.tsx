@@ -67,12 +67,3 @@ export function UnstitchedTailoringNotice({ productSlug, productName }: { produc
     </div>
   );
 }
-
-// Products are treated as "unstitched" if the category or fabric text says
-// so — the dashboard has no dedicated flag for this yet, so tagging a
-// product's category as e.g. "Unstitched Suits" is enough to trigger this
-// notice, with no backend changes needed.
-export function isUnstitchedProduct(category?: string, fabric?: string): boolean {
-  const haystack = `${category ?? ""} ${fabric ?? ""}`.toLowerCase();
-  return haystack.includes("unstitch");
-}
