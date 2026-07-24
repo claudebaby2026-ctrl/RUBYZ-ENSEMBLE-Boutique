@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle, BarChart3, Boxes, Check, ClipboardList, LayoutGrid, Plus, Ticket,
@@ -59,6 +59,9 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
   const [error, setError] = useState<string | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const dragStart = useRef({ x: 0, y: 0 });
+  const tileRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -88,50 +91,88 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
     onChange(next);
   };
 
+  // Pointer-based drag-and-drop (works for mouse AND touch, unlike the
+  // HTML5 drag-and-drop API which touch devices don't fire at all).
+  const findIndexAt = (x: number, y: number): number | null => {
+    for (const [index, el] of tileRefs.current.entries()) {
+      const rect = el.getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        return index;
+      }
+    }
+    return null;
+  };
+
+  const handlePointerDown = (index: number) => (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    dragStart.current = { x: e.clientX, y: e.clientY };
+    setDragIndex(index);
+    setOverIndex(index);
+    setDragOffset({ x: 0, y: 0 });
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (dragIndex === null) return;
+    e.preventDefault();
+    setDragOffset({ x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y });
+    const hovered = findIndexAt(e.clientX, e.clientY);
+    if (hovered !== null) setOverIndex(hovered);
+  };
+
+  const endDrag = () => {
+    if (dragIndex !== null && overIndex !== null) reorder(dragIndex, overIndex);
+    setDragIndex(null);
+    setOverIndex(null);
+    setDragOffset({ x: 0, y: 0 });
+  };
+
   return (
     <div>
       {images.length > 1 && (
-        <p className="mb-2 text-[11px] text-gray-500">Drag to reorder — the first photo is the cover image.</p>
+        <p className="mb-2 text-[11px] text-gray-500">Press and drag a photo to reorder — the first photo is the cover image.</p>
       )}
       <div className="flex flex-wrap gap-3">
-        {images.map((img, index) => (
-          <div
-            key={img}
-            draggable
-            onDragStart={() => setDragIndex(index)}
-            onDragEnter={() => setOverIndex(index)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              if (dragIndex !== null) reorder(dragIndex, index);
-              setDragIndex(null);
-              setOverIndex(null);
-            }}
-            onDragEnd={() => {
-              setDragIndex(null);
-              setOverIndex(null);
-            }}
-            className={`relative h-24 w-20 cursor-grab overflow-hidden rounded-[0.8rem] border transition active:cursor-grabbing ${
-              overIndex === index && dragIndex !== null && dragIndex !== index
-                ? "border-[#B68D40] ring-2 ring-[#B68D40]/40"
-                : "border-black/10"
-            } ${dragIndex === index ? "opacity-40" : ""}`}
-          >
-            <img src={resolveImageUrl(img)} alt="Product" className="h-full w-full object-cover" draggable={false} />
-            {index === 0 && (
-              <span className="absolute bottom-1 left-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] uppercase tracking-wide text-white">
-                Cover
-              </span>
-            )}
-            <button
-              onClick={() => removeImage(img)}
-              className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white"
-              aria-label="Remove image"
+        {images.map((img, index) => {
+          const isDragging = dragIndex === index;
+          return (
+            <div
+              key={img}
+              ref={(el) => {
+                if (el) tileRefs.current.set(index, el);
+                else tileRefs.current.delete(index);
+              }}
+              onPointerDown={handlePointerDown(index)}
+              onPointerMove={handlePointerMove}
+              onPointerUp={endDrag}
+              onPointerCancel={endDrag}
+              style={{
+                touchAction: "none",
+                transform: isDragging ? `translate(${dragOffset.x}px, ${dragOffset.y}px)` : undefined,
+                zIndex: isDragging ? 20 : undefined,
+              }}
+              className={`relative h-24 w-20 cursor-grab select-none overflow-hidden rounded-[0.8rem] border transition-colors active:cursor-grabbing ${
+                overIndex === index && dragIndex !== null && dragIndex !== index
+                  ? "border-[#B68D40] ring-2 ring-[#B68D40]/40"
+                  : "border-black/10"
+              } ${isDragging ? "opacity-90 shadow-lg" : ""}`}
             >
-              <X size={10} />
-            </button>
-          </div>
-        ))}
+              <img src={resolveImageUrl(img)} alt="Product" className="h-full w-full object-cover" draggable={false} />
+              {index === 0 && (
+                <span className="absolute bottom-1 left-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] uppercase tracking-wide text-white">
+                  Cover
+                </span>
+              )}
+              <button
+                onClick={() => removeImage(img)}
+                className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white"
+                aria-label="Remove image"
+              >
+                <X size={10} />
+              </button>
+            </div>
+          );
+        })}
         <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B68D40] hover:text-[#B68D40]">
           {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
           <span className="text-[10px]">{uploading ? "Uploading" : "Add photo"}</span>
