@@ -92,6 +92,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     .slice(0, 4)
     .map(({ item }) => item);
   const images = (product.images ?? []).map((img) => resolveImageUrl(img)).filter(Boolean) as string[];
+  const videos = (product.videos ?? []).map((v) => resolveImageUrl(v)).filter(Boolean) as string[];
   const mainImage = images[0];
   const discount = getDiscountPercent(product);
   const canonicalUrl = `${SITE_URL}/products/${product.slug}`;
@@ -153,7 +154,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <LikeButton productId={product.id} className="rounded-full border border-black/10 p-2" />
             </div>
             {mainImage ? (
-              <ProductImageGallery images={images} alt={product.name} fabric={product.fabric} />
+              <ProductImageGallery images={images} videos={videos} alt={product.name} fabric={product.fabric} />
             ) : (
               <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
             )}

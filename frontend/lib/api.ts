@@ -270,6 +270,34 @@ export async function uploadImage(file: File): Promise<{ url: string }> {
   return res.json();
 }
 
+// Uploads a product video (owner-only). Same shape as uploadImage, just a
+// different endpoint.
+export async function uploadVideo(file: File): Promise<{ url: string }> {
+  const token = getToken();
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch(`${API_URL}/uploads/video`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    body: form,
+  });
+  if (!res.ok) {
+    if (res.status === 401) {
+      logout();
+      throw new Error("You need to be logged in as the owner to do that.");
+    }
+    let detail = "";
+    try {
+      const body = await res.json();
+      detail = typeof body.detail === "string" ? body.detail : "";
+    } catch {
+      detail = await res.text().catch(() => "");
+    }
+    throw new Error(detail || `Upload failed: ${res.status}`);
+  }
+  return res.json();
+}
+
 export function getAttributes(type?: AttributeType): Promise<Attribute[]> {
   const query = type ? `?type=${encodeURIComponent(type)}` : "";
   return request<Attribute[]>(`/attributes${query}`);

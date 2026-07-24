@@ -156,6 +156,11 @@ def run_migrations(engine: Engine) -> None:
                     text(f"ALTER TABLE products ADD COLUMN {column} FLOAT")
                 )
 
+    if not _has_column(engine, "products", "videos"):
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE products ADD COLUMN videos JSON"))
+            conn.execute(text("UPDATE products SET videos = '[]' WHERE videos IS NULL"))
+
     # shipping_defaults table itself is created by Base.metadata.create_all
     # on brand-new databases (see app/models/shipping_defaults.py); nothing
     # to hand-roll here for the table's existence on an upgrade, since

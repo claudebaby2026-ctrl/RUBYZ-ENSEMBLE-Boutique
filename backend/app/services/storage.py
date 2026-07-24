@@ -44,10 +44,11 @@ def _get_r2_client():
     return _r2_client
 
 
-def save_image(contents: bytes, extension: str, content_type: str) -> str:
-    """Persist an uploaded image and return the URL to store on the product.
+def save_file(contents: bytes, extension: str, content_type: str) -> str:
+    """Persist an uploaded file (image or video) and return the URL to store
+    on the product.
 
-    `extension` should include the leading dot, e.g. ".jpg".
+    `extension` should include the leading dot, e.g. ".jpg" or ".mp4".
     """
     filename = f"{uuid.uuid4().hex}{extension}"
 
@@ -64,3 +65,7 @@ def save_image(contents: bytes, extension: str, content_type: str) -> str:
     LOCAL_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     (LOCAL_UPLOAD_DIR / filename).write_bytes(contents)
     return f"/static/uploads/{filename}"
+
+
+# Back-compat alias — existing callers importing save_image keep working.
+save_image = save_file

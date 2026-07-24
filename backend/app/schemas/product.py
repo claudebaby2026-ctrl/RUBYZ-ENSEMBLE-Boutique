@@ -22,6 +22,7 @@ class ProductBase(BaseModel):
     care: List[str] = []
     sizes: List[str] = []
     images: List[str] = []
+    videos: List[str] = []
     availability: str = "In stock"
     is_featured: bool = Field(default=False, alias="isFeatured")
     is_new: bool = Field(default=False, alias="isNew")
@@ -61,6 +62,7 @@ class ProductUpdate(BaseModel):
     care: Optional[List[str]] = None
     sizes: Optional[List[str]] = None
     images: Optional[List[str]] = None
+    videos: Optional[List[str]] = None
     availability: Optional[str] = None
     is_featured: Optional[bool] = Field(default=None, alias="isFeatured")
     is_new: Optional[bool] = Field(default=None, alias="isNew")

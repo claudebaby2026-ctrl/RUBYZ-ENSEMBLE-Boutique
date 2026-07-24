@@ -6,6 +6,7 @@ import {
   AlertTriangle, BarChart3, Boxes, Check, ClipboardList, LayoutGrid, Plus, Ticket,
   Users, Layout, ChevronRight, FileSpreadsheet, Save, X, Camera,
   ChevronLeft, Pencil, Trash2, Loader2, LogOut, Upload, ImageOff, Menu,
+  Video,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -15,7 +16,7 @@ import {
 import type { Product } from "@/lib/content";
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
-  getOrders, updateOrderStatus, getDashboardStats, uploadImage, resolveImageUrl,
+  getOrders, updateOrderStatus, getDashboardStats, uploadImage, uploadVideo, resolveImageUrl,
   getAttributes, type Order, type DashboardStats, type AttributeType,
   getCustomers, type Customer,
   getCoupons, createCoupon, updateCoupon, deleteCoupon, type Coupon,
@@ -98,6 +99,63 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
+            multiple
+            className="hidden"
+            onChange={(e) => handleFiles(e.target.files)}
+            disabled={uploading}
+          />
+        </label>
+      </div>
+      {error && <p className="mt-2 text-xs text-[#D94F70]">{error}</p>}
+    </div>
+  );
+}
+
+function VideoUploader({ videos, onChange }: { videos: string[]; onChange: (videos: string[]) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const uploaded: string[] = [];
+      for (const file of Array.from(files)) {
+        const { url } = await uploadVideo(file);
+        uploaded.push(url);
+      }
+      onChange([...videos, ...uploaded]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not upload video");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeVideo = (url: string) => onChange(videos.filter((v) => v !== url));
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-3">
+        {videos.map((v) => (
+          <div key={v} className="relative h-24 w-20 overflow-hidden rounded-[0.8rem] border border-black/10 bg-black">
+            <video src={resolveImageUrl(v)} className="h-full w-full object-cover" muted />
+            <button
+              onClick={() => removeVideo(v)}
+              className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white"
+              aria-label="Remove video"
+            >
+              <X size={10} />
+            </button>
+          </div>
+        ))}
+        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B68D40] hover:text-[#B68D40]">
+          {uploading ? <Loader2 size={18} className="animate-spin" /> : <Video size={18} />}
+          <span className="text-[10px]">{uploading ? "Uploading" : "Add video"}</span>
+          <input
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime"
             multiple
             className="hidden"
             onChange={(e) => handleFiles(e.target.files)}
@@ -259,6 +317,7 @@ function AddProduct({
 }) {
   const [step, setStep] = useState(1);
   const [images, setImages] = useState<string[]>([]);
+  const [videos, setVideos] = useState<string[]>([]);
   const [form, setForm] = useState({
     title: "", price: "", mrp: "", stock: "", description: "",
     category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "",
@@ -294,6 +353,7 @@ function AddProduct({
         care: care.length > 0 ? care : ["Dry clean recommended"],
         sizes: sizes.length > 0 ? sizes : ["Free Size"],
         images,
+        videos,
         availability: Number(form.stock) > 0 ? form.availability : "Out of stock",
         isNew: true,
       });
@@ -313,7 +373,7 @@ function AddProduct({
         <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
         <p className="mt-2 text-sm text-gray-500">&quot;{form.title}&quot; is now live in the store and inventory.</p>
         <button
-          onClick={() => { setStep(1); setImages([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", stock: "", description: "", category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
+          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", stock: "", description: "", category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
           className="mt-6 rounded-full bg-[#111111] px-8 py-3 text-sm text-white"
         >
           Add Another Product
@@ -341,6 +401,10 @@ function AddProduct({
           <p className="text-sm text-gray-600">Upload one or more photos of the outfit.</p>
           <div className="mt-5 flex justify-center">
             <ImageUploader images={images} onChange={setImages} />
+          </div>
+          <p className="mt-6 text-sm text-gray-600">Optionally, add one or more videos too.</p>
+          <div className="mt-5 flex justify-center">
+            <VideoUploader videos={videos} onChange={setVideos} />
           </div>
           <button onClick={() => setStep(2)} className="mt-6 rounded-full bg-[#111111] px-6 py-3 text-sm text-white">
             Continue
@@ -921,6 +985,7 @@ function EditProductModal({
   const [care, setCare] = useState<string[]>(product.care ?? []);
   const [sizes, setSizes] = useState<string[]>(product.sizes ?? []);
   const [images, setImages] = useState<string[]>(product.images ?? []);
+  const [videos, setVideos] = useState<string[]>(product.videos ?? []);
   const [saving, setSaving] = useState(false);
   const [showShipping, setShowShipping] = useState(false);
   // Blank string means "unset / use category default" — never coerced to
@@ -949,6 +1014,7 @@ function EditProductModal({
         care,
         sizes,
         images,
+        videos,
         weight: shipping.weight.trim() === "" ? null : Number(shipping.weight),
         length: shipping.length.trim() === "" ? null : Number(shipping.length),
         breadth: shipping.breadth.trim() === "" ? null : Number(shipping.breadth),
@@ -973,6 +1039,12 @@ function EditProductModal({
             <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Photos</label>
             <div className="mt-1">
               <ImageUploader images={images} onChange={setImages} />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Videos</label>
+            <div className="mt-1">
+              <VideoUploader videos={videos} onChange={setVideos} />
             </div>
           </div>
           <div>

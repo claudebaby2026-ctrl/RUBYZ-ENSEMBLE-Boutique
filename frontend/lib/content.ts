@@ -40,6 +40,7 @@ export type Product = {
   care: string[];
   sizes: string[];
   images?: string[];
+  videos?: string[];
   availability: string;
   isFeatured?: boolean;
   isNew?: boolean;
