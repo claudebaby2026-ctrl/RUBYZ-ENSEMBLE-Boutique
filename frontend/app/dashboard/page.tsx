@@ -57,6 +57,8 @@ function slugify(text: string) {
 function ImageUploader({ images, onChange }: { images: string[]; onChange: (images: string[]) => void }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -78,12 +80,49 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
 
   const removeImage = (url: string) => onChange(images.filter((img) => img !== url));
 
+  const reorder = (from: number, to: number) => {
+    if (from === to) return;
+    const next = [...images];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    onChange(next);
+  };
+
   return (
     <div>
+      {images.length > 1 && (
+        <p className="mb-2 text-[11px] text-gray-500">Drag to reorder — the first photo is the cover image.</p>
+      )}
       <div className="flex flex-wrap gap-3">
-        {images.map((img) => (
-          <div key={img} className="relative h-24 w-20 overflow-hidden rounded-[0.8rem] border border-black/10">
-            <img src={resolveImageUrl(img)} alt="Product" className="h-full w-full object-cover" />
+        {images.map((img, index) => (
+          <div
+            key={img}
+            draggable
+            onDragStart={() => setDragIndex(index)}
+            onDragEnter={() => setOverIndex(index)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              if (dragIndex !== null) reorder(dragIndex, index);
+              setDragIndex(null);
+              setOverIndex(null);
+            }}
+            onDragEnd={() => {
+              setDragIndex(null);
+              setOverIndex(null);
+            }}
+            className={`relative h-24 w-20 cursor-grab overflow-hidden rounded-[0.8rem] border transition active:cursor-grabbing ${
+              overIndex === index && dragIndex !== null && dragIndex !== index
+                ? "border-[#B68D40] ring-2 ring-[#B68D40]/40"
+                : "border-black/10"
+            } ${dragIndex === index ? "opacity-40" : ""}`}
+          >
+            <img src={resolveImageUrl(img)} alt="Product" className="h-full w-full object-cover" draggable={false} />
+            {index === 0 && (
+              <span className="absolute bottom-1 left-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] uppercase tracking-wide text-white">
+                Cover
+              </span>
+            )}
             <button
               onClick={() => removeImage(img)}
               className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white"
