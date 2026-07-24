@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { X } from "lucide-react";
 
 // Position-specific descriptors so each image in the gallery gets distinct,
 // meaningful alt text (SEO plan §3) instead of "{name} 1", "{name} 2", etc.
@@ -25,6 +26,7 @@ export function ProductImageGallery({
   fabric?: string;
 }) {
   const [selected, setSelected] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   // Media is images first, then videos — indices carry straight through to
   // both the main viewer and the thumbnail strip.
   const media = [
@@ -40,13 +42,15 @@ export function ProductImageGallery({
           <video
             src={mainItem.src}
             controls
-            className="h-[320px] w-full rounded-[1.1rem] object-cover sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]"
+            onClick={() => setLightboxOpen(true)}
+            className="h-[320px] w-full cursor-zoom-in rounded-[1.1rem] object-cover sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]"
           />
         ) : (
           <img
             src={mainItem.src}
             alt={altFor(alt, fabric, selected)}
-            className="h-[320px] w-full rounded-[1.1rem] object-cover sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]"
+            onClick={() => setLightboxOpen(true)}
+            className="h-[320px] w-full cursor-zoom-in rounded-[1.1rem] object-cover sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]"
           />
         )
       ) : (
@@ -72,6 +76,39 @@ export function ProductImageGallery({
               )}
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Lightbox: shows the media at its true aspect ratio (object-contain
+          inside a viewport-sized box) instead of the cropped preview above. */}
+      {lightboxOpen && mainItem && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            onClick={() => setLightboxOpen(false)}
+            aria-label="Close"
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+          >
+            <X size={20} />
+          </button>
+          {mainItem.type === "video" ? (
+            <video
+              src={mainItem.src}
+              controls
+              autoPlay
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-full max-w-full rounded-[0.6rem] object-contain"
+            />
+          ) : (
+            <img
+              src={mainItem.src}
+              alt={altFor(alt, fabric, selected)}
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-full max-w-full rounded-[0.6rem] object-contain"
+            />
+          )}
         </div>
       )}
     </div>
