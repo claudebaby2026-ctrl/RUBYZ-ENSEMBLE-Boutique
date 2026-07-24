@@ -27,6 +27,11 @@ export type Product = {
   slug: string;
   name: string;
   category: string;
+  // Full multi-category selection (category is always kept as
+  // categories[0] for backward compatibility — see backend
+  // crud/product.py). Optional so nothing that only reads/writes
+  // `category` needs to change.
+  categories?: string[];
   fabric: string;
   occasion: string;
   color: string;

@@ -9,6 +9,13 @@ class ProductBase(BaseModel):
     slug: str
     name: str
     category: str
+    # Full multi-category selection. Optional on input: if omitted, it's
+    # derived from `category` (see crud/product.py's _resolve_categories),
+    # so any existing caller that only ever sent `category` keeps working
+    # exactly as before. When provided, `category` is re-derived from this
+    # list's first element instead — the dropdown is the source of truth
+    # when the person actually used it.
+    categories: Optional[List[str]] = None
     fabric: str
     occasion: str
     color: str
@@ -49,6 +56,7 @@ class ProductUpdate(BaseModel):
     slug: Optional[str] = None
     name: Optional[str] = None
     category: Optional[str] = None
+    categories: Optional[List[str]] = None
     fabric: Optional[str] = None
     occasion: Optional[str] = None
     color: Optional[str] = None

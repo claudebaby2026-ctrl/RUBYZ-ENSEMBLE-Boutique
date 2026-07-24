@@ -15,6 +15,7 @@ from app.routers import (
     admin,
     attributes,
     auth,
+    cart,
     coupons,
     homepage,
     likes,
@@ -35,6 +36,7 @@ from app.seed_data import (
 
 # Import models so SQLAlchemy metadata knows about them before create_all
 from app.models import attribute as _attribute_models  # noqa: F401
+from app.models import cart as _cart_models  # noqa: F401
 from app.models import coupon as _coupon_models  # noqa: F401
 from app.models import homepage as _homepage_models  # noqa: F401
 from app.models import like as _like_models  # noqa: F401
@@ -83,6 +85,7 @@ def on_startup() -> None:
 
 
 app.include_router(auth.router)
+app.include_router(cart.router)
 app.include_router(products.router)
 app.include_router(orders.router)
 app.include_router(payments.router)

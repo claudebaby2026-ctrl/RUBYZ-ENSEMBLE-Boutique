@@ -219,6 +219,51 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
+// ---- Cart (DB-backed, per signed-in user_id) ----
+
+export type ApiCartItem = {
+  id: number;
+  productId: number;
+  slug: string;
+  name: string;
+  image?: string;
+  price: number;
+  mrp: number;
+  size: string;
+  stock?: number;
+  quantity: number;
+  category?: string;
+};
+
+export type CartItemInput = Omit<ApiCartItem, "id">;
+
+export function getCartFromApi(): Promise<ApiCartItem[]> {
+  return request<ApiCartItem[]>(`/cart`);
+}
+
+export function addCartItemApi(item: CartItemInput): Promise<ApiCartItem[]> {
+  return request<ApiCartItem[]>(`/cart/items`, { method: "POST", body: JSON.stringify(item) });
+}
+
+export function updateCartItemApi(productId: number, size: string, quantity: number): Promise<ApiCartItem[]> {
+  return request<ApiCartItem[]>(`/cart/items/${productId}/${encodeURIComponent(size)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ quantity }),
+  });
+}
+
+export function removeCartItemApi(productId: number, size: string): Promise<ApiCartItem[]> {
+  return request<ApiCartItem[]>(`/cart/items/${productId}/${encodeURIComponent(size)}`, { method: "DELETE" });
+}
+
+export function clearCartApi(): Promise<void> {
+  return request<void>(`/cart`, { method: "DELETE" });
+}
+
+export function mergeCartApi(items: CartItemInput[]): Promise<ApiCartItem[]> {
+  return request<ApiCartItem[]>(`/cart/merge`, { method: "POST", body: JSON.stringify(items) });
+}
+
 // ---- Products ----
 
 export function getProducts(category?: string): Promise<Product[]> {

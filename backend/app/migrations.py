@@ -161,6 +161,25 @@ def run_migrations(engine: Engine) -> None:
             conn.execute(text("ALTER TABLE products ADD COLUMN videos JSON"))
             conn.execute(text("UPDATE products SET videos = '[]' WHERE videos IS NULL"))
 
+    # Multi-category support (see app/models/product.py) — additive column,
+    # backfilled from each existing row's single `category` so nothing
+    # already in the DB is left without a categories list.
+    if not _has_column(engine, "products", "categories"):
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE products ADD COLUMN categories JSON"))
+            conn.execute(
+                text(
+                    "UPDATE products SET categories = "
+                    "('[\"' || REPLACE(category, '\"', '\\\"') || '\"]') "
+                    "WHERE categories IS NULL"
+                )
+                if engine.dialect.name == "sqlite"
+                else text(
+                    "UPDATE products SET categories = "
+                    "jsonb_build_array(category) WHERE categories IS NULL"
+                )
+            )
+
     # shipping_defaults table itself is created by Base.metadata.create_all
     # on brand-new databases (see app/models/shipping_defaults.py); nothing
     # to hand-roll here for the table's existence on an upgrade, since

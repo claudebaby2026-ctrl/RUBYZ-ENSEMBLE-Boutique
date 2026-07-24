@@ -27,7 +27,7 @@ import {
   ApiError,
 } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
-import { AttributeSelect } from "@/components/ui/attribute-select";
+import { AttributeSelect, AttributeMultiSelect } from "@/components/ui/attribute-select";
 
 // Product fields backed by the taxonomy (attributes) table — dropdown +
 // "add new" everywhere they're edited, instead of free text.
@@ -400,7 +400,7 @@ function AddProduct({
   const [videos, setVideos] = useState<string[]>([]);
   const [form, setForm] = useState({
     title: "", price: "", mrp: "", stock: "", description: "",
-    category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "",
+    categories: ["Pakistani Suits"] as string[], fabric: "Georgette", occasion: "Party Wear", color: "",
     availability: "In stock",
   });
   const [care, setCare] = useState<string[]>(["Dry clean recommended"]);
@@ -419,7 +419,8 @@ function AddProduct({
       await createProduct({
         slug: slugify(form.title),
         name: form.title || "Untitled Product",
-        category: form.category,
+        category: form.categories[0],
+        categories: form.categories,
         fabric: form.fabric,
         occasion: form.occasion,
         color: form.color || "Multi",
@@ -453,7 +454,7 @@ function AddProduct({
         <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
         <p className="mt-2 text-sm text-gray-500">&quot;{form.title}&quot; is now live in the store and inventory.</p>
         <button
-          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", stock: "", description: "", category: "Pakistani Suits", fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
+          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", stock: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
           className="mt-6 rounded-full bg-[#111111] px-8 py-3 text-sm text-white"
         >
           Add Another Product
@@ -514,12 +515,12 @@ function AddProduct({
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <AttributeSelect
+              <AttributeMultiSelect
                 label="Category"
                 type="category"
-                value={form.category}
+                values={form.categories}
                 options={attributeOptions.category}
-                onChange={(value) => setForm({ ...form, category: value })}
+                onChange={(values) => setForm({ ...form, categories: values })}
                 onOptionAdded={(value) => onAttributeAdded("category", value)}
               />
               <AttributeSelect
@@ -1056,7 +1057,7 @@ function EditProductModal({
     mrp: String(product.mrp),
     stock: String(product.stock ?? 0),
     description: product.description,
-    category: product.category,
+    categories: product.categories?.length ? product.categories : [product.category],
     fabric: product.fabric,
     occasion: product.occasion,
     color: product.color,
@@ -1086,7 +1087,8 @@ function EditProductModal({
         mrp: Number(form.mrp) || 0,
         stock: Number(form.stock) || 0,
         description: form.description,
-        category: form.category,
+        category: form.categories[0],
+        categories: form.categories,
         fabric: form.fabric,
         occasion: form.occasion,
         color: form.color,
@@ -1146,12 +1148,12 @@ function EditProductModal({
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <AttributeSelect
+            <AttributeMultiSelect
               label="Category"
               type="category"
-              value={form.category}
+              values={form.categories}
               options={attributeOptions.category}
-              onChange={(value) => setForm({ ...form, category: value })}
+              onChange={(values) => setForm({ ...form, categories: values })}
               onOptionAdded={(value) => onAttributeAdded("category", value)}
             />
             <AttributeSelect

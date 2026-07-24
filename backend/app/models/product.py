@@ -10,7 +10,18 @@ class Product(Base):
     id = Column(Integer, primary_key=True, index=True)
     slug = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=False)
+    # Primary category — kept as a plain string (not derived) so every bit
+    # of existing single-category logic keeps working untouched: storefront
+    # filtering by a single category, shipping-default resolution
+    # (app/services/shiprocket.py, app/services/shipment_creation.py, the
+    # Shipping Defaults dashboard page), and the Attribute taxonomy sync.
+    # Always kept equal to categories[0].
     category = Column(String, nullable=False, index=True)
+    # Full set of categories a product belongs to (adds multi-category
+    # support). Always contains at least `category` as its first element.
+    # Additive — nothing that reads `category` needs to change; only
+    # code that wants "all categories a product is in" reads this instead.
+    categories = Column(JSON, default=list)
     fabric = Column(String, nullable=False)
     occasion = Column(String, nullable=False)
     color = Column(String, nullable=False)

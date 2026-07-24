@@ -13,6 +13,129 @@ const ADD_NEW = "__add_new__";
  * so it's immediately available as a normal option everywhere else
  * (other product forms, storefront filters) without a page reload.
  */
+/**
+ * Multi-select variant of AttributeSelect — used only for `category` so a
+ * product can belong to more than one, while occasion/color/fabric keep
+ * using the single-select AttributeSelect above unchanged. Same "+ Add
+ * new…" flow, but toggles values on/off a checklist instead of swapping
+ * one selection for another.
+ */
+export function AttributeMultiSelect({
+  label,
+  type,
+  values,
+  options,
+  onChange,
+  onOptionAdded,
+}: {
+  label: string;
+  type: AttributeType;
+  values: string[];
+  options: string[];
+  onChange: (values: string[]) => void;
+  onOptionAdded: (value: string) => void;
+}) {
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const allOptions = [...options, ...values.filter((v) => !options.includes(v))];
+
+  const toggle = (option: string) => {
+    if (values.includes(option)) {
+      // Keep at least one category selected.
+      if (values.length === 1) return;
+      onChange(values.filter((v) => v !== option));
+    } else {
+      onChange([...values, option]);
+    }
+  };
+
+  const confirmAdd = async () => {
+    const trimmed = draft.trim();
+    if (!trimmed) {
+      setAdding(false);
+      return;
+    }
+    const existing = allOptions.find((o) => o.toLowerCase() === trimmed.toLowerCase());
+    if (existing) {
+      if (!values.includes(existing)) onChange([...values, existing]);
+      setAdding(false);
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const created = await createAttribute(type, trimmed);
+      onOptionAdded(created.value);
+      onChange([...values, created.value]);
+      setAdding(false);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not save new option");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <label className="text-xs uppercase tracking-[0.24em] text-gray-500">{label}</label>
+      <div className="mt-1 flex flex-wrap gap-2 rounded-[1rem] border border-black/10 p-3">
+        {allOptions.map((option) => {
+          const selected = values.includes(option);
+          return (
+            <button
+              type="button"
+              key={option}
+              onClick={() => toggle(option)}
+              className={`rounded-full border px-3 py-1.5 text-xs ${
+                selected ? "border-[#111111] bg-[#111111] text-white" : "border-black/10 text-[#111111]"
+              }`}
+            >
+              {option}
+            </button>
+          );
+        })}
+        {adding ? (
+          <div className="flex items-center gap-2">
+            <input
+              autoFocus
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  confirmAdd();
+                } else if (e.key === "Escape") {
+                  setAdding(false);
+                }
+              }}
+              placeholder={`New ${label.toLowerCase()}…`}
+              className="rounded-full border border-black/10 px-3 py-1.5 text-xs"
+            />
+            <button type="button" onClick={confirmAdd} disabled={saving} className="text-xs text-[#111111] disabled:opacity-60">
+              {saving && <Loader2 size={12} className="mr-1 inline animate-spin" />}Add
+            </button>
+            <button type="button" onClick={() => setAdding(false)} disabled={saving} className="text-xs text-gray-500">
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => { setDraft(""); setError(null); setAdding(true); }}
+            className="rounded-full border border-dashed border-black/20 px-3 py-1.5 text-xs text-gray-500"
+          >
+            + Add new {label.toLowerCase()}…
+          </button>
+        )}
+      </div>
+      {error && <p className="mt-1 text-xs text-[#D94F70]">{error}</p>}
+    </div>
+  );
+}
+
 export function AttributeSelect({
   label,
   type,

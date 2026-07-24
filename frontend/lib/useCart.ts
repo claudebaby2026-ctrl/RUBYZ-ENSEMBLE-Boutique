@@ -1,80 +1,176 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   CART_EVENT,
   type CartItem,
   addToCart as addToCartStorage,
   clearCart as clearCartStorage,
-  getCart,
+  getCart as getCartStorage,
   getCartCount,
   getCartSubtotal,
   removeFromCart as removeFromCartStorage,
   updateQuantity as updateQuantityStorage,
 } from "@/lib/cart";
+import {
+  type ApiCartItem,
+  addCartItemApi,
+  clearCartApi,
+  getCartFromApi,
+  mergeCartApi,
+  removeCartItemApi,
+  updateCartItemApi,
+} from "@/lib/api";
+import { useAuth } from "@/lib/useAuth";
+
+function fromApi(items: ApiCartItem[]): CartItem[] {
+  return items.map((i) => ({
+    productId: i.productId,
+    slug: i.slug,
+    name: i.name,
+    image: i.image,
+    price: i.price,
+    mrp: i.mrp,
+    size: i.size,
+    stock: i.stock,
+    quantity: i.quantity,
+    category: i.category,
+  }));
+}
 
 /**
- * Reactive cart state backed by localStorage. Stays in sync across every
- * component in the tab (header badge, cart page, checkout) via the
- * "rubyz-cart-changed" custom event, the same pattern useAuth uses for
- * session state.
+ * Reactive cart state. Signed-in customers are backed by the database
+ * (tied to their user_id via /cart — see backend app/routers/cart.py);
+ * signed-out visitors keep using the localStorage cart from lib/cart.ts
+ * exactly as before. The moment someone logs in, whatever was in their
+ * guest cart is merged into their account's DB cart (see mergeCartApi) so
+ * nothing they added while browsing gets lost.
  */
 export function useCart() {
+  const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const mergedForUser = useRef<number | null>(null);
 
-  const refresh = useCallback(() => {
-    setItems(getCart());
+  const refresh = useCallback(async () => {
+    if (user) {
+      try {
+        const apiItems = await getCartFromApi();
+        setItems(fromApi(apiItems));
+      } catch {
+        setItems([]);
+      }
+    } else {
+      setItems(getCartStorage());
+    }
     setHydrated(true);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    refresh();
+    if (authLoading) return;
+
+    const doMergeThenRefresh = async () => {
+      if (user && mergedForUser.current !== user.id) {
+        mergedForUser.current = user.id;
+        const guestItems = getCartStorage();
+        if (guestItems.length > 0) {
+          try {
+            await mergeCartApi(guestItems);
+            clearCartStorage();
+          } catch {
+            // Leave the guest cart in localStorage if the merge failed —
+            // better to retry next load than to silently lose it.
+          }
+        }
+      }
+      refresh();
+    };
+
+    doMergeThenRefresh();
     window.addEventListener(CART_EVENT, refresh);
     window.addEventListener("storage", refresh);
-    // The cart is namespaced per account (see lib/cart.ts), so a login or
-    // logout points reads/writes at a different storage key — refresh here
-    // too, or the UI would keep showing the previous account's cart until
-    // something else happened to trigger a re-render.
     window.addEventListener("rubyz-auth-changed", refresh);
     return () => {
       window.removeEventListener(CART_EVENT, refresh);
       window.removeEventListener("storage", refresh);
       window.removeEventListener("rubyz-auth-changed", refresh);
     };
-  }, [refresh]);
+  }, [authLoading, user, refresh]);
 
-  const add: typeof addToCartStorage = useCallback((item) => {
-    const updated = addToCartStorage(item);
-    setItems(updated);
-    return updated;
-  }, []);
+  const addToCart = useCallback(
+    async (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
+      if (user) {
+        const updated = await addCartItemApi({
+          productId: item.productId,
+          slug: item.slug,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          mrp: item.mrp,
+          size: item.size,
+          stock: item.stock,
+          quantity: item.quantity ?? 1,
+          category: item.category,
+        });
+        const mapped = fromApi(updated);
+        setItems(mapped);
+        return mapped;
+      }
+      const updated = addToCartStorage(item);
+      setItems(updated);
+      return updated;
+    },
+    [user]
+  );
 
-  const updateQuantity = useCallback((productId: number, size: string, quantity: number) => {
-    const updated = updateQuantityStorage(productId, size, quantity);
-    setItems(updated);
-    return updated;
-  }, []);
+  const updateQuantity = useCallback(
+    async (productId: number, size: string, quantity: number) => {
+      if (user) {
+        const updated = await updateCartItemApi(productId, size, quantity);
+        const mapped = fromApi(updated);
+        setItems(mapped);
+        return mapped;
+      }
+      const updated = updateQuantityStorage(productId, size, quantity);
+      setItems(updated);
+      return updated;
+    },
+    [user]
+  );
 
-  const remove = useCallback((productId: number, size: string) => {
-    const updated = removeFromCartStorage(productId, size);
-    setItems(updated);
-    return updated;
-  }, []);
+  const removeFromCart = useCallback(
+    async (productId: number, size: string) => {
+      if (user) {
+        const updated = await removeCartItemApi(productId, size);
+        const mapped = fromApi(updated);
+        setItems(mapped);
+        return mapped;
+      }
+      const updated = removeFromCartStorage(productId, size);
+      setItems(updated);
+      return updated;
+    },
+    [user]
+  );
 
-  const clear = useCallback(() => {
+  const clearCart = useCallback(async () => {
+    if (user) {
+      await clearCartApi();
+      setItems([]);
+      return;
+    }
     clearCartStorage();
     setItems([]);
-  }, []);
+  }, [user]);
 
   return {
     items,
     hydrated,
     count: getCartCount(items),
     subtotal: getCartSubtotal(items),
-    addToCart: add,
+    addToCart,
     updateQuantity,
-    removeFromCart: remove,
-    clearCart: clear,
+    removeFromCart,
+    clearCart,
   };
 }
