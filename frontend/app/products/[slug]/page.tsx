@@ -6,6 +6,7 @@ import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { AddToCartPanel } from "@/components/product/add-to-cart-panel";
 import { LikeButton } from "@/components/product/like-button";
 import { ProductImageGallery } from "@/components/product/product-image-gallery";
+import { UnstitchedTailoringNotice, isUnstitchedProduct } from "@/components/product/unstitched-tailoring-notice";
 import { StockBadge } from "@/components/product/stock-badge";
 import { getDiscountPercent, getStockStatus } from "@/lib/stock";
 import { SITE_URL } from "@/lib/content";
@@ -229,6 +230,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           ))}
         </div>
       </section>
+      {isUnstitchedProduct(product.category, product.fabric) && (
+        <UnstitchedTailoringNotice productSlug={product.slug} productName={product.name} />
+      )}
     </main>
   );
 }
