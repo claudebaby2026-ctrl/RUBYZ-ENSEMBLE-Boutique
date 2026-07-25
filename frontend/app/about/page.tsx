@@ -1,5 +1,5 @@
-import { MapPin, Star, Truck, Users } from "lucide-react";
-import { brand } from "@/lib/content";
+import { MapPin, Star, Truck, Users, ExternalLink } from "lucide-react";
+import { brand, googleReviewsUrl } from "@/lib/content";
 
 export const metadata = {
   title: "About",
@@ -66,6 +66,14 @@ export default function AboutPage() {
                 <div>
                   <p className="text-sm font-semibold text-[#111111]">5-star rated</p>
                   <p className="mt-1 text-sm text-gray-600">Rated by real customers on Google — not a marketing claim.</p>
+                  <a
+                    href={googleReviewsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-[#B68D40] hover:underline"
+                  >
+                    See our Google Reviews <ExternalLink size={13} />
+                  </a>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
