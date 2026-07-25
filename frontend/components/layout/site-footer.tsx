@@ -47,12 +47,22 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Visit</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Store Location</p>
           <p className="mt-4 text-sm leading-7 text-gray-300">
-            {legalEntity.streetAddress}, {legalEntity.addressLocality}<br />
-            {legalEntity.phone}<br />
-            {legalEntity.email}
+            RUBYZ-ENSEMBLE Boutique<br />
+            Plot no 93<br />
+            Home-Town Road, near Prayash Park<br />
+            Satya Nagar, Bhubaneswar- 751007<br />
+            (+91) {legalEntity.phone.replace("+91 ", "")}
           </p>
+          <a
+            href="https://maps.google.com/?q=RUBYZ-ENSEMBLE+Boutique+Home-Town+Road+Satya+Nagar+Bhubaneswar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block text-sm text-[#B68D40] underline underline-offset-4 transition hover:text-white"
+          >
+            View on Google Maps
+          </a>
           <div className="mt-6 flex gap-3">
             <a href="https://www.instagram.com/rubyzensemble_" aria-label="Instagram" className="rounded-full border border-white/20 p-2 text-white">
               <Camera size={16} />
