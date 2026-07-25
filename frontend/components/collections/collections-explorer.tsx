@@ -320,25 +320,28 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
       {/* Primary, client-mandated split — every product is either
           Stitched/Ready-made or Unstitched. Kept as its own prominent tab
           row (not folded into the sidebar checkboxes) so it reads as the
-          top-level category, not just another facet. */}
-      <div className="mt-6 flex flex-wrap gap-2 rounded-full border border-black/10 bg-white p-1.5 shadow-sm sm:inline-flex">
+          top-level category, not just another facet. Mobile gets a fixed
+          3-up grid with short labels so it doesn't wrap into a blob inside
+          the rounded container; sm+ switches to an auto-width pill row. */}
+      <div className="mt-6 grid grid-cols-3 gap-1.5 rounded-2xl border border-black/10 bg-white p-1.5 shadow-sm sm:inline-flex sm:w-auto sm:gap-2 sm:rounded-full">
         {(
           [
-            { value: "all", label: "All Pieces" },
-            { value: "stitched", label: "Stitched / Ready-made" },
-            { value: "unstitched", label: "Unstitched" },
-          ] as { value: ProductType; label: string }[]
+            { value: "all", label: "All Pieces", short: "All" },
+            { value: "stitched", label: "Stitched / Ready-made", short: "Stitched" },
+            { value: "unstitched", label: "Unstitched", short: "Unstitched" },
+          ] as { value: ProductType; label: string; short: string }[]
         ).map((tab) => (
           <button
             key={tab.value}
             onClick={() => setSelectedType(tab.value)}
-            className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${
+            className={`rounded-full px-2 py-2.5 text-center text-xs font-medium leading-tight transition sm:px-5 sm:text-sm ${
               selectedType === tab.value
                 ? "bg-[#111111] text-white"
                 : "text-gray-600 hover:bg-[#EFE7DA]"
             }`}
           >
-            {tab.label}
+            <span className="sm:hidden">{tab.short}</span>
+            <span className="hidden sm:inline">{tab.label}</span>
           </button>
         ))}
       </div>
