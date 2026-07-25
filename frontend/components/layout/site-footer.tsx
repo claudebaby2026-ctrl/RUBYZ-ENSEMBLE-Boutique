@@ -7,7 +7,7 @@ import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/soc
 export function SiteFooter() {
   return (
     <footer className="border-t border-black/5 bg-[#1A1714] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1fr_0.6fr_0.6fr_0.8fr_0.6fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1fr_0.55fr_0.55fr_0.7fr_0.55fr_0.55fr] lg:px-8">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">RUBYZ Ensemble</p>
           <h2 className="mt-3 text-2xl text-white" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -56,7 +56,7 @@ export function SiteFooter() {
             Satya Nagar, Bhubaneswar- 751007<br />
             (+91) {legalEntity.phone.replace("+91 ", "")}
           </p>
-          <a
+          
             href="https://maps.google.com/?q=RUBYZ-ENSEMBLE+Boutique+Home-Town+Road+Satya+Nagar+Bhubaneswar"
             target="_blank"
             rel="noopener noreferrer"
@@ -69,7 +69,7 @@ export function SiteFooter() {
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Follow Us</p>
           <div className="mt-4 flex gap-3">
-            <a
+            
               href={socialLinks.facebook}
               target="_blank"
               rel="noopener noreferrer"
@@ -78,7 +78,7 @@ export function SiteFooter() {
             >
               <FacebookIcon size={16} />
             </a>
-            <a
+            
               href={socialLinks.instagram}
               target="_blank"
               rel="noopener noreferrer"
@@ -87,7 +87,7 @@ export function SiteFooter() {
             >
               <InstagramIcon size={16} />
             </a>
-            <a
+            
               href={socialLinks.youtube}
               target="_blank"
               rel="noopener noreferrer"
@@ -96,7 +96,7 @@ export function SiteFooter() {
             >
               <YoutubeIcon size={16} />
             </a>
-            <a
+            
               href={socialLinks.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
@@ -107,21 +107,26 @@ export function SiteFooter() {
             </a>
           </div>
         </div>
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Legal</p>
+          <ul className="mt-4 space-y-3 text-sm text-gray-300">
+            {legalLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="transition hover:text-white">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
-      {/* Slim compliance strip — keeps Privacy/Terms/Shipping/Refund policy
-          pages accessible from every page (required for Razorpay & Shiprocket
-          verification) without competing for space with the main footer nav. */}
+      {/* Slim compliance strip — just the copyright line now; the legal
+          pages themselves live in the "Legal" column above so they're not
+          duplicated down here. */}
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col-reverse items-center gap-3 px-5 py-5 text-xs text-gray-500 sm:flex-row sm:justify-between lg:px-8">
+        <div className="mx-auto px-5 py-5 text-center text-xs text-gray-500 lg:px-8">
           <p>© {new Date().getFullYear()} {brand.name}. All rights reserved.</p>
-          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-            {legalLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="transition hover:text-white">
-                {link.label}
-              </Link>
-            ))}
-          </nav>
         </div>
       </div>
     </footer>
