@@ -51,7 +51,7 @@ export function SiteHeader() {
   return (
     <>
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#1A1714]/95 backdrop-blur">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-5 lg:px-8">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-3 sm:px-5 lg:px-8">
         <button
           onClick={() => setMobileNavOpen(true)}
           className="shrink-0 rounded-full border border-white/15 p-2 text-white lg:hidden"
@@ -69,11 +69,11 @@ export function SiteHeader() {
             gets clipped mid-word like the shrink/truncate approach did. */}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-1.5 text-white sm:gap-2"
+          className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-white sm:gap-2"
           style={{ fontFamily: "Playfair Display, serif" }}
         >
           <img src="/logo.png" alt={brand.name} className="h-8 w-auto shrink-0 sm:h-10 lg:h-12" />
-          <span className="hidden whitespace-nowrap text-lg tracking-wide min-[420px]:inline sm:text-xl lg:text-2xl">
+          <span className="text-base tracking-wide sm:text-xl lg:text-2xl">
             {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
           </span>
         </Link>
@@ -127,7 +127,12 @@ export function SiteHeader() {
             )}
           </Link>
 
-          <div className="relative">
+          {/* Hidden below lg: sign-in/orders/logout are already reachable
+              from the hamburger drawer at these widths, so this icon was
+              pure duplication — dropping it on mobile/tablet frees up the
+              width the logo + full "RUBYZ ENSEMBLE" text needs to avoid
+              truncating. */}
+          <div className="relative hidden lg:block">
             <button
               onClick={() => setMenuOpen((v) => !v)}
               className="rounded-full border border-white/15 p-2 text-white"
