@@ -122,22 +122,19 @@ class Settings:
         )
 
     # --- Email notifications (WhatsApp community sign-ups) ---
-    # Standard SMTP settings. For Gmail, SMTP_USER is the sending Gmail
-    # address and SMTP_PASSWORD must be a 16-character "App Password"
-    # (Google Account -> Security -> 2-Step Verification -> App passwords)
-    # — your normal Gmail login password will NOT work here.
-    SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
-    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
-    SMTP_USER: str = os.getenv("SMTP_USER", "")
-    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
-    # Who the notification email appears to be from. Defaults to SMTP_USER
-    # since most providers (Gmail included) require the From address to
-    # match the authenticated account.
-    SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL", "") or SMTP_USER
+    # Sent via Resend's HTTPS API, not SMTP — Render's free web services
+    # block outbound SMTP ports (25/465/587) entirely, so smtplib-style
+    # sending never connects there. Resend's API just needs a normal
+    # HTTPS request, which isn't blocked.
+    RESEND_API_KEY: str = os.getenv("RESEND_API_KEY", "")
+    # Must be an address on a domain you've verified in Resend, OR
+    # Resend's shared sandbox sender ("onboarding@resend.dev") — see
+    # backend/.env.example for details.
+    RESEND_FROM_EMAIL: str = os.getenv("RESEND_FROM_EMAIL", "onboarding@resend.dev")
 
     @property
-    def SMTP_ENABLED(self) -> bool:
-        return bool(self.SMTP_HOST and self.SMTP_USER and self.SMTP_PASSWORD)
+    def RESEND_ENABLED(self) -> bool:
+        return bool(self.RESEND_API_KEY)
 
     # Where WhatsApp-community sign-up notifications are sent.
     WHATSAPP_COMMUNITY_NOTIFY_EMAIL: str = os.getenv(
