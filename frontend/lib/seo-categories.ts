@@ -150,6 +150,15 @@ export const seoCategoryPages: SeoCategoryConfig[] = [...garmentTypePages, ...ta
 // keyword pages the SEO plan calls out as highest priority to link to.
 export const garmentTypeLinks = garmentTypePages.map((c) => ({ slug: c.slug, label: c.label }));
 
+// The two primary, client-mandated top-level categories — every product is
+// either Stitched/Ready-made or Unstitched, and the client wants this split
+// kept distinct and front-and-center (footer "Shop" section, /collections
+// type filter) rather than buried among garment-type/occasion links.
+export const productTypeLinks: { slug: "stitched" | "unstitched"; label: string }[] = [
+  { slug: "stitched", label: "Stitched / Ready-made" },
+  { slug: "unstitched", label: "Unstitched" },
+];
+
 export function getSeoCategoryConfig(slug: string): SeoCategoryConfig | undefined {
   return seoCategoryPages.find((c) => c.slug === slug);
 }

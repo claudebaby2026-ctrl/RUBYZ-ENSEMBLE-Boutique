@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { brand, footerLinks, legalEntity, legalLinks, socialLinks } from "@/lib/content";
-import { garmentTypeLinks } from "@/lib/seo-categories";
+import { productTypeLinks } from "@/lib/seo-categories";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/social-icons";
 
 export function SiteFooter() {
@@ -31,15 +31,16 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        {/* Direct internal links to the highest-intent garment-type SEO
-            pages (lehenga/anarkali/chikankari/sarees) — see SEO plan §2,
-            which calls these out as needing nav/footer link equity. */}
+        {/* The Shop section is deliberately limited to just the two primary,
+            client-mandated categories — Stitched/Ready-made and Unstitched —
+            so this top-level split stays the single clear entry point into
+            the catalog rather than competing with garment-type links. */}
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Shop</p>
           <ul className="mt-4 space-y-3 text-sm text-gray-300">
-            {garmentTypeLinks.map((link) => (
+            {productTypeLinks.map((link) => (
               <li key={link.slug}>
-                <Link href={`/collections/${link.slug}`} className="transition hover:text-white">
+                <Link href={`/collections?type=${link.slug}`} className="transition hover:text-white">
                   {link.label}
                 </Link>
               </li>

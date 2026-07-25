@@ -9,7 +9,7 @@ export default function TailoringPage() {
   return (
     <main className="bg-[#F3EEE6]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
+        <div className="grid gap-8">
           <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm">
             <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Custom Tailoring</p>
             <h1 className="mt-3 text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Tailored to your frame, shaped to your story.</h1>
@@ -17,14 +17,6 @@ export default function TailoringPage() {
               Our atelier offers bespoke alterations, custom fitting, and styling guidance for a seamless luxury experience.
             </p>
             <TailoringActions />
-          </div>
-          <div className="rounded-[2rem] border border-black/5 bg-[#111111] p-8 text-white">
-            <div className="h-64 rounded-[1.4rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
-            <div className="mt-6 grid gap-3 text-sm text-gray-300">
-              {['Neck adjustments','Sleeve refinement','Length tailoring','Waist shaping'].map((item) => (
-                <div key={item} className="rounded-[1rem] border border-white/10 bg-white/5 p-3">{item}</div>
-              ))}
-            </div>
           </div>
         </div>
       </section>

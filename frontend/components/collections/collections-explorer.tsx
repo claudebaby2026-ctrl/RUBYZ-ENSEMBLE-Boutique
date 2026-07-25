@@ -7,6 +7,9 @@ import { Search, SlidersHorizontal, X } from "lucide-react";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { getAttributes } from "@/lib/api";
 import type { Product } from "@/lib/content";
+import { isUnstitchedProduct } from "@/lib/tailoring";
+
+type ProductType = "all" | "stitched" | "unstitched";
 
 // Fallback bounds only for the (should-be-impossible) case of an empty
 // catalog — real bounds are derived from the actual products below so the
@@ -30,6 +33,13 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
     const category = searchParams.get("category");
     return category ? [category] : [];
+  });
+  // The client's primary, top-level split — every product is either
+  // Stitched/Ready-made or Unstitched. Seeded from ?type= so the footer's
+  // Shop links land here pre-filtered, same pattern as ?category=/?occasion=.
+  const [selectedType, setSelectedType] = useState<ProductType>(() => {
+    const type = searchParams.get("type");
+    return type === "stitched" || type === "unstitched" ? type : "all";
   });
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   // Seeds the occasion filter from ?occasion= so the homepage's "Shop by
@@ -90,8 +100,12 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     if (category) {
       setSelectedCategories((current) => (current.includes(category) ? current : [category]));
     }
+    const type = searchParams.get("type");
+    if (type === "stitched" || type === "unstitched") {
+      setSelectedType(type);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.get("q"), searchParams.get("category")]);
+  }, [searchParams.get("q"), searchParams.get("category"), searchParams.get("type")]);
 
   useEffect(() => {
     let cancelled = false;
@@ -127,6 +141,10 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
           .filter(Boolean)
           .some((field) => field.toLowerCase().includes(q));
 
+      const matchesType =
+        selectedType === "all" ||
+        (selectedType === "unstitched") === isUnstitchedProduct(product.category, product.fabric);
+
       const matchesCategory =
         selectedCategories.length === 0 || selectedCategories.includes(product.category);
 
@@ -142,7 +160,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
 
       const matchesPrice = product.price <= maxPrice;
 
-      return matchesQuery && matchesCategory && matchesFabric && matchesOccasion && matchesColor && matchesPrice;
+      return matchesType && matchesQuery && matchesCategory && matchesFabric && matchesOccasion && matchesColor && matchesPrice;
     });
 
     if (sort === "Price: Low to High") {
@@ -155,10 +173,11 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     }
 
     return result;
-  }, [products, query, selectedCategories, selectedFabrics, selectedOccasions, selectedColors, maxPrice, sort]);
+  }, [products, query, selectedType, selectedCategories, selectedFabrics, selectedOccasions, selectedColors, maxPrice, sort]);
 
   const hasActiveFilters =
     query.trim().length > 0 ||
+    selectedType !== "all" ||
     selectedCategories.length > 0 ||
     selectedFabrics.length > 0 ||
     selectedOccasions.length > 0 ||
@@ -176,6 +195,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
 
   const clearFilters = () => {
     setQuery("");
+    setSelectedType("all");
     setSelectedCategories([]);
     setSelectedFabrics([]);
     setSelectedOccasions([]);
@@ -297,7 +317,33 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[260px_1fr]">
+      {/* Primary, client-mandated split — every product is either
+          Stitched/Ready-made or Unstitched. Kept as its own prominent tab
+          row (not folded into the sidebar checkboxes) so it reads as the
+          top-level category, not just another facet. */}
+      <div className="mt-6 flex flex-wrap gap-2 rounded-full border border-black/10 bg-white p-1.5 shadow-sm sm:inline-flex">
+        {(
+          [
+            { value: "all", label: "All Pieces" },
+            { value: "stitched", label: "Stitched / Ready-made" },
+            { value: "unstitched", label: "Unstitched" },
+          ] as { value: ProductType; label: string }[]
+        ).map((tab) => (
+          <button
+            key={tab.value}
+            onClick={() => setSelectedType(tab.value)}
+            className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${
+              selectedType === tab.value
+                ? "bg-[#111111] text-white"
+                : "text-gray-600 hover:bg-[#EFE7DA]"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr]">
         {/* Desktop sidebar — always visible from lg upward. */}
         <aside className="hidden h-fit rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm lg:block">
           <div className="flex items-center justify-between">
