@@ -54,17 +54,28 @@ export function SiteHeader() {
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-5 lg:px-8">
         <button
           onClick={() => setMobileNavOpen(true)}
-          className="rounded-full border border-white/15 p-2 text-white lg:hidden"
+          className="shrink-0 rounded-full border border-white/15 p-2 text-white lg:hidden"
           aria-label="Open menu"
           aria-expanded={mobileNavOpen}
         >
           <Menu size={18} />
         </button>
 
-        <Link href="/" className="flex items-center gap-2 text-xl tracking-wide text-white sm:text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
-  <img src="/logo.png" alt={brand.name} className="h-10 w-auto sm:h-12" />
-  {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
- </Link>
+        {/* min-w-0 + shrink lets this block give up width to the fixed-size
+            menu button / icon cluster on narrow phones instead of forcing
+            them to compress; whitespace-nowrap + truncate keeps the brand
+            name on one line (ellipsizing only in the extreme case) rather
+            than wrapping to a second line and blowing out the h-20 bar. */}
+        <Link
+          href="/"
+          className="flex min-w-0 shrink items-center gap-1.5 whitespace-nowrap text-lg tracking-wide text-white sm:gap-2 sm:text-xl lg:text-2xl"
+          style={{ fontFamily: "Playfair Display, serif" }}
+        >
+          <img src="/logo.png" alt={brand.name} className="h-7 w-auto shrink-0 sm:h-10 lg:h-12" />
+          <span className="truncate">
+            {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
+          </span>
+        </Link>
 
         <nav className="hidden items-center gap-7 lg:flex">
           {navItems.map((item) => {
@@ -81,7 +92,7 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <div className="mr-1 hidden items-center gap-1 border-r border-white/15 pr-3 lg:flex" aria-label="Follow us">
             <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
               <FacebookIcon size={15} />
