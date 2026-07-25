@@ -83,8 +83,8 @@ export default function PrivacyPolicyPage() {
                 </li>
                 <li>
                   <span className="text-[#111111]">Shipping and logistics</span> — your name, phone number and
-                  delivery address are shared with Shiprocket and its courier network solely to dispatch and deliver
-                  your order and to provide tracking updates.
+                  delivery address are shared with the courier or delivery partner agreed upon for your order,
+                  solely to dispatch and deliver it.
                 </li>
                 <li>
                   <span className="text-[#111111]">Service providers</span> — hosting, analytics and communication

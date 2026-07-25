@@ -84,8 +84,10 @@ export default function TermsPage() {
           heading: "5. Shipping, cancellations and refunds",
           body: (
             <p>
-              Delivery is handled through our shipping partner, Shiprocket, and its courier network. Details on
-              delivery timelines, cancellations, returns and refunds are set out in our{" "}
+              Delivery is arranged directly with you over WhatsApp — the shipping partner and mode of delivery are
+              agreed at the time of order rather than through a fixed courier integration. Once an order has been
+              confirmed and paid for, it cannot be cancelled, refunded, exchanged, or returned. Full details are set
+              out in our{" "}
               <a href="/shipping-policy" className="underline">Shipping Policy</a> and{" "}
               <a href="/refund-policy" className="underline">Cancellation & Refund Policy</a>, which form part of
               these Terms.
@@ -97,9 +99,9 @@ export default function TermsPage() {
           body: (
             <p>
               Custom stitching, alteration and tailoring requests are made to the measurements and preferences you
-              provide. Please double-check measurements before confirming — custom-tailored items cannot be
-              cancelled or returned once production has begun, except where the finished item is materially
-              defective or does not match the agreed specification.
+              provide. Please double-check measurements before confirming — as with all orders, custom-tailored
+              items cannot be cancelled, refunded, exchanged or returned once your order has been confirmed and paid
+              for.
             </p>
           ),
         },
@@ -137,7 +139,9 @@ export default function TermsPage() {
           body: (
             <p>
               These Terms are governed by the laws of India, and any disputes will be subject to the exclusive
-              jurisdiction of the courts of Bhubaneswar, Odisha.
+              jurisdiction of the courts of Bhubaneswar, Odisha. To the extent permitted by law, our total liability
+              to you arising out of or in connection with any order — whether in contract, tort, or otherwise —
+              shall not exceed the value of the product ordered.
             </p>
           ),
         },

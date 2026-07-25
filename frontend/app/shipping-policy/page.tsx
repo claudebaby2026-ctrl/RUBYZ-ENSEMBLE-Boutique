@@ -34,8 +34,9 @@ export default function ShippingPolicyPage() {
           heading: "2. Shipping partner",
           body: (
             <p>
-              Deliveries are fulfilled through Shiprocket&apos;s courier network, which we use to reach locations
-              across India reliably and to provide real-time tracking.
+              We do not use a fixed courier integration. The shipping partner and mode of delivery are agreed upon
+              directly with you over WhatsApp at the time your order is placed, based on what works best for your
+              location and the item ordered.
             </p>
           ),
         },
@@ -43,15 +44,15 @@ export default function ShippingPolicyPage() {
           heading: "3. Delivery timelines",
           body: (
             <>
-              <p>Once shipped, estimated delivery times are:</p>
-              <ul className="list-disc space-y-1 pl-5">
-                <li>Metro cities: 3–6 business days</li>
-                <li>Rest of India: 5–9 business days</li>
-              </ul>
               <p>
-                These are estimates, not guarantees. Deliveries may take longer during sale periods, festive
-                seasons, extreme weather, courier disruptions, or for remote/non-serviceable pincodes, where an
-                alternate delivery arrangement will be offered.
+                Once shipped, orders are typically delivered within <strong>2–7 business days</strong>, depending on
+                your location and the courier/mode agreed upon at the time of order.
+              </p>
+              <p>
+                This is a standard estimate, not a guarantee. Deliveries may take longer in special cases — for
+                example during sale periods, festive seasons, extreme weather, courier disruptions, custom tailoring
+                timelines, or for remote/non-serviceable pincodes — and we&apos;ll keep you informed over WhatsApp if
+                that happens.
               </p>
             </>
           ),
@@ -60,8 +61,8 @@ export default function ShippingPolicyPage() {
           heading: "4. Shipping charges",
           body: (
             <p>
-              A flat delivery fee of ₹150 applies at checkout for home delivery. In-store pickup, where offered, is
-              free of charge. Any promotional free-shipping offers will be clearly indicated at checkout.
+              A flat shipping charge of ₹100 per suit applies at checkout for home delivery. In-store pickup, where
+              offered, is free of charge. Any promotional free-shipping offers will be clearly indicated at checkout.
             </p>
           ),
         },
@@ -79,8 +80,8 @@ export default function ShippingPolicyPage() {
           heading: "6. Order tracking",
           body: (
             <p>
-              Once your order is dispatched, you&apos;ll receive a tracking link via email, SMS, or WhatsApp so you
-              can follow its progress until delivery.
+              Since deliveries are arranged directly rather than through a single integrated courier system, please
+              contact us on WhatsApp for updates on your order&apos;s dispatch and delivery status at any time.
             </p>
           ),
         },
