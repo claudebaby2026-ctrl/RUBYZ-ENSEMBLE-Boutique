@@ -1,9 +1,10 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { WhatsAppCommunityForm } from "@/components/ui/whatsapp-community-form";
-import { categories, occasions, reviews, brand, legalEntity, type Product } from "@/lib/content";
-import { getProducts, getHomepageConfig } from "@/lib/api";
+import { categories, occasions, reviews, brand, legalEntity, socialLinks, type Product } from "@/lib/content";
+import { getProducts, getHomepageConfig, resolveImageUrl } from "@/lib/api";
 import { slugForCategoryName } from "@/lib/seo-categories";
+import { InstagramIcon } from "@/components/icons/social-icons";
 import Link from "next/link";
 import { ArrowRight, Camera, Check, Gem, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
 
@@ -35,6 +36,20 @@ export default async function HomePage() {
     .filter((p) => !featuredIds.has(p.id))
     .sort((a, b) => b.sold - a.sold)
     .slice(0, 4);
+
+  // Powers the "@handle" Instagram-style grid near the footer. Not a live
+  // API embed (see comment at the section itself) — just the shop's own
+  // product photography, deduped by product so the grid doesn't repeat
+  // the same picture, capped at 12 tiles to match the original layout.
+  const seenProductIds = new Set<number>();
+  const instagramTiles = products
+    .filter((p) => {
+      if (seenProductIds.has(p.id) || !p.images?.[0]) return false;
+      seenProductIds.add(p.id);
+      return true;
+    })
+    .slice(0, 12)
+    .map((p) => ({ id: p.id, name: p.name, image: resolveImageUrl(p.images![0]) }));
 
   return (
     <main className="bg-[#F3EEE6] text-[#111111]">
@@ -233,10 +248,46 @@ export default async function HomePage() {
             @{brand.name.toLowerCase().replace(/\s+/g, "")}
           </h2>
         </div>
+        {/* Was 12 empty gradient placeholders with no real content or links.
+            This isn't a live Instagram API embed (that needs a Business
+            account + Graph API access token, or a third-party embed
+            widget) — instead it repurposes the shop's own product
+            photography into an Instagram-style grid, so it's never empty,
+            and every tile links out to the real profile so it still drives
+            follows/traffic the way an embed would. Swap in real post
+            permalinks later if/when API access is set up. */}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
-          {Array.from({ length: 12 }).map((_, index) => (
-            <div key={index} className="aspect-square rounded-[1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
+          {instagramTiles.map((tile, index) => (
+            <a
+              key={tile.id ?? index}
+              href={socialLinks.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`View ${brand.name} on Instagram`}
+              className="group relative aspect-square overflow-hidden rounded-[1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]"
+            >
+              {tile.image && (
+                <img
+                  src={tile.image}
+                  alt={tile.name ?? brand.name}
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                />
+              )}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
+                <InstagramIcon size={22} className="text-white" />
+              </div>
+            </a>
           ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <a
+            href={socialLinks.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#111111] transition hover:border-[#B68D40] hover:text-[#B68D40]"
+          >
+            <InstagramIcon size={16} /> Follow Us
+          </a>
         </div>
       </section>
 
