@@ -56,7 +56,7 @@ export function SiteFooter() {
             Satya Nagar, Bhubaneswar- 751007<br />
             (+91) {legalEntity.phone.replace("+91 ", "")}
           </p>
-          
+          <a
             href="https://maps.google.com/?q=RUBYZ-ENSEMBLE+Boutique+Home-Town+Road+Satya+Nagar+Bhubaneswar"
             target="_blank"
             rel="noopener noreferrer"
@@ -69,7 +69,7 @@ export function SiteFooter() {
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Follow Us</p>
           <div className="mt-4 flex gap-3">
-            
+            <a
               href={socialLinks.facebook}
               target="_blank"
               rel="noopener noreferrer"
@@ -78,7 +78,7 @@ export function SiteFooter() {
             >
               <FacebookIcon size={16} />
             </a>
-            
+            <a
               href={socialLinks.instagram}
               target="_blank"
               rel="noopener noreferrer"
@@ -87,7 +87,7 @@ export function SiteFooter() {
             >
               <InstagramIcon size={16} />
             </a>
-            
+            <a
               href={socialLinks.youtube}
               target="_blank"
               rel="noopener noreferrer"
@@ -96,7 +96,7 @@ export function SiteFooter() {
             >
               <YoutubeIcon size={16} />
             </a>
-            
+            <a
               href={socialLinks.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
