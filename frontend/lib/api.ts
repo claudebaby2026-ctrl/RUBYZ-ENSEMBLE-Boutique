@@ -482,10 +482,10 @@ export function getLikedProductIds(): Promise<number[]> {
   return request<number[]>(`/likes/ids`);
 }
 
-export function subscribeToNewsletter(email: string): Promise<{ subscribed: boolean; already_subscribed: boolean }> {
-  return request(`/newsletter/subscribe`, {
+export function joinWhatsAppCommunity(name: string, whatsappNumber: string): Promise<{ joined: boolean }> {
+  return request(`/whatsapp-community/join`, {
     method: "POST",
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ name, whatsapp_number: whatsappNumber }),
   });
 }
 

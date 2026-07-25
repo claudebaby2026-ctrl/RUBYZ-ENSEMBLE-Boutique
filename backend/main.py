@@ -19,13 +19,13 @@ from app.routers import (
     coupons,
     homepage,
     likes,
-    newsletter,
     orders,
     payments,
     products,
     shipping,
     shipping_defaults,
     uploads,
+    whatsapp_community,
 )
 from app.seed_data import (
     seed_attributes,
@@ -40,12 +40,12 @@ from app.models import cart as _cart_models  # noqa: F401
 from app.models import coupon as _coupon_models  # noqa: F401
 from app.models import homepage as _homepage_models  # noqa: F401
 from app.models import like as _like_models  # noqa: F401
-from app.models import newsletter as _newsletter_models  # noqa: F401
 from app.models import order as _order_models  # noqa: F401
 from app.models import pending_checkout as _pending_checkout_models  # noqa: F401
 from app.models import product as _product_models  # noqa: F401
 from app.models import shipping_defaults as _shipping_defaults_models  # noqa: F401
 from app.models import user as _user_models  # noqa: F401
+from app.models import whatsapp_community as _whatsapp_community_models  # noqa: F401
 
 app = FastAPI(title="RUBYZ Ensemble API", version="2.0.0")
 
@@ -92,7 +92,7 @@ app.include_router(payments.router)
 app.include_router(admin.router)
 app.include_router(uploads.router)
 app.include_router(likes.router)
-app.include_router(newsletter.router)
+app.include_router(whatsapp_community.router)
 app.include_router(attributes.router)
 app.include_router(coupons.router)
 app.include_router(homepage.router)

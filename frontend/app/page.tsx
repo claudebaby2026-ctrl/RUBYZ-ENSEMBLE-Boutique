@@ -1,7 +1,7 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
-import { NewsletterForm } from "@/components/ui/newsletter-form";
-import { categories, occasions, reviews, brand, type Product } from "@/lib/content";
+import { WhatsAppCommunityForm } from "@/components/ui/whatsapp-community-form";
+import { categories, occasions, reviews, brand, legalEntity, type Product } from "@/lib/content";
 import { getProducts, getHomepageConfig } from "@/lib/api";
 import { slugForCategoryName } from "@/lib/seo-categories";
 import Link from "next/link";
@@ -242,11 +242,16 @@ export default async function HomePage() {
 
       <section className="bg-[#111111] py-10 sm:py-16 text-white">
         <div className="mx-auto max-w-xl px-5 text-center lg:px-8">
-          <h2 className="text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
-            Join Our Fashion Community
+          <p className="text-xs uppercase tracking-[0.28em] text-[#B68D40]">Hey Beautiful Ladies!</p>
+          <h2 className="mt-2 text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
+            Join Our Fashion Community on WhatsApp
           </h2>
-          <p className="mt-3 text-sm text-gray-400">Early access to new collections and styling notes.</p>
-          <NewsletterForm />
+          <p className="mt-3 text-sm text-gray-400">
+            Early access to new collections and styling notes. To view our WhatsApp status, please
+            fill the form below — and save our WhatsApp number, {legalEntity.phone}, so we can
+            reach you to place orders in future.
+          </p>
+          <WhatsAppCommunityForm />
         </div>
       </section>
     </main>
