@@ -1,12 +1,12 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { WhatsAppCommunityForm } from "@/components/ui/whatsapp-community-form";
-import { categories, occasions, reviews, brand, legalEntity, socialLinks, type Product } from "@/lib/content";
+import { categories, occasions, reviews, brand, legalEntity, socialLinks, googleReviewsUrl, type Product } from "@/lib/content";
 import { getProducts, getHomepageConfig, resolveImageUrl } from "@/lib/api";
 import { slugForCategoryName } from "@/lib/seo-categories";
 import { InstagramIcon } from "@/components/icons/social-icons";
 import Link from "next/link";
-import { ArrowRight, Camera, Check, Gem, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
+import { ArrowRight, Camera, Check, ExternalLink, Gem, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -237,6 +237,16 @@ export default async function HomePage() {
                 <p className="mt-4 text-xs uppercase tracking-[0.28em] text-[#B68D40]">{review.name}</p>
               </div>
             ))}
+          </div>
+          <div className="mt-8 flex justify-center">
+            <a
+              href={googleReviewsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#111111] transition hover:border-[#B68D40] hover:text-[#B68D40]"
+            >
+              Read More on Google <ExternalLink size={15} />
+            </a>
           </div>
         </div>
       </section>
