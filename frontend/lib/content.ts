@@ -126,6 +126,17 @@ export const legalEntity = {
   phone: "+91 78730 11110",
 };
 
+// Safe, no-API-key link straight to the real Google Business Profile
+// listing (and its reviews tab) — same maps.google.com "search" URL
+// pattern already used for the contact page's map embed (see
+// app/contact/page.tsx), just as a plain outbound link instead of an
+// iframe src. Swap in a dedicated Place ID/short link later if one gets
+// set up, but this always resolves correctly as long as the listing name
+// + address stay accurate.
+export const googleReviewsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  `${legalEntity.legalName} Boutique, ${legalEntity.address}`
+)}`;
+
 // Pages required for Razorpay merchant verification and Shiprocket seller
 // onboarding: Privacy Policy, Terms & Conditions, Shipping Policy and a
 // Cancellation/Refund Policy, each reachable from a compact footer strip
