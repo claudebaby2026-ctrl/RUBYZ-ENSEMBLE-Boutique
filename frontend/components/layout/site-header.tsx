@@ -62,7 +62,7 @@ export function SiteHeader() {
         </button>
 
         <Link href="/" className="text-xl tracking-wide text-white sm:text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
-          {brand.name.split(" ")[0]} <span className="italic text-[#B68D40]">{brand.name.split(" ")[1]}</span>
+          {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex">
@@ -191,7 +191,7 @@ export function SiteHeader() {
               className="text-xl tracking-wide text-[#111111]"
               style={{ fontFamily: "Playfair Display, serif" }}
             >
-              {brand.name.split(" ")[0]} <span className="italic text-[#B68D40]">{brand.name.split(" ")[1]}</span>
+              {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
             </Link>
             <button
               onClick={() => setMobileNavOpen(false)}
