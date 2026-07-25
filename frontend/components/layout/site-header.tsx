@@ -61,18 +61,19 @@ export function SiteHeader() {
           <Menu size={18} />
         </button>
 
-        {/* min-w-0 + shrink lets this block give up width to the fixed-size
-            menu button / icon cluster on narrow phones instead of forcing
-            them to compress; whitespace-nowrap + truncate keeps the brand
-            name on one line (ellipsizing only in the extreme case) rather
-            than wrapping to a second line and blowing out the h-20 bar. */}
+        {/* Below ~420px there just isn't room for the logo + full wordmark
+            without truncating a word — so the text is hidden entirely on
+            the smallest phones (logo mark alone still reads as the brand)
+            and reveals in full once the viewport has room. This guarantees
+            whatever is on screen is always shown completely; nothing ever
+            gets clipped mid-word like the shrink/truncate approach did. */}
         <Link
           href="/"
-          className="flex min-w-0 shrink items-center gap-1.5 whitespace-nowrap text-lg tracking-wide text-white sm:gap-2 sm:text-xl lg:text-2xl"
+          className="flex shrink-0 items-center gap-1.5 text-white sm:gap-2"
           style={{ fontFamily: "Playfair Display, serif" }}
         >
-          <img src="/logo.png" alt={brand.name} className="h-7 w-auto shrink-0 sm:h-10 lg:h-12" />
-          <span className="truncate">
+          <img src="/logo.png" alt={brand.name} className="h-8 w-auto shrink-0 sm:h-10 lg:h-12" />
+          <span className="hidden whitespace-nowrap text-lg tracking-wide min-[420px]:inline sm:text-xl lg:text-2xl">
             {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
           </span>
         </Link>
