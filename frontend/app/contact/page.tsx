@@ -1,5 +1,5 @@
-import { MapPin, Phone } from "lucide-react";
-import { legalEntity, SITE_URL } from "@/lib/content";
+import { MapPin, Phone, MessageCircle } from "lucide-react";
+import { legalEntity, socialLinks, SITE_URL } from "@/lib/content";
 
 export const metadata = {
   title: "Contact",
@@ -29,7 +29,21 @@ export default function ContactPage() {
                   app/layout.tsx (SEO plan §6, §8). */}
               <div className="flex gap-3"><MapPin size={16} className="mt-1 text-[#B68D40]" /><span>{legalEntity.address}</span></div>
               <div className="flex gap-3"><Phone size={16} className="mt-1 text-[#B68D40]" /><a href={`tel:${legalEntity.phone.replace(/\s+/g, "")}`}>{legalEntity.phone}</a></div>
+              <div className="flex gap-3">
+                <MessageCircle size={16} className="mt-1 text-[#B68D40]" />
+                <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-[#B68D40]">
+                  Chat with us on WhatsApp
+                </a>
+              </div>
             </div>
+            <a
+              href={socialLinks.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-medium text-white transition hover:brightness-95"
+            >
+              <MessageCircle size={16} /> Message us on WhatsApp
+            </a>
           </div>
           <div className="rounded-[2rem] border border-black/5 bg-[#111111] p-8 text-white shadow-sm">
             <div className="h-64 overflow-hidden rounded-[1.4rem]">
