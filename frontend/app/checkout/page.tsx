@@ -19,6 +19,7 @@ export default function CheckoutPage() {
   const [mode, setMode] = useState<"Delivery" | "Pickup">("Delivery");
   const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", pincode: "", city: "", state: "" });
   const [sent, setSent] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
@@ -78,7 +79,8 @@ export default function CheckoutPage() {
   const valid =
     form.name.trim().length > 1 &&
     form.phone.trim().length >= 8 &&
-    (mode === "Pickup" || (form.address.trim().length > 4 && pincodeValid));
+    (mode === "Pickup" || (form.address.trim().length > 4 && pincodeValid)) &&
+    agreedToTerms;
 
   const applyCoupon = async () => {
     const code = couponInput.trim();
@@ -304,16 +306,46 @@ export default function CheckoutPage() {
               {couponError && <p className="mt-2 text-xs text-[#D94F70]">{couponError}</p>}
             </div>
 
+            <label className="mt-6 flex items-start gap-3 text-xs leading-5 text-gray-600">
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/20 accent-[#111111]"
+              />
+              <span>
+                I have read, understood and agree to the{" "}
+                <Link href="/terms-and-conditions" target="_blank" className="underline hover:text-[#111111]">
+                  Terms &amp; Conditions
+                </Link>
+                ,{" "}
+                <Link href="/shipping-policy" target="_blank" className="underline hover:text-[#111111]">
+                  Shipping Policy
+                </Link>
+                ,{" "}
+                <Link href="/refund-policy" target="_blank" className="underline hover:text-[#111111]">
+                  Cancellation &amp; Refund Policy
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#111111]">
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </label>
+
             <button
               onClick={sendToWhatsApp}
               disabled={!valid}
-              className="mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               Send Order via WhatsApp
             </button>
             {!valid && (
               <p className="mt-3 text-center text-xs text-gray-400">
-                Fill in your name, phone{mode === "Delivery" ? ", address and a valid pincode" : ""} to continue.
+                {!agreedToTerms
+                  ? "Please agree to the Terms & Conditions and related policies to continue."
+                  : `Fill in your name, phone${mode === "Delivery" ? ", address and a valid pincode" : ""} to continue.`}
               </p>
             )}
           </div>
