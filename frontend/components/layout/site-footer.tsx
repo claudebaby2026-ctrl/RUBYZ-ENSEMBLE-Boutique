@@ -5,7 +5,7 @@ import { garmentTypeLinks } from "@/lib/seo-categories";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-black/5 bg-[#111111] text-white">
+    <footer className="border-t border-black/5 bg-[#1A1714] text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.1fr_0.7fr_0.7fr_0.8fr] lg:px-8">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">RUBYZ Ensemble</p>

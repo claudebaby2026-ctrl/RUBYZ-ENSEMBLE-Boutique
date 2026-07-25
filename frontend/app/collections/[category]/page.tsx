@@ -90,7 +90,7 @@ export default async function CategoryLandingPage({
   };
 
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger

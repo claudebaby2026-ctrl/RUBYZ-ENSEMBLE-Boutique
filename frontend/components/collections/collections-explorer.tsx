@@ -281,7 +281,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             Curated for celebration, comfort, and couture.
           </h1>
         </div>
-        <div className="flex w-full items-center gap-3 rounded-full border border-black/10 bg-[#F8F5F1] px-4 py-3 lg:w-auto">
+        <div className="flex w-full items-center gap-3 rounded-full border border-black/10 bg-[#EFE7DA] px-4 py-3 lg:w-auto">
           <Search size={16} className="shrink-0 text-gray-500" />
           <input
             value={query}
@@ -328,7 +328,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                   so this is the only way to reach filters on a phone. */}
               <button
                 onClick={() => setFiltersOpen(true)}
-                className="relative flex items-center gap-2 rounded-full border border-black/10 bg-[#F8F5F1] px-4 py-2 text-sm lg:hidden"
+                className="relative flex items-center gap-2 rounded-full border border-black/10 bg-[#EFE7DA] px-4 py-2 text-sm lg:hidden"
               >
                 <SlidersHorizontal size={15} className="text-[#B68D40]" />
                 Filters
@@ -341,7 +341,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortOption)}
-                className="rounded-full border border-black/10 bg-[#F8F5F1] px-3 py-2 text-sm"
+                className="rounded-full border border-black/10 bg-[#EFE7DA] px-3 py-2 text-sm"
               >
                 <option>Featured</option>
                 <option>Price: Low to High</option>

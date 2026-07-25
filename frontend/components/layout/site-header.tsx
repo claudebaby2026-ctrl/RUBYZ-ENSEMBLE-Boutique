@@ -49,18 +49,18 @@ export function SiteHeader() {
 
   return (
     <>
-    <header className="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#1A1714]/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-5 lg:px-8">
         <button
           onClick={() => setMobileNavOpen(true)}
-          className="rounded-full border border-black/10 p-2 lg:hidden"
+          className="rounded-full border border-white/15 p-2 text-white lg:hidden"
           aria-label="Open menu"
           aria-expanded={mobileNavOpen}
         >
           <Menu size={18} />
         </button>
 
-        <Link href="/" className="text-xl tracking-wide text-[#111111] sm:text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
+        <Link href="/" className="text-xl tracking-wide text-white sm:text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
           {brand.name.split(" ")[0]} <span className="italic text-[#B68D40]">{brand.name.split(" ")[1]}</span>
         </Link>
 
@@ -71,7 +71,7 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-[13px] uppercase tracking-[0.26em] transition ${isActive ? "text-[#B68D40]" : "text-[#111111] hover:text-[#B68D40]"}`}
+                className={`text-[13px] uppercase tracking-[0.26em] transition ${isActive ? "text-[#B68D40]" : "text-white/90 hover:text-[#B68D40]"}`}
               >
                 {item.label}
               </Link>
@@ -82,15 +82,15 @@ export function SiteHeader() {
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => setSearchOpen(true)}
-            className="rounded-full border border-black/10 p-2"
+            className="rounded-full border border-white/15 p-2 text-white"
             aria-label="Search"
           >
             <Search size={18} />
           </button>
-          <Link href="/wishlist" className="hidden rounded-full border border-black/10 p-2 sm:inline-flex" aria-label="Wishlist">
+          <Link href="/wishlist" className="hidden rounded-full border border-white/15 p-2 text-white sm:inline-flex" aria-label="Wishlist">
             <Heart size={18} />
           </Link>
-          <Link href="/cart" className="relative rounded-full border border-black/10 p-2" aria-label="Cart">
+          <Link href="/cart" className="relative rounded-full border border-white/15 p-2 text-white" aria-label="Cart">
             <ShoppingBag size={18} />
             {count > 0 && (
               <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#D94F70] px-1 text-[10px] font-semibold text-white">
@@ -102,14 +102,14 @@ export function SiteHeader() {
           <div className="relative">
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="rounded-full border border-black/10 p-2"
+              className="rounded-full border border-white/15 p-2 text-white"
               aria-label="Account"
               aria-expanded={menuOpen}
             >
               <User size={18} />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 top-12 w-48 rounded-[1rem] border border-black/5 bg-white p-2 shadow-lg">
+              <div className="absolute right-0 top-12 w-48 rounded-[1rem] border border-black/5 bg-white p-2 text-[#111111] shadow-lg">
                 {user ? (
                   <>
                     <p className="truncate px-3 py-2 text-xs text-gray-500">
@@ -119,7 +119,7 @@ export function SiteHeader() {
                       <Link
                         href="/dashboard"
                         onClick={() => setMenuOpen(false)}
-                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#F8F5F1]"
+                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#EFE7DA]"
                       >
                         Owner Dashboard
                       </Link>
@@ -127,7 +127,7 @@ export function SiteHeader() {
                       <Link
                         href="/orders"
                         onClick={() => setMenuOpen(false)}
-                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#F8F5F1]"
+                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#EFE7DA]"
                       >
                         My Orders
                       </Link>
@@ -137,7 +137,7 @@ export function SiteHeader() {
                         logout();
                         setMenuOpen(false);
                       }}
-                      className="flex w-full items-center gap-2 rounded-[0.7rem] px-3 py-2 text-left text-sm text-[#D94F70] hover:bg-[#F8F5F1]"
+                      className="flex w-full items-center gap-2 rounded-[0.7rem] px-3 py-2 text-left text-sm text-[#D94F70] hover:bg-[#EFE7DA]"
                     >
                       <LogOut size={14} /> Log out
                     </button>
@@ -146,7 +146,7 @@ export function SiteHeader() {
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#F8F5F1]"
+                    className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#EFE7DA]"
                   >
                     Sign in / Create account
                   </Link>
@@ -196,7 +196,7 @@ export function SiteHeader() {
                   href={item.href}
                   onClick={() => setMobileNavOpen(false)}
                   className={`rounded-[1rem] px-4 py-3 text-sm uppercase tracking-[0.24em] transition ${
-                    isActive ? "bg-[#F8F5F1] text-[#B68D40]" : "text-[#111111] hover:bg-[#F8F5F1]"
+                    isActive ? "bg-[#EFE7DA] text-[#B68D40]" : "text-[#111111] hover:bg-[#EFE7DA]"
                   }`}
                 >
                   {item.label}
@@ -209,14 +209,14 @@ export function SiteHeader() {
             <Link
               href="/cart"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#F8F5F1]"
+              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#EFE7DA]"
             >
               <ShoppingBag size={16} /> Cart {count > 0 ? `(${count})` : ""}
             </Link>
             <Link
               href="/wishlist"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#F8F5F1]"
+              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#EFE7DA]"
             >
               <Heart size={16} /> Wishlist
             </Link>
@@ -230,7 +230,7 @@ export function SiteHeader() {
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileNavOpen(false)}
-                    className="rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#F8F5F1]"
+                    className="rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#EFE7DA]"
                   >
                     Owner Dashboard
                   </Link>
@@ -238,7 +238,7 @@ export function SiteHeader() {
                   <Link
                     href="/orders"
                     onClick={() => setMobileNavOpen(false)}
-                    className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#F8F5F1]"
+                    className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#EFE7DA]"
                   >
                     <PackageSearch size={16} /> My Orders
                   </Link>
@@ -248,7 +248,7 @@ export function SiteHeader() {
                     logout();
                     setMobileNavOpen(false);
                   }}
-                  className="flex items-center gap-2 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#F8F5F1]"
+                  className="flex items-center gap-2 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#EFE7DA]"
                 >
                   <LogOut size={14} /> Log out
                 </button>

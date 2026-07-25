@@ -140,7 +140,7 @@ export default function CheckoutPage() {
 
   if (!hydrated || authLoading || !user) {
     return (
-      <main className="flex min-h-[60vh] items-center justify-center bg-[#FBFAF8]">
+      <main className="flex min-h-[60vh] items-center justify-center bg-[#F3EEE6]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Loading checkout…
         </div>
@@ -150,7 +150,7 @@ export default function CheckoutPage() {
 
   if (sent) {
     return (
-      <main className="bg-[#FBFAF8]">
+      <main className="bg-[#F3EEE6]">
         <section className="mx-auto max-w-2xl px-5 py-20 text-center lg:px-8">
           <CheckCircle2 size={40} className="mx-auto mb-4 text-[#3A9D5D]" />
           <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Sent to WhatsApp</h1>
@@ -167,7 +167,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">

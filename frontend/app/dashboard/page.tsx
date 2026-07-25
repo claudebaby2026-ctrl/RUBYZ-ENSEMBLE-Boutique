@@ -304,7 +304,7 @@ function TagListInput({ tags, onChange, placeholder }: { tags: string[]; onChang
       {tags.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <span key={tag} className="flex items-center gap-1 rounded-full bg-[#F8F5F1] px-3 py-1 text-xs text-[#111111]">
+            <span key={tag} className="flex items-center gap-1 rounded-full bg-[#EFE7DA] px-3 py-1 text-xs text-[#111111]">
               {tag}
               <button type="button" onClick={() => onChange(tags.filter((t) => t !== tag))} aria-label={`Remove ${tag}`}>
                 <X size={11} />
@@ -570,7 +570,7 @@ function AddProduct({
             </div>
             <div className="flex flex-wrap gap-3">
               <button onClick={() => setStep(1)} className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
-              <button onClick={() => setSaved(true)} className="flex items-center gap-2 rounded-full bg-[#F8F5F1] px-6 py-3 text-sm"><Save size={14} /> Save as Draft</button>
+              <button onClick={() => setSaved(true)} className="flex items-center gap-2 rounded-full bg-[#EFE7DA] px-6 py-3 text-sm"><Save size={14} /> Save as Draft</button>
               <button onClick={() => setStep(3)} className="rounded-full bg-[#111111] px-6 py-3 text-sm text-white sm:ml-auto">Continue</button>
             </div>
             {saved && <p className="text-xs text-gray-500">Saved locally — continue whenever you&apos;re ready.</p>}
@@ -661,7 +661,7 @@ function OrdersTable({
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-sm">
-            <thead className="bg-[#FBFAF8] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+            <thead className="bg-[#F3EEE6] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
               <tr>
                 <th className="p-3">Order</th><th className="p-3">Customer</th><th className="p-3">Amount</th>
                 <th className="p-3">Placed</th><th className="p-3">Status</th><th className="p-3">Shipment</th>
@@ -674,7 +674,7 @@ function OrdersTable({
                   <tr
                     key={order.id}
                     onClick={() => onSelect(order)}
-                    className={`cursor-pointer border-t border-black/5 ${selected?.id === order.id ? "bg-[#FBFAF8]" : ""}`}
+                    className={`cursor-pointer border-t border-black/5 ${selected?.id === order.id ? "bg-[#F3EEE6]" : ""}`}
                   >
                     <td className="p-3">{order.id}</td>
                     <td className="p-3">{order.customerName}</td>
@@ -1309,7 +1309,7 @@ function Inventory({
                 {product.images?.[0] ? (
                   <img src={resolveImageUrl(product.images[0])} alt={product.name} className="h-12 w-10 shrink-0 rounded-[0.5rem] object-cover" />
                 ) : (
-                  <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#F8F5F1] text-gray-400">
+                  <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#EFE7DA] text-gray-400">
                     <ImageOff size={14} />
                   </div>
                 )}
@@ -1836,13 +1836,13 @@ function HomepageEditor({ products }: { products: Product[] }) {
               return (
                 <label
                   key={p.id}
-                  className={`flex cursor-pointer items-center gap-3 rounded-[0.9rem] border p-3 text-sm ${checked ? "border-[#111111] bg-[#F8F5F1]" : "border-black/10"}`}
+                  className={`flex cursor-pointer items-center gap-3 rounded-[0.9rem] border p-3 text-sm ${checked ? "border-[#111111] bg-[#EFE7DA]" : "border-black/10"}`}
                 >
                   <input type="checkbox" checked={checked} onChange={() => toggleFeatured(p.id)} className="accent-[#111111]" />
                   {p.images?.[0] ? (
                     <img src={resolveImageUrl(p.images[0])} alt={p.name} className="h-10 w-8 rounded-[0.4rem] object-cover" />
                   ) : (
-                    <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#F8F5F1] text-gray-400"><ImageOff size={12} /></div>
+                    <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#EFE7DA] text-gray-400"><ImageOff size={12} /></div>
                   )}
                   <span className="truncate">{p.name}</span>
                 </label>
@@ -1926,7 +1926,7 @@ function ShippingDefaultsEditor() {
       <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] text-sm">
-            <thead className="bg-[#FBFAF8] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+            <thead className="bg-[#F3EEE6] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
               <tr>
                 <th className="p-3">Category</th>
                 <th className="p-3">Weight (kg)</th>
@@ -2024,7 +2024,7 @@ export default function DashboardPage() {
   // yet, never render owner data.
   if (authLoading || user?.role !== "owner") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#FBFAF8]">
+      <div className="flex min-h-screen items-center justify-center bg-[#F3EEE6]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Checking your session…
         </div>
@@ -2035,7 +2035,7 @@ export default function DashboardPage() {
   const activeLabel = NAV.find((item) => item.id === active)?.label ?? "Dashboard";
 
   return (
-    <div className="min-h-screen bg-[#FBFAF8]">
+    <div className="min-h-screen bg-[#F3EEE6]">
       {/* Mobile top bar: hamburger + current section label, replaces the hidden sidebar */}
       <div className="flex items-center justify-between border-b border-black/5 bg-white px-5 py-4 lg:hidden">
         <button
@@ -2079,7 +2079,7 @@ export default function DashboardPage() {
                       setActive(item.id);
                       setMobileNavOpen(false);
                     }}
-                    className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#111111] text-white" : "text-[#111111] hover:bg-[#F8F5F1]"}`}
+                    className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#111111] text-white" : "text-[#111111] hover:bg-[#EFE7DA]"}`}
                   >
                     <Icon size={16} /> {item.label}
                   </button>
@@ -2090,7 +2090,7 @@ export default function DashboardPage() {
                   logout();
                   router.push("/login");
                 }}
-                className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#F8F5F1]"
+                className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#EFE7DA]"
               >
                 <LogOut size={16} /> Log out
               </button>
@@ -2110,7 +2110,7 @@ export default function DashboardPage() {
             {NAV.map((item) => {
               const Icon = item.icon;
               return (
-                <button key={item.id} onClick={() => setActive(item.id)} className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#111111] text-white" : "text-[#111111] hover:bg-[#F8F5F1]"}`}>
+                <button key={item.id} onClick={() => setActive(item.id)} className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#111111] text-white" : "text-[#111111] hover:bg-[#EFE7DA]"}`}>
                   <Icon size={16} /> {item.label}
                 </button>
               );
@@ -2120,7 +2120,7 @@ export default function DashboardPage() {
                 logout();
                 router.push("/login");
               }}
-              className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#F8F5F1]"
+              className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#EFE7DA]"
             >
               <LogOut size={16} /> Log out
             </button>

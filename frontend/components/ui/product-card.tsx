@@ -32,7 +32,7 @@ export function ProductCard({ product }: { product: Product }) {
         transition={{ duration: 0.2 }}
         className="group overflow-hidden rounded-[1.5rem] border border-black/5 bg-white p-3 shadow-[0_12px_40px_rgba(17,17,17,0.04)]"
       >
-        <div className="relative overflow-hidden rounded-[1.2rem] bg-[#F8F5F1] p-4">
+        <div className="relative overflow-hidden rounded-[1.2rem] bg-[#EFE7DA] p-4">
           <OutOfStockRibbon product={product} />
           <div className="absolute right-3 top-3">
             <LikeButton productId={product.id} />
@@ -44,7 +44,7 @@ export function ProductCard({ product }: { product: Product }) {
               className={`h-64 w-full rounded-[1rem] object-cover ${outOfStock ? "grayscale-[70%] opacity-70" : ""}`}
             />
           ) : (
-            <div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+            <div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
           )}        <div className="mt-3 flex items-center justify-between">
             <span className="rounded-full bg-[#111111] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white">
               {product.badge}

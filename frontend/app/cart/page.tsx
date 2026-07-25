@@ -29,7 +29,7 @@ export default function CartPage() {
 
   if (!hydrated) {
     return (
-      <main className="flex min-h-[60vh] items-center justify-center bg-[#FBFAF8]">
+      <main className="flex min-h-[60vh] items-center justify-center bg-[#F3EEE6]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Loading your cart…
         </div>
@@ -38,7 +38,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">
@@ -55,12 +55,12 @@ export default function CartPage() {
             ) : (
               <div className="mt-6 space-y-4">
                 {items.map((item) => (
-                  <div key={`${item.productId}-${item.size}`} className="flex flex-col gap-3 rounded-[1.2rem] border border-black/5 bg-[#F8F5F1] p-4 sm:flex-row sm:items-center sm:gap-4">
+                  <div key={`${item.productId}-${item.size}`} className="flex flex-col gap-3 rounded-[1.2rem] border border-black/5 bg-[#EFE7DA] p-4 sm:flex-row sm:items-center sm:gap-4">
                     <div className="flex items-center gap-4">
                       {item.image ? (
                         <img src={item.image} alt={item.name} className="h-20 w-16 shrink-0 rounded-[0.8rem] object-cover" />
                       ) : (
-                        <div className="h-20 w-16 shrink-0 rounded-[0.8rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+                        <div className="h-20 w-16 shrink-0 rounded-[0.8rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
                       )}
                       <div className="min-w-0 flex-1">
                         <Link href={`/products/${item.slug}`} className="font-medium text-[#111111] hover:text-[#B68D40]">
@@ -109,7 +109,7 @@ export default function CartPage() {
               <div className="flex justify-between"><span>Delivery</span><span>{deliveryFee ? `₹${deliveryFee}` : "Free"}</span></div>
               <div className="mt-3 border-t border-black/5 pt-3 flex justify-between text-base font-semibold text-[#111111]"><span>Total</span><span>₹{total.toLocaleString()}</span></div>
             </div>
-            <div className="mt-6 rounded-[1.2rem] bg-[#F8F5F1] p-4 text-sm">
+            <div className="mt-6 rounded-[1.2rem] bg-[#EFE7DA] p-4 text-sm">
               <p className="font-semibold text-[#111111]">Pickup or Delivery</p>
               <div className="mt-3 flex gap-2">
                 <button

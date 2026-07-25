@@ -42,7 +42,7 @@ export default function OrdersPage() {
 
   if (authLoading || !user) {
     return (
-      <main className="flex min-h-[60vh] items-center justify-center bg-[#FBFAF8]">
+      <main className="flex min-h-[60vh] items-center justify-center bg-[#F3EEE6]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Loading…
         </div>
@@ -51,7 +51,7 @@ export default function OrdersPage() {
   }
 
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <section className="mx-auto max-w-4xl px-5 py-12 lg:px-8 lg:py-16">
         <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
           Your Orders

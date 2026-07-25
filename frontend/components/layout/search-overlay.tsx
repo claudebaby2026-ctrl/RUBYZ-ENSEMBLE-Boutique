@@ -115,7 +115,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                 <button
                   onClick={onClose}
                   aria-label="Close search"
-                  className="shrink-0 rounded-full p-1.5 text-gray-400 hover:bg-[#F8F5F1] hover:text-[#111111]"
+                  className="shrink-0 rounded-full p-1.5 text-gray-400 hover:bg-[#EFE7DA] hover:text-[#111111]"
                 >
                   <X size={18} />
                 </button>
@@ -150,12 +150,12 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                         key={product.id}
                         href={`/products/${product.slug}`}
                         onClick={onClose}
-                        className="flex items-center gap-4 rounded-[1rem] px-3 py-2.5 transition hover:bg-[#F8F5F1]"
+                        className="flex items-center gap-4 rounded-[1rem] px-3 py-2.5 transition hover:bg-[#EFE7DA]"
                       >
                         {image ? (
                           <img src={image} alt={product.name} className="h-14 w-14 shrink-0 rounded-[0.7rem] object-cover" />
                         ) : (
-                          <div className="h-14 w-14 shrink-0 rounded-[0.7rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+                          <div className="h-14 w-14 shrink-0 rounded-[0.7rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
                         )}
                         <div className="min-w-0">
                           <p className="truncate text-sm text-[#111111]">{product.name}</p>
@@ -172,7 +172,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
               {q.length > 0 && (
                 <button
                   onClick={goToResults}
-                  className="flex w-full items-center justify-center gap-2 border-t border-black/5 px-5 py-3.5 text-xs uppercase tracking-[0.24em] text-[#111111] hover:bg-[#F8F5F1]"
+                  className="flex w-full items-center justify-center gap-2 border-t border-black/5 px-5 py-3.5 text-xs uppercase tracking-[0.24em] text-[#111111] hover:bg-[#EFE7DA]"
                 >
                   View all results for &ldquo;{query.trim()}&rdquo; <ArrowRight size={14} />
                 </button>

@@ -16,7 +16,7 @@ const MAP_EMBED_SRC = `https://maps.google.com/maps?q=${MAP_QUERY}&t=&z=15&ie=UT
 
 export default function ContactPage() {
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm">

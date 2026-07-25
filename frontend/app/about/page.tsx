@@ -21,7 +21,7 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="rounded-[2rem] border border-black/5 bg-[#111111] p-8 text-white shadow-sm">
@@ -54,28 +54,28 @@ export default function AboutPage() {
 
           <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#F8F5F1] p-4">
+              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
                 <MapPin size={18} className="mt-0.5 shrink-0 text-[#B68D40]" />
                 <div>
                   <p className="text-sm font-semibold text-[#111111]">Visit the boutique</p>
                   <p className="mt-1 text-sm text-gray-600">Satyanagar, near Prayash Park, Bhubaneswar, Odisha</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#F8F5F1] p-4">
+              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
                 <Star size={18} className="mt-0.5 shrink-0 text-[#B68D40]" />
                 <div>
                   <p className="text-sm font-semibold text-[#111111]">5-star rated</p>
                   <p className="mt-1 text-sm text-gray-600">Rated by real customers on Google — not a marketing claim.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#F8F5F1] p-4">
+              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
                 <Truck size={18} className="mt-0.5 shrink-0 text-[#B68D40]" />
                 <div>
                   <p className="text-sm font-semibold text-[#111111]">Pan-India delivery</p>
                   <p className="mt-1 text-sm text-gray-600">The Bhubaneswar boutique experience, shipped nationwide.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#F8F5F1] p-4">
+              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
                 <Users size={18} className="mt-0.5 shrink-0 text-[#B68D40]" />
                 <div>
                   <p className="text-sm font-semibold text-[#111111]">Founder-led</p>
@@ -86,7 +86,7 @@ export default function AboutPage() {
 
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {values.map((item) => (
-                <div key={item.title} className="rounded-[1rem] border border-black/5 bg-[#F8F5F1] p-4">
+                <div key={item.title} className="rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
                   <p className="text-sm font-semibold text-[#111111]">{item.title}</p>
                   <p className="mt-2 text-sm text-gray-600">{item.body}</p>
                 </div>

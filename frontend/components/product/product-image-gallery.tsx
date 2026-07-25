@@ -54,7 +54,7 @@ export function ProductImageGallery({
           />
         )
       ) : (
-        <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
+        <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
       )}
       {media.length > 1 && (
         <div className="mt-3 grid grid-cols-4 gap-2 sm:mt-4 sm:gap-3">

@@ -90,7 +90,7 @@ const clothingStoreJsonLd = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable} ${poppins.variable}`}>
-      <body className="min-h-screen bg-[#FBFAF8] text-[#111111] antialiased">
+      <body className="min-h-screen bg-[#F3EEE6] text-[#111111] antialiased">
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

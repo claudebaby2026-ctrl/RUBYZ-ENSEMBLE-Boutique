@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function TailoringPage() {
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm">
@@ -19,7 +19,7 @@ export default function TailoringPage() {
             <TailoringActions />
           </div>
           <div className="rounded-[2rem] border border-black/5 bg-[#111111] p-8 text-white">
-            <div className="h-64 rounded-[1.4rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)]" />
+            <div className="h-64 rounded-[1.4rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
             <div className="mt-6 grid gap-3 text-sm text-gray-300">
               {['Neck adjustments','Sleeve refinement','Length tailoring','Waist shaping'].map((item) => (
                 <div key={item} className="rounded-[1rem] border border-white/10 bg-white/5 p-3">{item}</div>

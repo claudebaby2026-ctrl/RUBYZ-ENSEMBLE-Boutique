@@ -20,7 +20,7 @@ export function LegalPage({
   sections: LegalSection[];
 }) {
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <section className="mx-auto max-w-4xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm sm:p-10">
           <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">{eyebrow}</p>

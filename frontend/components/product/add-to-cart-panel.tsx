@@ -103,7 +103,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
       </div>
 
       {added && (
-        <div className="mt-4 flex items-center gap-3 rounded-[1rem] bg-[#F8F5F1] p-3 text-sm text-[#111111]">
+        <div className="mt-4 flex items-center gap-3 rounded-[1rem] bg-[#EFE7DA] p-3 text-sm text-[#111111]">
           <span>Added to your cart.</span>
           <Link href="/cart" onClick={() => router.refresh()} className="font-medium text-[#B68D40] underline">
             View Cart

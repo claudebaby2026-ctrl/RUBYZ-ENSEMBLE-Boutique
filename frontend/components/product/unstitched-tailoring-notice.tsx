@@ -41,7 +41,7 @@ export function UnstitchedTailoringNotice({ productSlug, productName }: { produc
     <div className="fixed inset-x-4 bottom-4 z-40 sm:inset-x-auto sm:bottom-6 sm:right-6 sm:max-w-sm">
       <div className="rounded-[1.2rem] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(17,17,17,0.15)]">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F8F5F1] text-[#B68D40]">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EFE7DA] text-[#B68D40]">
             <Scissors size={16} />
           </span>
           <div className="flex-1">

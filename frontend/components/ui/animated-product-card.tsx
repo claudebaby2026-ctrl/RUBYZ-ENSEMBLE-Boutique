@@ -34,7 +34,7 @@ export function AnimatedProductCard({ product }: { product: Product }) {
         transition={{ duration: 0.2 }}
         className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white p-2 shadow-[0_12px_40px_rgba(17,17,17,0.04)] sm:rounded-[1.5rem] sm:p-3"
       >
-        <div className="relative overflow-hidden rounded-[1rem] bg-[#F8F5F1] p-2 sm:rounded-[1.2rem] sm:p-4">
+        <div className="relative overflow-hidden rounded-[1rem] bg-[#EFE7DA] p-2 sm:rounded-[1.2rem] sm:p-4">
           <OutOfStockRibbon product={product} />
           <div className="absolute right-2 top-2 sm:right-3 sm:top-3">
             <LikeButton productId={product.id} />
@@ -46,7 +46,7 @@ export function AnimatedProductCard({ product }: { product: Product }) {
               className={`aspect-[3/4] w-full rounded-[0.8rem] object-cover sm:rounded-[1rem] ${outOfStock ? "grayscale-[70%] opacity-70" : ""}`}
             />
           ) : (
-            <div className="aspect-[3/4] w-full rounded-[0.8rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] sm:rounded-[1rem]" />
+            <div className="aspect-[3/4] w-full rounded-[0.8rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)] sm:rounded-[1rem]" />
           )}
           <div className="mt-2 flex items-center justify-between gap-2 sm:mt-3">
             <span className="rounded-full bg-[#111111] px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.2em] text-white sm:px-2.5 sm:text-[10px] sm:tracking-[0.24em]">

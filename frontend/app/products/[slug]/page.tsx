@@ -137,7 +137,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   };
 
   return (
-    <main className="bg-[#FBFAF8]">
+    <main className="bg-[#F3EEE6]">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
@@ -158,7 +158,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {mainImage ? (
               <ProductImageGallery images={images} videos={videos} alt={product.name} fabric={product.fabric} />
             ) : (
-              <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#F8F5F1_0%,_#E4D4BE_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
+              <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
             )}
           </div>
 
@@ -170,9 +170,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <p className="mt-4 text-sm leading-7 text-gray-600">{product.description}</p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <span className="rounded-full bg-[#F8F5F1] px-3 py-1 text-sm text-[#111111]">{product.category}</span>
-              <span className="rounded-full bg-[#F8F5F1] px-3 py-1 text-sm text-[#111111]">{product.fabric}</span>
-              <span className="rounded-full bg-[#F8F5F1] px-3 py-1 text-sm text-[#111111]">{product.occasion}</span>
+              <span className="rounded-full bg-[#EFE7DA] px-3 py-1 text-sm text-[#111111]">{product.category}</span>
+              <span className="rounded-full bg-[#EFE7DA] px-3 py-1 text-sm text-[#111111]">{product.fabric}</span>
+              <span className="rounded-full bg-[#EFE7DA] px-3 py-1 text-sm text-[#111111]">{product.occasion}</span>
             </div>
 
             <div className="mt-8 flex items-end gap-4">
