@@ -5,7 +5,9 @@ import { getStoredUser } from "@/lib/auth";
 
 const CART_KEY_PREFIX = "rubyz_cart";
 const CART_EVENT = "rubyz-cart-changed";
-export const DELIVERY_FEE = 150;
+// Shipping charge per suit (see Shipping Policy) — charged per unit in the
+// cart, not a single flat fee for the whole order.
+export const DELIVERY_FEE_PER_ITEM = 100;
 
 export type CartItem = {
   productId: number;
@@ -102,6 +104,13 @@ export function getCartCount(items?: CartItem[]): number {
 
 export function getCartSubtotal(items?: CartItem[]): number {
   return (items ?? readRaw()).reduce((sum, i) => sum + i.price * i.quantity, 0);
+}
+
+// Total shipping charge for the cart: ₹100 per suit (per unit), not a flat
+// fee for the whole order. Call sites multiply this by 0 when delivery
+// isn't selected (e.g. in-store pickup).
+export function getCartDeliveryFee(items?: CartItem[]): number {
+  return getCartCount(items) * DELIVERY_FEE_PER_ITEM;
 }
 
 export { CART_EVENT };

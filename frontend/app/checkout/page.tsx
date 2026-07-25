@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2, Tag, X } from "lucide-react";
 import { useCart } from "@/lib/useCart";
 import { useAuth } from "@/lib/useAuth";
-import { DELIVERY_FEE } from "@/lib/cart";
+import { getCartDeliveryFee } from "@/lib/cart";
 import { brand } from "@/lib/content";
 import { validateCoupon, type Coupon } from "@/lib/api";
 
@@ -62,9 +62,9 @@ export default function CheckoutPage() {
   const pincodeValid = /^\d{6}$/.test(form.pincode.trim());
 
   // No live courier-rate lookup anymore — the owner confirms delivery
-  // details directly over WhatsApp, so this is just the flat estimate
-  // shown up front for the customer's reference.
-  const deliveryFee = mode === "Delivery" ? DELIVERY_FEE : 0;
+  // details directly over WhatsApp, so this is just the flat per-suit
+  // estimate (₹100/suit) shown up front for the customer's reference.
+  const deliveryFee = mode === "Delivery" ? getCartDeliveryFee(items) : 0;
   const discount = appliedCoupon
     ? Math.min(
         appliedCoupon.discount_type === "flat"

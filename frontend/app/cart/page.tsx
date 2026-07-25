@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ArrowRight, Loader2, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/useCart";
 import { useAuth } from "@/lib/useAuth";
-import { DELIVERY_FEE } from "@/lib/cart";
+import { getCartDeliveryFee } from "@/lib/cart";
 import { useRouter } from "next/navigation";
 
 const MODE_KEY = "rubyz_delivery_mode";
@@ -24,7 +24,7 @@ export default function CartPage() {
     window.localStorage.setItem(MODE_KEY, next);
   };
 
-  const deliveryFee = mode === "Delivery" && items.length > 0 ? DELIVERY_FEE : 0;
+  const deliveryFee = mode === "Delivery" && items.length > 0 ? getCartDeliveryFee(items) : 0;
   const total = subtotal + deliveryFee;
 
   if (!hydrated) {
