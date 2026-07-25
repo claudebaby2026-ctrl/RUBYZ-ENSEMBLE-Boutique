@@ -61,9 +61,10 @@ export function SiteHeader() {
           <Menu size={18} />
         </button>
 
-        <Link href="/" className="text-xl tracking-wide text-white sm:text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
-          {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
-        </Link>
+        <Link href="/" className="flex items-center gap-2 text-xl tracking-wide text-white sm:text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
+  <img src="/logo.png" alt={brand.name} className="h-10 w-auto sm:h-12" />
+  {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
+ </Link>
 
         <nav className="hidden items-center gap-7 lg:flex">
           {navItems.map((item) => {
