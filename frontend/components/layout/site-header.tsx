@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, Heart, Menu, User, LogOut, X, PackageSearch } from "lucide-react";
+import { Search, ShoppingBag, Heart, Menu, User, LogOut, X, PackageSearch, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { brand } from "@/lib/content";
+import { brand, socialLinks } from "@/lib/content";
 import { useAuth } from "@/lib/useAuth";
 import { useCart } from "@/lib/useCart";
 import { SearchOverlay } from "@/components/layout/search-overlay";
+import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/social-icons";
 
 const navItems = [
   { href: "/collections", label: "Collections" },
@@ -80,6 +81,20 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <div className="mr-1 hidden items-center gap-1 border-r border-white/15 pr-3 lg:flex" aria-label="Follow us">
+            <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
+              <FacebookIcon size={15} />
+            </a>
+            <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
+              <InstagramIcon size={15} />
+            </a>
+            <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
+              <YoutubeIcon size={15} />
+            </a>
+            <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
+              <MessageCircle size={15} />
+            </a>
+          </div>
           <button
             onClick={() => setSearchOpen(true)}
             className="rounded-full border border-white/15 p-2 text-white"
@@ -262,6 +277,24 @@ export function SiteHeader() {
                 Sign in / Create account
               </Link>
             )}
+
+            <div className="my-4 border-t border-black/5" />
+
+            <p className="px-4 text-xs uppercase tracking-[0.24em] text-gray-500">Follow Us</p>
+            <div className="mt-3 flex gap-2 px-4">
+              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full border border-black/10 p-2 text-[#111111]">
+                <FacebookIcon size={16} />
+              </a>
+              <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full border border-black/10 p-2 text-[#111111]">
+                <InstagramIcon size={16} />
+              </a>
+              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="rounded-full border border-black/10 p-2 text-[#111111]">
+                <YoutubeIcon size={16} />
+              </a>
+              <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full border border-black/10 p-2 text-[#111111]">
+                <MessageCircle size={16} />
+              </a>
+            </div>
           </nav>
         </div>
       </div>,

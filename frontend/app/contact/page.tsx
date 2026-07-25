@@ -1,4 +1,4 @@
-import { MapPin, Phone, MessageCircle } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import { legalEntity, SITE_URL } from "@/lib/content";
 
 export const metadata = {
@@ -29,7 +29,6 @@ export default function ContactPage() {
                   app/layout.tsx (SEO plan §6, §8). */}
               <div className="flex gap-3"><MapPin size={16} className="mt-1 text-[#B68D40]" /><span>{legalEntity.address}</span></div>
               <div className="flex gap-3"><Phone size={16} className="mt-1 text-[#B68D40]" /><a href={`tel:${legalEntity.phone.replace(/\s+/g, "")}`}>{legalEntity.phone}</a></div>
-              <div className="flex gap-3"><MessageCircle size={16} className="mt-1 text-[#B68D40]" /><a href={`mailto:${legalEntity.email}`}>{legalEntity.email}</a></div>
             </div>
           </div>
           <div className="rounded-[2rem] border border-black/5 bg-[#111111] p-8 text-white shadow-sm">

@@ -22,6 +22,16 @@ export const brand = {
   },
 };
 
+// Social profile URLs — reused in the header, footer, and the
+// ClothingStore JSON-LD `sameAs` field (app/layout.tsx) so every "Follow
+// Us" link and the schema markup stay in sync from one place.
+export const socialLinks = {
+  facebook: "https://www.facebook.com/ruby.hans.735/",
+  instagram: "https://www.instagram.com/rubyzensemble_",
+  youtube: "https://www.youtube.com/channel/UCv7ExbmHDxnGmluD7dYYgXQ",
+  whatsapp: `https://wa.me/${brand.whatsappNumber}`,
+};
+
 export type Product = {
   id: number;
   slug: string;
@@ -113,7 +123,6 @@ export const legalEntity = {
   get address() {
     return `${this.streetAddress}, ${this.addressLocality}, ${this.addressRegion} ${this.postalCode}, ${this.addressCountry}`;
   },
-  email: "hello@rubyzensemble.in",
   phone: "+91 78730 11110",
 };
 

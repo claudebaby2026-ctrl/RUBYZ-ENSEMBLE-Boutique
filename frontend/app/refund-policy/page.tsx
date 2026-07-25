@@ -25,7 +25,6 @@ export default function RefundPolicyPage() {
             <p>
               You may cancel an order free of charge any time before it has been dispatched, by messaging us on the
               same WhatsApp chat used to place the order, or by contacting us at{" "}
-              <a href={`mailto:${legalEntity.email}`} className="underline">{legalEntity.email}</a> or{" "}
               {legalEntity.phone} with your order details. Once an order has been dispatched, it can no longer be
               cancelled — but you may be eligible to return it after delivery, per the terms below.
             </p>
@@ -73,8 +72,7 @@ export default function RefundPolicyPage() {
           heading: "5. How to initiate a return",
           body: (
             <p>
-              Write to{" "}
-              <a href={`mailto:${legalEntity.email}`} className="underline">{legalEntity.email}</a> or message us at{" "}
+              Message us at{" "}
               {legalEntity.phone} with your order ID and reason for return. Once approved, we&apos;ll arrange pickup
               through our courier partner or share drop-off instructions.
             </p>
@@ -106,7 +104,6 @@ export default function RefundPolicyPage() {
           body: (
             <p>
               For any cancellation, return or refund query, reach {legalEntity.legalName} at{" "}
-              <a href={`mailto:${legalEntity.email}`} className="underline">{legalEntity.email}</a> or{" "}
               {legalEntity.phone}. Registered address: {legalEntity.address}.
             </p>
           ),

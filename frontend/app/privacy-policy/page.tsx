@@ -123,11 +123,8 @@ export default function PrivacyPolicyPage() {
           body: (
             <p>
               You may request access to, correction of, or deletion of your personal information, or withdraw
-              consent to marketing communications, by writing to us at{" "}
-              <a href={`mailto:${legalEntity.email}`} className="underline">
-                {legalEntity.email}
-              </a>
-              . We&apos;ll respond within a reasonable time.
+              consent to marketing communications, by contacting us at {legalEntity.phone}. We&apos;ll respond within
+              a reasonable time.
             </p>
           ),
         },
@@ -148,11 +145,7 @@ export default function PrivacyPolicyPage() {
           heading: "9. Contact us",
           body: (
             <p>
-              For any privacy-related questions, write to{" "}
-              <a href={`mailto:${legalEntity.email}`} className="underline">
-                {legalEntity.email}
-              </a>{" "}
-              or call {legalEntity.phone}. Registered address: {legalEntity.address}.
+              For any privacy-related questions, call {legalEntity.phone}. Registered address: {legalEntity.address}.
             </p>
           ),
         },

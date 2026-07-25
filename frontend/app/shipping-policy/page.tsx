@@ -99,7 +99,6 @@ export default function ShippingPolicyPage() {
           body: (
             <p>
               For shipping questions, reach us at{" "}
-              <a href={`mailto:${legalEntity.email}`} className="underline">{legalEntity.email}</a> or{" "}
               {legalEntity.phone}.
             </p>
           ),

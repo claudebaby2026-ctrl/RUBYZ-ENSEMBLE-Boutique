@@ -155,7 +155,6 @@ export default function TermsPage() {
           body: (
             <p>
               Questions about these Terms can be sent to{" "}
-              <a href={`mailto:${legalEntity.email}`} className="underline">{legalEntity.email}</a> or{" "}
               {legalEntity.phone}.
             </p>
           ),

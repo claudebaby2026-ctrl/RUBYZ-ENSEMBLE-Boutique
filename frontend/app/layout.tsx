@@ -3,7 +3,7 @@ import { Playfair_Display, Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { legalEntity, SITE_URL } from "@/lib/content";
+import { legalEntity, SITE_URL, brand, socialLinks } from "@/lib/content";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -62,7 +62,12 @@ const clothingStoreJsonLd = {
   name: "RUBYZ Ensemble",
   url: SITE_URL,
   telephone: legalEntity.phone,
-  email: legalEntity.email,
+  sameAs: [
+    socialLinks.facebook,
+    socialLinks.instagram,
+    socialLinks.youtube,
+    `https://wa.me/${brand.whatsappNumber}`,
+  ],
   address: {
     "@type": "PostalAddress",
     streetAddress: legalEntity.streetAddress,

@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { Camera, MessageCircle, PhoneCall } from "lucide-react";
-import { brand, footerLinks, legalEntity, legalLinks } from "@/lib/content";
+import { MessageCircle } from "lucide-react";
+import { brand, footerLinks, legalEntity, legalLinks, socialLinks } from "@/lib/content";
 import { garmentTypeLinks } from "@/lib/seo-categories";
+import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/social-icons";
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-black/5 bg-[#1A1714] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.1fr_0.7fr_0.7fr_0.8fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1fr_0.6fr_0.6fr_0.8fr_0.6fr] lg:px-8">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">RUBYZ Ensemble</p>
           <h2 className="mt-3 text-2xl text-white" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -63,15 +64,46 @@ export function SiteFooter() {
           >
             View on Google Maps
           </a>
-          <div className="mt-6 flex gap-3">
-            <a href="https://www.instagram.com/rubyzensemble_" aria-label="Instagram" className="rounded-full border border-white/20 p-2 text-white">
-              <Camera size={16} />
+        </div>
+
+        <div>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Follow Us</p>
+          <div className="mt-4 flex gap-3">
+            <a
+              href={socialLinks.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="rounded-full border border-white/20 p-2 text-white transition hover:border-white/40"
+            >
+              <FacebookIcon size={16} />
             </a>
-            <a href={`https://wa.me/${brand.whatsappNumber}`} aria-label="WhatsApp" className="rounded-full border border-white/20 p-2 text-white">
+            <a
+              href={socialLinks.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="rounded-full border border-white/20 p-2 text-white transition hover:border-white/40"
+            >
+              <InstagramIcon size={16} />
+            </a>
+            <a
+              href={socialLinks.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              className="rounded-full border border-white/20 p-2 text-white transition hover:border-white/40"
+            >
+              <YoutubeIcon size={16} />
+            </a>
+            <a
+              href={socialLinks.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+              className="rounded-full border border-white/20 p-2 text-white transition hover:border-white/40"
+            >
               <MessageCircle size={16} />
-            </a>
-            <a href={`tel:${legalEntity.phone.replace(/\s+/g, "")}`} aria-label="Phone" className="rounded-full border border-white/20 p-2 text-white">
-              <PhoneCall size={16} />
             </a>
           </div>
         </div>
