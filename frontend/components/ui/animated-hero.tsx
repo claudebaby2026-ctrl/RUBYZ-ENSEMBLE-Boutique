@@ -27,7 +27,7 @@ export function AnimatedHero({
         <img
           src={imageUrl}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-[center_20%]"
         />
         {/* Scrim so heading/buttons stay legible over any photo. Stronger
             behind the text column on desktop (left-to-right fade); on
@@ -35,7 +35,7 @@ export function AnimatedHero({
             top-to-bottom fade keeps that area readable instead. */}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,_rgba(23,13,6,0.7)_0%,_rgba(23,13,6,0.3)_35%,_rgba(23,13,6,0.12)_60%,_rgba(23,13,6,0.5)_100%)] sm:bg-[linear-gradient(100deg,_rgba(23,13,6,0.8)_0%,_rgba(23,13,6,0.55)_38%,_rgba(23,13,6,0.12)_70%,_transparent_100%)]" />
 
-        <div className="relative z-10 mx-auto flex min-h-[560px] max-w-7xl flex-col justify-between gap-6 px-5 py-10 sm:min-h-[620px] sm:gap-8 sm:px-8 sm:py-14 lg:min-h-[680px] lg:py-20">
+        <div className="relative z-10 mx-auto flex min-h-[560px] max-w-7xl flex-col justify-between gap-6 px-5 py-10 sm:min-h-[620px] sm:gap-8 sm:px-8 sm:py-14 lg:min-h-[760px] lg:py-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
