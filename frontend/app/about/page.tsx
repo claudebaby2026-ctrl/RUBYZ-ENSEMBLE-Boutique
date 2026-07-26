@@ -1,5 +1,6 @@
-import { MapPin, Star, Truck, Users, ExternalLink } from "lucide-react";
-import { brand, googleReviewsUrl } from "@/lib/content";
+import { MapPin, Star, Truck, Users, ExternalLink, MessageCircle } from "lucide-react";
+import { brand, googleReviewsUrl, socialLinks } from "@/lib/content";
+import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/social-icons";
 
 export const metadata = {
   title: "About",
@@ -109,6 +110,94 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 pb-12 lg:px-8 lg:pb-16">
+        <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm lg:p-10">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Founder&apos;s Message</p>
+          <h2 className="mt-3 text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            Hello, beautiful ladies.
+          </h2>
+
+          <div className="mt-5 space-y-4 text-sm leading-7 text-gray-600 lg:max-w-3xl">
+            <p>
+              Thank you for visiting my page. I am Ruby Hans. A small brief about my business — we deal mainly
+              in unstitched and readymade women&apos;s wear only.
+            </p>
+            <p>
+              Our premium collection is outsourced from India&apos;s best manufacturers and distributors. Each
+              suit piece, whether unstitched or ready-made, is carefully hand-picked so that the best design and
+              quality is assured.
+            </p>
+            <p>
+              Our suits are available at unbelievable, pocket-friendly prices — always 40% to 60% lower than
+              regular market price. Kaftan, Pakistani, Zardozi, Brush Paint, Pure Muslin, Silk and Cotton,
+              Embroidery and many designer collections are available. No design is ever repeated. Popular brands
+              like Ganga, Jai Vijay and Saiba are also available.
+            </p>
+            <p>
+              We also provide Pan-India delivery, tailoring services, and international shipping too. Please
+              check our reviews on Google at{" "}
+              <a
+                href={googleReviewsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#B68D40] hover:underline"
+              >
+                Rubyz Ensemble, Bhubaneswar
+              </a>
+              .
+            </p>
+          </div>
+
+          <div className="mt-6 flex flex-col gap-3 border-t border-black/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm font-semibold text-[#111111]">
+              Please join us for the latest updates on WhatsApp, YouTube, Facebook and Instagram.
+            </p>
+            <div className="flex items-center gap-3">
+              <a
+                href={socialLinks.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Join us on WhatsApp"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#EFE7DA] text-[#111111] transition hover:bg-[#B68D40] hover:text-white"
+              >
+                <MessageCircle size={16} />
+              </a>
+              <a
+                href={socialLinks.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Subscribe on YouTube"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#EFE7DA] text-[#111111] transition hover:bg-[#B68D40] hover:text-white"
+              >
+                <YoutubeIcon size={16} />
+              </a>
+              <a
+                href={socialLinks.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow us on Facebook"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#EFE7DA] text-[#111111] transition hover:bg-[#B68D40] hover:text-white"
+              >
+                <FacebookIcon size={16} />
+              </a>
+              <a
+                href={socialLinks.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow us on Instagram"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#EFE7DA] text-[#111111] transition hover:bg-[#B68D40] hover:text-white"
+              >
+                <InstagramIcon size={16} />
+              </a>
+            </div>
+          </div>
+
+          <p className="mt-6 text-sm font-medium text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            Awaiting to connect! — Ruby Hans
+          </p>
         </div>
       </section>
     </main>
