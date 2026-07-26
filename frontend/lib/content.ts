@@ -81,8 +81,6 @@ export const categories = [
   { name: "Tailoring Services", tag: "Custom Fit · Alterations" },
 ];
 
-export const occasions = ["Wedding", "Festive", "Office", "Casual", "Party Wear", "Eid", "Diwali"];
-
 export const reviews = [
   {
     name: "Ananya, Bhubaneswar",
@@ -126,16 +124,15 @@ export const legalEntity = {
   phone: "+91 78730 11110",
 };
 
-// Safe, no-API-key link straight to the real Google Business Profile
-// listing (and its reviews tab) — same maps.google.com "search" URL
-// pattern already used for the contact page's map embed (see
-// app/contact/page.tsx), just as a plain outbound link instead of an
-// iframe src. Swap in a dedicated Place ID/short link later if one gets
-// set up, but this always resolves correctly as long as the listing name
-// + address stay accurate.
-export const googleReviewsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  `${legalEntity.legalName} Boutique, ${legalEntity.address}`
-)}`;
+// Direct link to the reviews tab of RUBYZ-ENSEMBLE Boutique's actual,
+// verified Google Business Profile (place_id ChIJFYepAO8LGToRdNWE7bZPXQo —
+// confirmed via Places lookup: "RUBYZ-ENSEMBLE Boutique.", Home-Town Road,
+// Plot no 93, near Prayash Park, Satya Nagar, Bhubaneswar). Unlike a plain
+// maps.google.com/maps/search query — which just runs a text search and may
+// land on the wrong result or the general place page — this
+// search.google.com/local/reviews?placeid= form is Google's own supported
+// pattern for deep-linking straight into a specific listing's reviews.
+export const googleReviewsUrl = `https://search.google.com/local/reviews?placeid=ChIJFYepAO8LGToRdNWE7bZPXQo`;
 
 // Pages required for Razorpay merchant verification and Shiprocket seller
 // onboarding: Privacy Policy, Terms & Conditions, Shipping Policy and a

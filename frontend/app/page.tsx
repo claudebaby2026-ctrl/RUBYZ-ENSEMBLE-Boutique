@@ -1,11 +1,11 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { WhatsAppCommunityForm } from "@/components/ui/whatsapp-community-form";
-import { occasions, reviews, brand, legalEntity, socialLinks, googleReviewsUrl, type Product } from "@/lib/content";
+import { reviews, brand, legalEntity, socialLinks, googleReviewsUrl, type Product } from "@/lib/content";
 import { getProducts, getHomepageConfig, resolveImageUrl } from "@/lib/api";
 import { InstagramIcon } from "@/components/icons/social-icons";
 import Link from "next/link";
-import { ArrowRight, Camera, Check, ExternalLink, Gem, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
+import { ArrowRight, Camera, Check, ExternalLink, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
 
 // Homepage "Shop by Category" is deliberately trimmed to the 3 top-level
 // entry points the client wants front-and-center — everything else
@@ -164,28 +164,6 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
-        <h2 className="mb-8 text-center text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
-          Shop by Occasion
-        </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-7">
-          {occasions.map((occasion) => (
-            // Was a static, unlinked tag — now a real internal link into the
-            // filtered collections view so these keywords (Wedding, Eid,
-            // Diwali, etc.) actually pass link equity and are crawlable
-            // rather than being dead-end decoration.
-            <Link
-              key={occasion}
-              href={`/collections?occasion=${encodeURIComponent(occasion)}`}
-              className="group rounded-[1rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-[#B17F5E]/50 sm:p-4"
-            >
-              <Gem size={18} className="mx-auto mb-2 text-[#B17F5E] sm:mb-3" />
-              <p className="text-sm text-[#3A2213] group-hover:text-[#B17F5E]">{occasion}</p>
-            </Link>
-          ))}
         </div>
       </section>
 
