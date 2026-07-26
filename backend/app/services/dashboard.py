@@ -9,5 +9,5 @@ def get_dashboard_stats(db: Session) -> dict:
         "todayOrders": order_crud.count_today_orders(db),
         "pendingOrders": order_crud.count_pending_orders(db),
         "revenueToday": order_crud.sum_revenue(db),
-        "lowStockItems": product_crud.count_low_stock(db),
+        "outOfStockItems": product_crud.count_out_of_stock(db),
     }

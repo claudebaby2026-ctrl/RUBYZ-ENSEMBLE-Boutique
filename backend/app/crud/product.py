@@ -111,5 +111,9 @@ def delete_product(db: Session, db_product: Product) -> None:
     db.commit()
 
 
-def count_low_stock(db: Session, threshold: int = 3) -> int:
+def count_out_of_stock(db: Session, threshold: int = 0) -> int:
+    # RUBYZ keeps exactly one piece per suit — there's no "running low"
+    # state to speak of, only "in stock" (1) or "sold" (0) — so this
+    # counts products that have sold their single piece instead of a
+    # multi-unit low-stock threshold.
     return db.query(Product).filter(Product.stock <= threshold).count()

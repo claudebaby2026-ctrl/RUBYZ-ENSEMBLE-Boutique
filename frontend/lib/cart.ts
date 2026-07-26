@@ -60,14 +60,14 @@ export function getCart(): CartItem[] {
   return readRaw();
 }
 
+// RUBYZ keeps exactly one piece per suit, so a cart line's quantity is
+// always exactly 1 — there's nothing to "add more" of once a product's
+// single piece is already in the cart.
 export function addToCart(item: Omit<CartItem, "quantity"> & { quantity?: number }): CartItem[] {
   const items = readRaw();
-  const quantity = Math.max(1, item.quantity ?? 1);
   const existing = items.find((i) => i.productId === item.productId && i.size === item.size);
-  if (existing) {
-    existing.quantity = Math.min(existing.quantity + quantity, existing.stock ?? 99);
-  } else {
-    items.push({ ...item, quantity: Math.min(quantity, item.stock ?? 99) });
+  if (!existing) {
+    items.push({ ...item, quantity: 1 });
   }
   writeRaw(items);
   return items;
@@ -77,12 +77,6 @@ export function updateQuantity(productId: number, size: string, quantity: number
   let items = readRaw();
   if (quantity <= 0) {
     items = items.filter((i) => !(i.productId === productId && i.size === size));
-  } else {
-    items = items.map((i) =>
-      i.productId === productId && i.size === size
-        ? { ...i, quantity: Math.min(quantity, i.stock ?? 99) }
-        : i
-    );
   }
   writeRaw(items);
   return items;

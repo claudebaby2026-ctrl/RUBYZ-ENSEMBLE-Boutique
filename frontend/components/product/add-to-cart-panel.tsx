@@ -3,22 +3,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Minus, MessageCircle, Plus, ShoppingBag } from "lucide-react";
+import { Check, MessageCircle, ShoppingBag, Sparkles } from "lucide-react";
 import type { Product } from "@/lib/content";
 import { brand } from "@/lib/content";
 import { useCart } from "@/lib/useCart";
-import { getStockStatus } from "@/lib/stock";
 
 export function AddToCartPanel({ product, image }: { product: Product; image?: string }) {
   const router = useRouter();
   const { addToCart } = useCart();
   const sizes = product.sizes?.length ? product.sizes : ["Free Size"];
   const [size, setSize] = useState(sizes[0]);
-  const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const outOfStock = (product.stock ?? 1) <= 0;
-  const lowStock = getStockStatus(product) === "low-stock";
 
+  // RUBYZ keeps exactly one piece per suit — there's no quantity to pick,
+  // every add-to-cart is a single, exclusive unit.
   const handleAdd = () => {
     if (outOfStock) return;
     addToCart({
@@ -30,7 +29,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
       mrp: product.mrp,
       size,
       stock: product.stock,
-      quantity,
+      quantity: 1,
       category: product.category,
     });
     setAdded(true);
@@ -58,29 +57,10 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
         </div>
       )}
 
-      <div className="mt-6">
-        <p className="text-xs uppercase tracking-[0.28em] text-gray-400">Quantity</p>
-        <div className="mt-2 flex items-center gap-3">
-          <button
-            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            className="rounded-full border border-black/10 p-2.5"
-            aria-label="Decrease quantity"
-          >
-            <Minus size={14} />
-          </button>
-          <span className="w-6 text-center text-sm">{quantity}</span>
-          <button
-            onClick={() => setQuantity((q) => Math.min(q + 1, product.stock ?? 99))}
-            className="rounded-full border border-black/10 p-2.5"
-            aria-label="Increase quantity"
-          >
-            <Plus size={14} />
-          </button>
-        </div>
-      </div>
-
-      {lowStock && typeof product.stock === "number" && (
-        <p className="mt-4 text-sm font-medium text-[#B3261E]">Only {product.stock} left — order soon.</p>
+      {!outOfStock && (
+        <p className="mt-6 flex items-center gap-2 text-sm font-medium text-[#B68D40]">
+          <Sparkles size={14} /> Only 1 piece available — this exact suit won&apos;t be restocked.
+        </p>
       )}
 
       <div className="mt-8 flex flex-wrap gap-3">

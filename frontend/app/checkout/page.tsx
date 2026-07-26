@@ -5,19 +5,19 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2, Tag, X } from "lucide-react";
 import { useCart } from "@/lib/useCart";
-import { useAuth } from "@/lib/useAuth";
 import { getCartDeliveryFee } from "@/lib/cart";
 import { brand } from "@/lib/content";
 import { validateCoupon, type Coupon } from "@/lib/api";
 
 const MODE_KEY = "rubyz_delivery_mode";
 
+// No account required to check out — everyone can send an order request
+// straight to WhatsApp, where the team confirms details directly with the
+// customer, so there's no name/phone/email/address form to fill in here.
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, hydrated, subtotal, clearCart } = useCart();
-  const { user, loading: authLoading } = useAuth();
   const [mode, setMode] = useState<"Delivery" | "Pickup">("Delivery");
-  const [form, setForm] = useState({ name: "", phone: "", email: "", address: "", pincode: "", city: "", state: "" });
   const [sent, setSent] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [couponInput, setCouponInput] = useState("");
@@ -31,27 +31,6 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    // Checkout requires an account — bounce to login and send the customer
-    // straight back here once they've signed in.
-    if (!authLoading && !user) {
-      router.replace("/login?redirect=/checkout");
-    }
-  }, [authLoading, user, router]);
-
-  useEffect(() => {
-    // Pre-fill from the signed-in account so returning customers don't have
-    // to retype their details.
-    if (user) {
-      setForm((f) => ({
-        ...f,
-        name: f.name || user.name || "",
-        email: f.email || user.email || "",
-        phone: f.phone || user.phone || "",
-      }));
-    }
-  }, [user]);
-
-  useEffect(() => {
     // Nothing left to check out — bounce back to the cart, unless we just
     // sent the order to WhatsApp (in which case the cart has been
     // intentionally cleared).
@@ -59,8 +38,6 @@ export default function CheckoutPage() {
       router.replace("/cart");
     }
   }, [hydrated, items.length, sent, router]);
-
-  const pincodeValid = /^\d{6}$/.test(form.pincode.trim());
 
   // No live courier-rate lookup anymore — the owner confirms delivery
   // details directly over WhatsApp, so this is just the flat per-suit
@@ -76,11 +53,7 @@ export default function CheckoutPage() {
     : 0;
   const total = subtotal - discount + deliveryFee;
 
-  const valid =
-    form.name.trim().length > 1 &&
-    form.phone.trim().length >= 8 &&
-    (mode === "Pickup" || (form.address.trim().length > 4 && pincodeValid)) &&
-    agreedToTerms;
+  const valid = agreedToTerms;
 
   const applyCoupon = async () => {
     const code = couponInput.trim();
@@ -121,14 +94,7 @@ export default function CheckoutPage() {
     lines.push(`${mode === "Delivery" ? `Delivery: ₹${deliveryFee}` : "Pickup: in-store"}`);
     lines.push(`Estimated total: ₹${total.toLocaleString()}`);
     lines.push("");
-    lines.push(`Name: ${form.name}`);
-    lines.push(`Phone: ${form.phone}`);
-    if (form.email) lines.push(`Email: ${form.email}`);
-    if (mode === "Delivery") {
-      lines.push(`Delivery address: ${form.address}, ${form.city ? `${form.city}, ` : ""}${form.state ? `${form.state} ` : ""}${form.pincode}`.trim());
-    } else {
-      lines.push("Mode: Store pickup");
-    }
+    lines.push(mode === "Delivery" ? "Mode: Delivery — I'll share my name, phone and address here." : "Mode: Store pickup");
     return lines.join("\n");
   };
 
@@ -140,7 +106,7 @@ export default function CheckoutPage() {
     setSent(true);
   };
 
-  if (!hydrated || authLoading || !user) {
+  if (!hydrated) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center bg-[#F3EEE6]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -175,64 +141,11 @@ export default function CheckoutPage() {
           <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">
             <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Checkout</h1>
             <p className="mt-2 text-sm text-gray-500">
-              We don&apos;t take payment on the site — fill in your details below and we&apos;ll send your order
-              to WhatsApp, where our team confirms availability and pricing with you directly.
+              We don&apos;t take payment on the site — choose delivery or pickup below and we&apos;ll send your
+              order to WhatsApp. Share your name, phone and address there and our team will confirm availability
+              and pricing with you directly.
             </p>
             <div className="mt-6 space-y-4">
-              <input
-                placeholder="Full name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
-              />
-              <input
-                placeholder="Phone number"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
-              />
-              <input
-                placeholder="Email address (optional)"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
-              />
-              {mode === "Delivery" && (
-                <>
-                  <textarea
-                    placeholder="Delivery address"
-                    rows={4}
-                    value={form.address}
-                    onChange={(e) => setForm({ ...form, address: e.target.value })}
-                    className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
-                  />
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <input
-                      placeholder="Pincode"
-                      inputMode="numeric"
-                      maxLength={6}
-                      value={form.pincode}
-                      onChange={(e) => setForm({ ...form, pincode: e.target.value.replace(/\D/g, "") })}
-                      className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
-                    />
-                    <input
-                      placeholder="City (optional)"
-                      value={form.city}
-                      onChange={(e) => setForm({ ...form, city: e.target.value })}
-                      className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
-                    />
-                    <input
-                      placeholder="State (optional)"
-                      value={form.state}
-                      onChange={(e) => setForm({ ...form, state: e.target.value })}
-                      className="w-full rounded-[1rem] border border-black/10 px-4 py-3"
-                    />
-                  </div>
-                  {form.pincode.length > 0 && !pincodeValid && (
-                    <p className="text-xs text-[#D94F70]">Enter a valid 6-digit pincode.</p>
-                  )}
-                </>
-              )}
               <div className="flex gap-3">
                 <button
                   onClick={() => setMode("Delivery")}
@@ -343,9 +256,7 @@ export default function CheckoutPage() {
             </button>
             {!valid && (
               <p className="mt-3 text-center text-xs text-gray-400">
-                {!agreedToTerms
-                  ? "Please agree to the Terms & Conditions and related policies to continue."
-                  : `Fill in your name, phone${mode === "Delivery" ? ", address and a valid pincode" : ""} to continue.`}
+                Please agree to the Terms &amp; Conditions and related policies to continue.
               </p>
             )}
           </div>

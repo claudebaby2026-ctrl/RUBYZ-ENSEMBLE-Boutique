@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, Loader2, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { ArrowRight, Loader2, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/useCart";
-import { useAuth } from "@/lib/useAuth";
 import { getCartDeliveryFee } from "@/lib/cart";
 import { useRouter } from "next/navigation";
 
@@ -12,8 +11,7 @@ const MODE_KEY = "rubyz_delivery_mode";
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, hydrated, subtotal, updateQuantity, removeFromCart } = useCart();
-  const { user, loading: authLoading } = useAuth();
+  const { items, hydrated, subtotal, removeFromCart } = useCart();
   const [mode, setMode] = useState<"Delivery" | "Pickup">(() => {
     if (typeof window === "undefined") return "Delivery";
     return (window.localStorage.getItem(MODE_KEY) as "Delivery" | "Pickup") || "Delivery";
@@ -71,23 +69,7 @@ export default function CartPage() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between gap-3 sm:ml-auto sm:justify-end">
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}
-                          className="rounded-full border border-black/10 p-2.5"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus size={14} />
-                        </button>
-                        <span className="w-4 text-center text-sm">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}
-                          className="rounded-full border border-black/10 p-2.5"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus size={14} />
-                        </button>
-                      </div>
+                      <span className="text-xs uppercase tracking-[0.2em] text-gray-400">1 piece</span>
                       <button
                         onClick={() => removeFromCart(item.productId, item.size)}
                         className="rounded-full border border-black/10 p-2.5 text-[#D94F70]"
@@ -127,17 +109,12 @@ export default function CartPage() {
               </div>
             </div>
             <button
-              disabled={items.length === 0 || authLoading}
-              onClick={() => router.push(user ? "/checkout" : "/login?redirect=/checkout")}
+              disabled={items.length === 0}
+              onClick={() => router.push("/checkout")}
               className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {user ? "Proceed to Checkout" : "Sign In to Checkout"} <ArrowRight size={16} />
+              Proceed to Checkout <ArrowRight size={16} />
             </button>
-            {!authLoading && !user && items.length > 0 && (
-              <p className="mt-3 text-center text-xs text-gray-400">
-                You&apos;ll need an account to place an order.
-              </p>
-            )}
           </div>
         </div>
       </section>

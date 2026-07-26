@@ -77,7 +77,7 @@ export type DashboardStats = {
   todayOrders: number;
   pendingOrders: number;
   revenueToday: number;
-  lowStockItems: number;
+  outOfStockItems: number;
 };
 
 export type ProductInput = Omit<Product, "id"> & { stock?: number };

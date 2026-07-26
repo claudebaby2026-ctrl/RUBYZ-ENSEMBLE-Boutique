@@ -1,33 +1,27 @@
 import type { Product } from "@/lib/content";
 
-// Below this many units left (and still > 0), we surface "Only N left"
-// urgency messaging instead of the plain "In stock" label.
-const LOW_STOCK_THRESHOLD = 5;
-
-export type StockStatus = "out-of-stock" | "low-stock" | "in-stock";
+// RUBYZ keeps exactly one piece per suit — every product is a single,
+// one-of-a-kind unit, so stock is binary (0 or 1). There's no "low stock"
+// state in between: a product is either the one available piece, or it's
+// already sold.
+export type StockStatus = "out-of-stock" | "in-stock";
 
 /**
- * Single source of truth for "is this product actually purchasable / how
- * urgently should we say so" — derived primarily from the numeric
- * `stock` count (when the backend provides one), falling back to the
- * free-text `availability` string for older/seed data that predates
- * per-product stock counts.
+ * Single source of truth for "is this product actually purchasable" —
+ * derived primarily from the numeric `stock` count (when the backend
+ * provides one), falling back to the free-text `availability` string for
+ * older/seed data that predates per-product stock counts.
  */
 export function getStockStatus(product: Pick<Product, "stock" | "availability">): StockStatus {
   const stock = product.stock;
   const availability = (product.availability ?? "").toLowerCase();
 
   if (typeof stock === "number") {
-    if (stock <= 0) return "out-of-stock";
-    if (stock <= LOW_STOCK_THRESHOLD) return "low-stock";
-    return "in-stock";
+    return stock <= 0 ? "out-of-stock" : "in-stock";
   }
 
   if (availability.includes("out of stock") || availability.includes("out-of-stock")) {
     return "out-of-stock";
-  }
-  if (availability.includes("low") || availability.includes("limited")) {
-    return "low-stock";
   }
   return "in-stock";
 }
@@ -35,13 +29,10 @@ export function getStockStatus(product: Pick<Product, "stock" | "availability">)
 export function getStockLabel(product: Pick<Product, "stock" | "availability">): string {
   const status = getStockStatus(product);
   if (status === "out-of-stock") return "Out of Stock";
-  if (status === "low-stock") {
-    if (typeof product.stock === "number" && product.stock > 0) {
-      return `Only ${product.stock} left`;
-    }
-    return product.availability || "Low Stock";
-  }
-  return product.availability || "In Stock";
+  // Every in-stock product is a single, exclusive piece — say so rather
+  // than a generic "In Stock" label. Kept short since this also renders
+  // inside compact product-card badges.
+  return "Only 1 Available";
 }
 
 /**

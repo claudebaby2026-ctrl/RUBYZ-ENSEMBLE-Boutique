@@ -25,7 +25,7 @@ def add_item(db: Session, user_id: int, item: CartItemCreate) -> CartItem:
     quantity = max(1, item.quantity or 1)
     existing = _get_item(db, user_id, item.product_id, item.size)
     if existing:
-        cap = existing.stock if existing.stock is not None else 99
+        cap = existing.stock if existing.stock is not None else 1
         existing.quantity = min(existing.quantity + quantity, cap)
         # Refresh the snapshot in case price/name/image/stock changed since
         # it was first added.
@@ -40,7 +40,7 @@ def add_item(db: Session, user_id: int, item: CartItemCreate) -> CartItem:
         db.refresh(existing)
         return existing
 
-    cap = item.stock if item.stock is not None else 99
+    cap = item.stock if item.stock is not None else 1
     db_item = CartItem(
         user_id=user_id,
         product_id=item.product_id,
@@ -68,7 +68,7 @@ def update_quantity(db: Session, user_id: int, product_id: int, size: str, quant
         db.delete(item)
         db.commit()
         return
-    cap = item.stock if item.stock is not None else 99
+    cap = item.stock if item.stock is not None else 1
     item.quantity = min(quantity, cap)
     db.commit()
 

@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class ProductBase(BaseModel):
@@ -43,6 +43,14 @@ class ProductBase(BaseModel):
     breadth: Optional[float] = None
     height: Optional[float] = None
 
+    # RUBYZ keeps exactly one piece per suit — every product is either
+    # in stock (1) or sold (0), never a multi-unit count. Clamp here so
+    # this holds no matter what a client sends.
+    @field_validator("stock")
+    @classmethod
+    def _cap_stock_at_one(cls, value: int) -> int:
+        return max(0, min(1, value))
+
 
 class ProductCreate(ProductBase):
     pass
@@ -79,6 +87,13 @@ class ProductUpdate(BaseModel):
     length: Optional[float] = None
     breadth: Optional[float] = None
     height: Optional[float] = None
+
+    @field_validator("stock")
+    @classmethod
+    def _cap_stock_at_one(cls, value: Optional[int]) -> Optional[int]:
+        if value is None:
+            return value
+        return max(0, min(1, value))
 
 
 class ProductOut(ProductBase):

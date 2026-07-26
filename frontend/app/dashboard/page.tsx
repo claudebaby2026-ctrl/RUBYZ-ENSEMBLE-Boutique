@@ -249,7 +249,10 @@ function VideoUploader({ videos, onChange }: { videos: string[]; onChange: (vide
 }
 
 const ALL_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "Free Size"];
-const AVAILABILITY_OPTIONS = ["In stock", "Low stock", "Made to order", "Out of stock"];
+// RUBYZ keeps exactly one piece per suit — every product is either the
+// single available piece (stock = 1) or sold (stock = 0). No "low stock"
+// or "made to order" states in between.
+const AVAILABILITY_OPTIONS = ["In stock", "Out of stock"];
 
 function SizePicker({ sizes, onChange }: { sizes: string[]; onChange: (sizes: string[]) => void }) {
   return (
@@ -346,10 +349,10 @@ function StatusPill({ status }: { status: string }) {
   return <span className="rounded-full px-2.5 py-1 text-[11px] text-white" style={{ background: bg }}>{status}</span>;
 }
 
-function DashboardHome({ setActive, stats, lowStockCount, loading }: {
+function DashboardHome({ setActive, stats, outOfStockCount, loading }: {
   setActive: (id: string) => void;
   stats: DashboardStats | null;
-  lowStockCount: number;
+  outOfStockCount: number;
   loading: boolean;
 }) {
   return (
@@ -359,10 +362,10 @@ function DashboardHome({ setActive, stats, lowStockCount, loading }: {
         <p className="mt-1 text-sm text-gray-500">Here is how the boutique is performing today.</p>
       </div>
 
-      {!loading && lowStockCount > 0 && (
+      {!loading && outOfStockCount > 0 && (
         <div className="flex flex-wrap items-center gap-3 rounded-[1.2rem] border border-[#EFD9B0] bg-[#FDF3E7] p-4">
           <AlertTriangle size={18} className="shrink-0 text-[#B68D40]" />
-          <p className="text-sm text-[#111111]"><strong>{lowStockCount} product(s)</strong> are running low on stock.</p>
+          <p className="text-sm text-[#111111]"><strong>{outOfStockCount} product(s)</strong> have sold their one available piece.</p>
           <button onClick={() => setActive("inventory")} className="ml-auto text-xs uppercase tracking-[0.24em] underline">View</button>
         </div>
       )}
@@ -371,7 +374,7 @@ function DashboardHome({ setActive, stats, lowStockCount, loading }: {
         <StatCard label="Total Orders" value={loading ? "…" : stats?.todayOrders ?? 0} icon={ClipboardList} />
         <StatCard label="Pending Orders" value={loading ? "…" : stats?.pendingOrders ?? 0} tone="rose" icon={AlertTriangle} />
         <StatCard label="Total Revenue" value={loading ? "…" : `₹${(stats?.revenueToday ?? 0).toLocaleString()}`} icon={BarChart3} />
-        <StatCard label="Low Stock Items" value={loading ? "…" : lowStockCount} tone="rose" icon={AlertTriangle} />
+        <StatCard label="Out of Stock" value={loading ? "…" : outOfStockCount} tone="rose" icon={AlertTriangle} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -398,8 +401,11 @@ function AddProduct({
   const [step, setStep] = useState(1);
   const [images, setImages] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
+  // No numeric "stock" field — RUBYZ keeps exactly one piece per suit, so
+  // stock is just derived from the Availability toggle (1 for "In stock",
+  // 0 for "Out of stock").
   const [form, setForm] = useState({
-    title: "", price: "", mrp: "", stock: "", description: "",
+    title: "", price: "", mrp: "", description: "",
     categories: ["Pakistani Suits"] as string[], fabric: "Georgette", occasion: "Party Wear", color: "",
     availability: "In stock",
   });
@@ -426,7 +432,7 @@ function AddProduct({
         color: form.color || "Multi",
         price,
         mrp: Number(form.mrp) || price,
-        stock: Number(form.stock) || 0,
+        stock: form.availability === "In stock" ? 1 : 0,
         rating: 0,
         sold: 0,
         badge: "NEW",
@@ -435,7 +441,7 @@ function AddProduct({
         sizes: sizes.length > 0 ? sizes : ["Free Size"],
         images,
         videos,
-        availability: Number(form.stock) > 0 ? form.availability : "Out of stock",
+        availability: form.availability,
         isNew: true,
       });
       setPublished(true);
@@ -454,7 +460,7 @@ function AddProduct({
         <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
         <p className="mt-2 text-sm text-gray-500">&quot;{form.title}&quot; is now live in the store and inventory.</p>
         <button
-          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", stock: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
+          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
           className="mt-6 rounded-full bg-[#111111] px-8 py-3 text-sm text-white"
         >
           Add Another Product
@@ -500,7 +506,7 @@ function AddProduct({
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Title</label>
               <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Price (₹)</label>
                 <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
@@ -508,10 +514,6 @@ function AddProduct({
               <div>
                 <label className="text-xs uppercase tracking-[0.24em] text-gray-500">MRP (₹)</label>
                 <input value={form.mrp} onChange={(e) => setForm({ ...form, mrp: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
-              </div>
-              <div>
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Stock</label>
-                <input value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
@@ -1051,17 +1053,20 @@ function EditProductModal({
   attributeOptions: AttributeOptions;
   onAttributeAdded: (type: AttributeType, value: string) => void;
 }) {
+  // No numeric "stock" field — RUBYZ keeps exactly one piece per suit, so
+  // stock is derived from the Availability toggle. Legacy values like
+  // "Low stock" or "Made to order" (from before this change) are folded
+  // into "In stock" here so the dropdown always shows a valid option.
   const [form, setForm] = useState({
     name: product.name,
     price: String(product.price),
     mrp: String(product.mrp),
-    stock: String(product.stock ?? 0),
     description: product.description,
     categories: product.categories?.length ? product.categories : [product.category],
     fabric: product.fabric,
     occasion: product.occasion,
     color: product.color,
-    availability: product.availability || "In stock",
+    availability: product.availability === "Out of stock" ? "Out of stock" : "In stock",
   });
   const [care, setCare] = useState<string[]>(product.care ?? []);
   const [sizes, setSizes] = useState<string[]>(product.sizes ?? []);
@@ -1085,7 +1090,7 @@ function EditProductModal({
         name: form.name,
         price: Number(form.price) || 0,
         mrp: Number(form.mrp) || 0,
-        stock: Number(form.stock) || 0,
+        stock: form.availability === "In stock" ? 1 : 0,
         description: form.description,
         category: form.categories[0],
         categories: form.categories,
@@ -1133,7 +1138,7 @@ function EditProductModal({
             <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Name</label>
             <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Price</label>
               <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
@@ -1141,10 +1146,6 @@ function EditProductModal({
             <div>
               <label className="text-xs uppercase tracking-[0.24em] text-gray-500">MRP</label>
               <input value={form.mrp} onChange={(e) => setForm({ ...form, mrp: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
-            </div>
-            <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Stock</label>
-              <input value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1319,8 +1320,9 @@ function Inventory({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {(product.stock ?? 0) <= 3 && <span className="text-xs text-[#D94F70]">Low Stock</span>}
-                <span className="w-10 text-right text-sm">{product.stock ?? 0}</span>
+                <span className={`text-xs font-medium ${(product.stock ?? 0) > 0 ? "text-[#3A9D5D]" : "text-[#D94F70]"}`}>
+                  {(product.stock ?? 0) > 0 ? "In Stock" : "Sold Out"}
+                </span>
                 <button onClick={() => setEditing(product)} className="rounded-full border border-black/10 p-2 text-[#111111]"><Pencil size={14} /></button>
                 <button onClick={() => remove(product)} disabled={deletingId === product.id} className="rounded-full border border-[#D94F70] p-2 text-[#D94F70] disabled:opacity-50">
                   {deletingId === product.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
@@ -2018,7 +2020,7 @@ export default function DashboardPage() {
     if (user?.role === "owner") refresh();
   }, [user, refresh]);
 
-  const lowStockCount = products.filter((p) => (p.stock ?? 0) <= 3).length;
+  const outOfStockCount = products.filter((p) => (p.stock ?? 0) <= 0).length;
 
   // While we verify the session, or if the redirect above hasn't happened
   // yet, never render owner data.
@@ -2128,7 +2130,7 @@ export default function DashboardPage() {
         </aside>
 
         <main className="flex-1 rounded-[2rem] border border-black/5 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
-          {active === "home" && <DashboardHome setActive={setActive} stats={stats} lowStockCount={lowStockCount} loading={loading} />}
+          {active === "home" && <DashboardHome setActive={setActive} stats={stats} outOfStockCount={outOfStockCount} loading={loading} />}
           {active === "add" && (
             <AddProduct onCreated={refresh} attributeOptions={attributeOptions} onAttributeAdded={handleAttributeAdded} />
           )}

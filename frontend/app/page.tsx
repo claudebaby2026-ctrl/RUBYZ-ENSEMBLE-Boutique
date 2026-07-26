@@ -1,12 +1,23 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { WhatsAppCommunityForm } from "@/components/ui/whatsapp-community-form";
-import { categories, occasions, reviews, brand, legalEntity, socialLinks, googleReviewsUrl, type Product } from "@/lib/content";
+import { occasions, reviews, brand, legalEntity, socialLinks, googleReviewsUrl, type Product } from "@/lib/content";
 import { getProducts, getHomepageConfig, resolveImageUrl } from "@/lib/api";
-import { slugForCategoryName } from "@/lib/seo-categories";
 import { InstagramIcon } from "@/components/icons/social-icons";
 import Link from "next/link";
 import { ArrowRight, Camera, Check, ExternalLink, Gem, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
+
+// Homepage "Shop by Category" is deliberately trimmed to the 3 top-level
+// entry points the client wants front-and-center — everything else
+// (occasion/fabric taxonomy, garment-type pages) still exists for SEO but
+// no longer clutters this grid. "Stitched"/"Unstitched" reuse the same
+// /collections?type= filter already wired up in collections-explorer.tsx
+// and linked from the footer.
+const homeShopCategories = [
+  { name: "All Pieces", tag: "Every one-of-a-kind suit in the boutique", href: "/collections" },
+  { name: "Stitched", tag: "Ready-to-wear · Try and go", href: "/collections?type=stitched" },
+  { name: "Unstitched", tag: "Custom Fit · Tailored to you", href: "/collections?type=unstitched" },
+];
 
 export const dynamic = "force-dynamic";
 
@@ -73,26 +84,16 @@ export default async function HomePage() {
             </h2>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
-          {categories.map((category) => (
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-3">
+          {homeShopCategories.map((category) => (
             <Link
               key={category.name}
-              // "Tailoring Services" is its own dedicated page rather than a
-              // filterable product category; every other category now has a
-              // real server-rendered landing page at /collections/[slug]
-              // (see lib/seo-categories.ts) instead of the client-filtered
-              // ?category= query string, so this card links to an
-              // indexable URL with unique on-page copy.
-              href={
-                category.name === "Tailoring Services"
-                  ? "/tailoring"
-                  : `/collections/${slugForCategoryName(category.name) ?? ""}`
-              }
+              href={category.href}
               className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1 sm:rounded-[1.5rem]"
             >
               <div className="h-32 bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)] p-3 sm:h-48 sm:p-6">
                 <div className="flex h-full flex-col justify-between rounded-[1rem] border border-white/60 bg-white/40 p-3 sm:p-5">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#B68D40] sm:text-xs sm:tracking-[0.28em]">Featured</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#B68D40] sm:text-xs sm:tracking-[0.28em]">Shop</p>
                   <div>
                     <h3 className="text-base text-[#111111] sm:text-xl" style={{ fontFamily: "Playfair Display, serif" }}>
                       {category.name}
