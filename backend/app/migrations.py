@@ -185,3 +185,10 @@ def run_migrations(engine: Engine) -> None:
     # to hand-roll here for the table's existence on an upgrade, since
     # create_all also creates missing tables (not just missing columns) on
     # every startup. The seeded rows are handled in app/seed_data.py.
+
+    # Homepage hero background image (dashboard's Homepage Editor). Additive,
+    # nullable column — existing rows just get NULL, which the storefront
+    # treats the same as "no custom hero photo uploaded yet".
+    if not _has_column(engine, "homepage_config", "hero_image"):
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE homepage_config ADD COLUMN hero_image VARCHAR"))

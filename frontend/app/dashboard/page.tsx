@@ -1741,6 +1741,69 @@ function Coupons() {
   );
 }
 
+function HeroImageUploader({ image, onChange }: { image: string | null | undefined; onChange: (image: string | null) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleFile = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const { url } = await uploadImage(file);
+      onChange(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not upload image");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      {image ? (
+        <div className="relative h-40 w-full max-w-sm overflow-hidden rounded-[0.9rem] border border-black/10 sm:h-48">
+          <img src={resolveImageUrl(image)} alt="Hero background" className="h-full w-full object-cover" />
+          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-black/50 p-2">
+            <label className="flex cursor-pointer items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-medium text-[#3A2213] hover:bg-white">
+              {uploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+              {uploading ? "Uploading" : "Replace"}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="hidden"
+                onChange={(e) => handleFile(e.target.files)}
+                disabled={uploading}
+              />
+            </label>
+            <button
+              onClick={() => onChange(null)}
+              className="flex items-center gap-1 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-medium text-[#D94F70] hover:bg-white"
+              type="button"
+            >
+              <X size={12} /> Remove
+            </button>
+          </div>
+        </div>
+      ) : (
+        <label className="flex h-40 w-full max-w-sm cursor-pointer flex-col items-center justify-center gap-2 rounded-[0.9rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B17F5E] hover:text-[#B17F5E] sm:h-48">
+          {uploading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
+          <span className="text-xs">{uploading ? "Uploading…" : "Upload hero background photo"}</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="hidden"
+            onChange={(e) => handleFile(e.target.files)}
+            disabled={uploading}
+          />
+        </label>
+      )}
+      {error && <p className="mt-2 text-xs text-[#D94F70]">{error}</p>}
+    </div>
+  );
+}
+
 function HomepageEditor({ products }: { products: Product[] }) {
   const [config, setConfig] = useState<HomepageConfig | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1822,6 +1885,14 @@ function HomepageEditor({ products }: { products: Product[] }) {
             onChange={(e) => setConfig({ ...config, banner_text: e.target.value })}
             placeholder="e.g. Free shipping on orders above ₹4999"
             className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Hero Background Image</label>
+          <p className="mb-2 mt-0.5 text-xs text-gray-400">Shown behind the hero heading on the homepage. Leave empty to use the default dark background.</p>
+          <HeroImageUploader
+            image={config.hero_image}
+            onChange={(url) => setConfig({ ...config, hero_image: url })}
           />
         </div>
       </div>

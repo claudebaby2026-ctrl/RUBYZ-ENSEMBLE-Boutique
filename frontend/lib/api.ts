@@ -161,6 +161,7 @@ export type HomepageConfig = {
   hero_heading: string;
   hero_subheading: string;
   banner_text: string;
+  hero_image?: string | null;
   featured_product_ids: number[];
 };
 

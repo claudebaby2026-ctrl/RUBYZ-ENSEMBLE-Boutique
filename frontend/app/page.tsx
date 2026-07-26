@@ -36,6 +36,7 @@ export default async function HomePage() {
 
   const heroHeading = homepageConfig.hero_heading?.trim() || undefined;
   const heroSubheading = homepageConfig.hero_subheading?.trim() || undefined;
+  const heroImage = resolveImageUrl(homepageConfig.hero_image);
   const bannerText = homepageConfig.banner_text?.trim();
 
   // "Best Sellers" is data-driven off actual sales (Product.sold), not a
@@ -72,7 +73,7 @@ export default async function HomePage() {
       )}
 
       <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-16">
-        <AnimatedHero heading={heroHeading} subheading={heroSubheading} />
+        <AnimatedHero heading={heroHeading} subheading={heroSubheading} imageUrl={heroImage} />
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">

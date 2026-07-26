@@ -16,6 +16,12 @@ class HomepageConfig(Base):
         default="Handcrafted ensembles for the moments that matter most.",
     )
     banner_text = Column(String, default="")
+    # Uploaded via the dashboard's Homepage Editor (reuses the same
+    # /uploads/image endpoint product photos use). Stored the same way as
+    # product images: a path/URL resolved against the API origin by the
+    # frontend's resolveImageUrl(). Null/blank means "no custom hero photo
+    # set" — the storefront falls back to the original solid background.
+    hero_image = Column(String, nullable=True)
     # Comma-separated product ids, kept simple since this is a single-row
     # config table (no need for a join table for one editable list).
     featured_product_ids = Column(Text, default="")
