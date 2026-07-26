@@ -39,6 +39,18 @@ function fromApi(items: ApiCartItem[]): CartItem[] {
 }
 
 /**
+ * Module-level (not per-hook-instance) guard. Several components call
+ * useCart() at once — the header badge, the cart page, the checkout page,
+ * etc — each getting its own hook instance. A per-instance ref here would
+ * let two instances both see "not merged yet" and both call mergeCartApi()
+ * with the same guest items before either finishes clearCartStorage(),
+ * silently doubling every item's quantity in the account cart right after
+ * login. Tracking it at module scope means whichever instance runs first
+ * wins and every other instance skips it.
+ */
+let mergedForUserId: number | null = null;
+
+/**
  * Reactive cart state. Signed-in customers are backed by the database
  * (tied to their user_id via /cart — see backend app/routers/cart.py);
  * signed-out visitors keep using the localStorage cart from lib/cart.ts
@@ -50,7 +62,6 @@ export function useCart() {
   const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
-  const mergedForUser = useRef<number | null>(null);
 
   const refresh = useCallback(async () => {
     if (user) {
@@ -70,8 +81,8 @@ export function useCart() {
     if (authLoading) return;
 
     const doMergeThenRefresh = async () => {
-      if (user && mergedForUser.current !== user.id) {
-        mergedForUser.current = user.id;
+      if (user && mergedForUserId !== user.id) {
+        mergedForUserId = user.id;
         const guestItems = getCartStorage();
         if (guestItems.length > 0) {
           try {
@@ -79,7 +90,9 @@ export function useCart() {
             clearCartStorage();
           } catch {
             // Leave the guest cart in localStorage if the merge failed —
-            // better to retry next load than to silently lose it.
+            // better to retry next load than to silently lose it. Reset
+            // the guard too, so the retry isn't skipped as "already done".
+            mergedForUserId = null;
           }
         }
       }
