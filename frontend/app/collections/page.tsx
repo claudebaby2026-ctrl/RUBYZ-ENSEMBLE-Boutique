@@ -32,7 +32,7 @@ export async function generateMetadata({
 export default async function CollectionsPage() {
   const products = await getProducts();
   return (
-    <main className="bg-[#F3EEE6]">
+    <main className="bg-[#FDF2EC]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         {/* CollectionsExplorer reads ?q= via useSearchParams, which requires
             a Suspense boundary so Next.js doesn't force this whole route to

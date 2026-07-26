@@ -47,9 +47,9 @@ export function LikeButton({
       className={className ?? "rounded-full bg-white/90 p-2 shadow-sm"}
     >
       {busy ? (
-        <Loader2 size={15} className="animate-spin text-[#111111]" />
+        <Loader2 size={15} className="animate-spin text-[#3A2213]" />
       ) : (
-        <Heart size={15} className={liked ? "fill-[#D94F70] text-[#D94F70]" : "text-[#111111]"} />
+        <Heart size={15} className={liked ? "fill-[#D94F70] text-[#D94F70]" : "text-[#3A2213]"} />
       )}
     </button>
   );

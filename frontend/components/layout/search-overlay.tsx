@@ -101,7 +101,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
           >
             <div className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-2xl">
               <div className="flex items-center gap-3 border-b border-black/5 px-5 py-4">
-                <Search size={18} className="shrink-0 text-[#B68D40]" />
+                <Search size={18} className="shrink-0 text-[#B17F5E]" />
                 <input
                   ref={inputRef}
                   value={query}
@@ -110,12 +110,12 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                     if (e.key === "Enter") goToResults();
                   }}
                   placeholder="Search silhouettes, fabrics, occasions…"
-                  className="w-full min-w-0 bg-transparent text-base text-[#111111] outline-none placeholder:text-gray-400"
+                  className="w-full min-w-0 bg-transparent text-base text-[#3A2213] outline-none placeholder:text-gray-400"
                 />
                 <button
                   onClick={onClose}
                   aria-label="Close search"
-                  className="shrink-0 rounded-full p-1.5 text-gray-400 hover:bg-[#EFE7DA] hover:text-[#111111]"
+                  className="shrink-0 rounded-full p-1.5 text-gray-400 hover:bg-[#E9CFBA] hover:text-[#3A2213]"
                 >
                   <X size={18} />
                 </button>
@@ -150,20 +150,20 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                         key={product.id}
                         href={`/products/${product.slug}`}
                         onClick={onClose}
-                        className="flex items-center gap-4 rounded-[1rem] px-3 py-2.5 transition hover:bg-[#EFE7DA]"
+                        className="flex items-center gap-4 rounded-[1rem] px-3 py-2.5 transition hover:bg-[#E9CFBA]"
                       >
                         {image ? (
                           <img src={image} alt={product.name} className="h-14 w-14 shrink-0 rounded-[0.7rem] object-cover" />
                         ) : (
-                          <div className="h-14 w-14 shrink-0 rounded-[0.7rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
+                          <div className="h-14 w-14 shrink-0 rounded-[0.7rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
                         )}
                         <div className="min-w-0">
-                          <p className="truncate text-sm text-[#111111]">{product.name}</p>
+                          <p className="truncate text-sm text-[#3A2213]">{product.name}</p>
                           <p className="truncate text-xs uppercase tracking-[0.2em] text-gray-400">
                             {[product.category, product.color].filter(Boolean).join(" · ")}
                           </p>
                         </div>
-                        <p className="ml-auto shrink-0 text-sm text-[#B68D40]">₹{product.price.toLocaleString()}</p>
+                        <p className="ml-auto shrink-0 text-sm text-[#B17F5E]">₹{product.price.toLocaleString()}</p>
                       </a>
                     );
                   })}
@@ -172,7 +172,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
               {q.length > 0 && (
                 <button
                   onClick={goToResults}
-                  className="flex w-full items-center justify-center gap-2 border-t border-black/5 px-5 py-3.5 text-xs uppercase tracking-[0.24em] text-[#111111] hover:bg-[#EFE7DA]"
+                  className="flex w-full items-center justify-center gap-2 border-t border-black/5 px-5 py-3.5 text-xs uppercase tracking-[0.24em] text-[#3A2213] hover:bg-[#E9CFBA]"
                 >
                   View all results for &ldquo;{query.trim()}&rdquo; <ArrowRight size={14} />
                 </button>

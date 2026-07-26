@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F3EEE6;
-  --foreground: #111111;
+  --background: #FDF2EC;
+  --foreground: #3A2213;
 }
 
 @theme inline {
@@ -29,6 +29,13 @@ h2,
 h3,
 h4 {
   font-family: var(--font-playfair), serif;
+}
+
+/* Cormorant Garamond italic — used for small script-style accent lines
+   (e.g. "let's shop", eyebrow taglines) inspired by the boutique demo. */
+.font-script {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
 }
 
 button,

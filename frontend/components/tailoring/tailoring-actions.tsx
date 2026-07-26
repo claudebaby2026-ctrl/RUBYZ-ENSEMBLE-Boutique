@@ -37,7 +37,7 @@ function AppointmentModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5">
       <div className="w-full max-w-md rounded-[1.4rem] bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Book an Appointment</h3>
+          <h3 className="text-lg text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Book an Appointment</h3>
           <button onClick={onClose} aria-label="Close"><X size={18} /></button>
         </div>
         <p className="mt-1 text-sm text-gray-500">We&apos;ll confirm your slot over WhatsApp within business hours (11am – 8pm).</p>
@@ -80,7 +80,7 @@ function AppointmentModal({ onClose }: { onClose: () => void }) {
           <button
             onClick={submit}
             disabled={!canSubmit || submitting}
-            className="flex items-center gap-2 rounded-full bg-[#111111] px-5 py-2.5 text-sm text-white disabled:opacity-50"
+            className="flex items-center gap-2 rounded-full bg-[#3A2213] px-5 py-2.5 text-sm text-white disabled:opacity-50"
           >
             {submitting && <Loader2 size={14} className="animate-spin" />}
             Continue on WhatsApp
@@ -100,7 +100,7 @@ export function TailoringActions() {
       <div className="mt-8 flex flex-wrap gap-3">
         <button
           onClick={() => setShowModal(true)}
-          className="rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white hover:bg-black"
+          className="rounded-full bg-[#3A2213] px-6 py-3 text-sm font-medium text-white hover:bg-black"
         >
           Book an Appointment
         </button>
@@ -108,7 +108,7 @@ export function TailoringActions() {
           href={buildWhatsAppUrl("Hi RUBYZ Ensemble, I'd like to know more about your tailoring services.")}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm font-medium text-[#111111] hover:border-[#B68D40] hover:text-[#B68D40]"
+          className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm font-medium text-[#3A2213] hover:border-[#B17F5E] hover:text-[#B17F5E]"
         >
           <MessageCircle size={16} /> WhatsApp Us
         </a>

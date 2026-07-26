@@ -20,11 +20,11 @@ export function LegalPage({
   sections: LegalSection[];
 }) {
   return (
-    <main className="bg-[#F3EEE6]">
+    <main className="bg-[#FDF2EC]">
       <section className="mx-auto max-w-4xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm sm:p-10">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">{eyebrow}</p>
-          <h1 className="mt-3 text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+          <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">{eyebrow}</p>
+          <h1 className="mt-3 text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
             {title}
           </h1>
           <p className="mt-2 text-xs text-gray-400">Last updated: {updated}</p>
@@ -34,7 +34,7 @@ export function LegalPage({
           <div className="mt-8 space-y-8">
             {sections.map((section) => (
               <div key={section.heading}>
-                <h2 className="text-base font-semibold text-[#111111]">{section.heading}</h2>
+                <h2 className="text-base font-semibold text-[#3A2213]">{section.heading}</h2>
                 <div className="mt-3 space-y-3 text-sm leading-7 text-gray-600">{section.body}</div>
               </div>
             ))}
@@ -42,7 +42,7 @@ export function LegalPage({
 
           <div className="mt-10 flex flex-wrap gap-x-5 gap-y-2 border-t border-black/5 pt-6 text-xs uppercase tracking-[0.2em] text-gray-400">
             {legalLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="hover:text-[#B68D40]">
+              <Link key={link.href} href={link.href} className="hover:text-[#B17F5E]">
                 {link.label}
               </Link>
             ))}

@@ -208,7 +208,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   const filterFields = (
     <div className="space-y-6">
       <div>
-        <p className="text-sm font-semibold text-[#111111]">Category</p>
+        <p className="text-sm font-semibold text-[#3A2213]">Category</p>
         <div className="mt-3 space-y-2 text-sm text-gray-600">
           {categoryOptions.map((category) => (
             <label key={category} className="flex items-center gap-2 py-0.5">
@@ -216,7 +216,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                 type="checkbox"
                 checked={selectedCategories.includes(category)}
                 onChange={() => setSelectedCategories((current) => toggle(current, category))}
-                className="h-4 w-4 accent-[#B68D40]"
+                className="h-4 w-4 accent-[#B17F5E]"
               />
               {category}
             </label>
@@ -224,7 +224,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         </div>
       </div>
       <div>
-        <p className="text-sm font-semibold text-[#111111]">Price</p>
+        <p className="text-sm font-semibold text-[#3A2213]">Price</p>
         <div className="mt-3">
           <input
             type="range"
@@ -233,7 +233,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             step={100}
             value={maxPrice}
             onChange={(e) => setMaxPrice(Number(e.target.value))}
-            className="w-full accent-[#B68D40]"
+            className="w-full accent-[#B17F5E]"
           />
           <div className="mt-2 flex justify-between text-sm text-gray-600">
             <span>₹{MIN_PRICE.toLocaleString()}</span>
@@ -242,7 +242,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         </div>
       </div>
       <div>
-        <p className="text-sm font-semibold text-[#111111]">Fabric</p>
+        <p className="text-sm font-semibold text-[#3A2213]">Fabric</p>
         <div className="mt-3 space-y-2 text-sm text-gray-600">
           {fabricOptions.map((fabric) => (
             <label key={fabric} className="flex items-center gap-2 py-0.5">
@@ -250,7 +250,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                 type="checkbox"
                 checked={selectedFabrics.includes(fabric)}
                 onChange={() => setSelectedFabrics((current) => toggle(current, fabric))}
-                className="h-4 w-4 accent-[#B68D40]"
+                className="h-4 w-4 accent-[#B17F5E]"
               />
               {fabric}
             </label>
@@ -258,7 +258,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         </div>
       </div>
       <div>
-        <p className="text-sm font-semibold text-[#111111]">Occasion</p>
+        <p className="text-sm font-semibold text-[#3A2213]">Occasion</p>
         <div className="mt-3 space-y-2 text-sm text-gray-600">
           {occasionOptions.map((occasion) => (
             <label key={occasion} className="flex items-center gap-2 py-0.5">
@@ -266,7 +266,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                 type="checkbox"
                 checked={selectedOccasions.includes(occasion)}
                 onChange={() => setSelectedOccasions((current) => toggle(current, occasion))}
-                className="h-4 w-4 accent-[#B68D40]"
+                className="h-4 w-4 accent-[#B17F5E]"
               />
               {occasion}
             </label>
@@ -274,7 +274,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         </div>
       </div>
       <div>
-        <p className="text-sm font-semibold text-[#111111]">Color</p>
+        <p className="text-sm font-semibold text-[#3A2213]">Color</p>
         <div className="mt-3 space-y-2 text-sm text-gray-600">
           {colorOptions.map((color) => (
             <label key={color} className="flex items-center gap-2 py-0.5">
@@ -282,7 +282,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                 type="checkbox"
                 checked={selectedColors.includes(color)}
                 onChange={() => setSelectedColors((current) => toggle(current, color))}
-                className="h-4 w-4 accent-[#B68D40]"
+                className="h-4 w-4 accent-[#B17F5E]"
               />
               {color}
             </label>
@@ -296,12 +296,12 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     <>
       <div className="flex flex-col gap-6 rounded-[2rem] border border-black/5 bg-white p-5 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:p-8 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Collections</p>
-          <h1 className="mt-2 text-2xl text-[#111111] sm:text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
+          <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Collections</p>
+          <h1 className="mt-2 text-2xl text-[#3A2213] sm:text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
             Curated for celebration, comfort, and couture.
           </h1>
         </div>
-        <div className="flex w-full items-center gap-3 rounded-full border border-black/10 bg-[#EFE7DA] px-4 py-3 lg:w-auto">
+        <div className="flex w-full items-center gap-3 rounded-full border border-black/10 bg-[#E9CFBA] px-4 py-3 lg:w-auto">
           <Search size={16} className="shrink-0 text-gray-500" />
           <input
             value={query}
@@ -310,7 +310,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-gray-400 lg:w-56"
           />
           {query && (
-            <button aria-label="Clear search" onClick={() => setQuery("")} className="shrink-0 text-gray-400 hover:text-[#111111]">
+            <button aria-label="Clear search" onClick={() => setQuery("")} className="shrink-0 text-gray-400 hover:text-[#3A2213]">
               <X size={14} />
             </button>
           )}
@@ -336,8 +336,8 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             onClick={() => setSelectedType(tab.value)}
             className={`rounded-full px-2 py-2.5 text-center text-xs font-medium leading-tight transition sm:px-5 sm:text-sm ${
               selectedType === tab.value
-                ? "bg-[#111111] text-white"
-                : "text-gray-600 hover:bg-[#EFE7DA]"
+                ? "bg-[#3A2213] text-white"
+                : "text-gray-600 hover:bg-[#E9CFBA]"
             }`}
           >
             <span className="sm:hidden">{tab.short}</span>
@@ -351,11 +351,11 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         <aside className="hidden h-fit rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm lg:block">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal size={16} className="text-[#B68D40]" />
+              <SlidersHorizontal size={16} className="text-[#B17F5E]" />
               <p className="text-sm font-semibold uppercase tracking-[0.28em]">Filters</p>
             </div>
             {hasActiveFilters && (
-              <button onClick={clearFilters} className="text-xs uppercase tracking-[0.2em] text-[#B68D40] hover:underline">
+              <button onClick={clearFilters} className="text-xs uppercase tracking-[0.2em] text-[#B17F5E] hover:underline">
                 Clear
               </button>
             )}
@@ -377,12 +377,12 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                   so this is the only way to reach filters on a phone. */}
               <button
                 onClick={() => setFiltersOpen(true)}
-                className="relative flex items-center gap-2 rounded-full border border-black/10 bg-[#EFE7DA] px-4 py-2 text-sm lg:hidden"
+                className="relative flex items-center gap-2 rounded-full border border-black/10 bg-[#E9CFBA] px-4 py-2 text-sm lg:hidden"
               >
-                <SlidersHorizontal size={15} className="text-[#B68D40]" />
+                <SlidersHorizontal size={15} className="text-[#B17F5E]" />
                 Filters
                 {activeFilterCount > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#111111] px-1 text-[10px] font-semibold text-white">
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#3A2213] px-1 text-[10px] font-semibold text-white">
                     {activeFilterCount}
                   </span>
                 )}
@@ -390,7 +390,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortOption)}
-                className="rounded-full border border-black/10 bg-[#EFE7DA] px-3 py-2 text-sm"
+                className="rounded-full border border-black/10 bg-[#E9CFBA] px-3 py-2 text-sm"
               >
                 <option>Featured</option>
                 <option>Price: Low to High</option>
@@ -401,12 +401,12 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
 
           {filtered.length === 0 ? (
             <div className="rounded-[1.5rem] border border-dashed border-black/10 bg-white p-10 text-center sm:p-16">
-              <p className="text-lg text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+              <p className="text-lg text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
                 No pieces match your search
               </p>
               <p className="mt-2 text-sm text-gray-500">Try a different keyword or clear your filters.</p>
               {hasActiveFilters && (
-                <button onClick={clearFilters} className="mt-5 rounded-full bg-[#111111] px-6 py-2.5 text-sm text-white">
+                <button onClick={clearFilters} className="mt-5 rounded-full bg-[#3A2213] px-6 py-2.5 text-sm text-white">
                   Clear filters
                 </button>
               )}
@@ -433,7 +433,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
           <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[86vw] max-w-sm flex-col bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-black/5 px-5 py-5">
               <div className="flex items-center gap-2">
-                <SlidersHorizontal size={16} className="text-[#B68D40]" />
+                <SlidersHorizontal size={16} className="text-[#B17F5E]" />
                 <p className="text-sm font-semibold uppercase tracking-[0.28em]">Filters</p>
               </div>
               <button
@@ -451,14 +451,14 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="flex-1 rounded-full border border-black/10 px-4 py-3 text-sm font-medium text-[#111111]"
+                  className="flex-1 rounded-full border border-black/10 px-4 py-3 text-sm font-medium text-[#3A2213]"
                 >
                   Clear all
                 </button>
               )}
               <button
                 onClick={() => setFiltersOpen(false)}
-                className="flex-1 rounded-full bg-[#111111] px-4 py-3 text-sm font-medium text-white"
+                className="flex-1 rounded-full bg-[#3A2213] px-4 py-3 text-sm font-medium text-white"
               >
                 Show {filtered.length} result{filtered.length === 1 ? "" : "s"}
               </button>

@@ -50,7 +50,7 @@ export function SiteHeader() {
 
   return (
     <>
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#1A1714]/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#20130B]/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-3 sm:px-5 lg:px-8">
         <button
           onClick={() => setMobileNavOpen(true)}
@@ -74,7 +74,7 @@ export function SiteHeader() {
         >
           <img src="/logo.png" alt={brand.name} className="h-8 w-auto shrink-0 sm:h-10 lg:h-12" />
           <span className="text-base tracking-wide sm:text-xl lg:text-2xl">
-            {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
+            {brand.name.split(" ")[0]} <span className="text-[#B17F5E] uppercase">{brand.name.split(" ")[1]}</span>
           </span>
         </Link>
 
@@ -85,7 +85,7 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-[13px] uppercase tracking-[0.26em] transition ${isActive ? "text-[#B68D40]" : "text-white/90 hover:text-[#B68D40]"}`}
+                className={`text-[13px] uppercase tracking-[0.26em] transition ${isActive ? "text-[#B17F5E]" : "text-white/90 hover:text-[#B17F5E]"}`}
               >
                 {item.label}
               </Link>
@@ -95,16 +95,16 @@ export function SiteHeader() {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <div className="mr-1 hidden items-center gap-1 border-r border-white/15 pr-3 lg:flex" aria-label="Follow us">
-            <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
+            <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B17F5E]">
               <FacebookIcon size={15} />
             </a>
-            <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
+            <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B17F5E]">
               <InstagramIcon size={15} />
             </a>
-            <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
+            <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B17F5E]">
               <YoutubeIcon size={15} />
             </a>
-            <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B68D40]">
+            <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full p-1.5 text-white/80 transition hover:text-[#B17F5E]">
               <MessageCircle size={15} />
             </a>
           </div>
@@ -142,17 +142,17 @@ export function SiteHeader() {
               <User size={18} />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 top-12 w-48 rounded-[1rem] border border-black/5 bg-white p-2 text-[#111111] shadow-lg">
+              <div className="absolute right-0 top-12 w-48 rounded-[1rem] border border-black/5 bg-white p-2 text-[#3A2213] shadow-lg">
                 {user ? (
                   <>
                     <p className="truncate px-3 py-2 text-xs text-gray-500">
-                      Signed in as <span className="text-[#111111]">{user.name}</span>
+                      Signed in as <span className="text-[#3A2213]">{user.name}</span>
                     </p>
                     {user.role === "owner" ? (
                       <Link
                         href="/dashboard"
                         onClick={() => setMenuOpen(false)}
-                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#EFE7DA]"
+                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#E9CFBA]"
                       >
                         Owner Dashboard
                       </Link>
@@ -160,7 +160,7 @@ export function SiteHeader() {
                       <Link
                         href="/orders"
                         onClick={() => setMenuOpen(false)}
-                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#EFE7DA]"
+                        className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#E9CFBA]"
                       >
                         My Orders
                       </Link>
@@ -170,7 +170,7 @@ export function SiteHeader() {
                         logout();
                         setMenuOpen(false);
                       }}
-                      className="flex w-full items-center gap-2 rounded-[0.7rem] px-3 py-2 text-left text-sm text-[#D94F70] hover:bg-[#EFE7DA]"
+                      className="flex w-full items-center gap-2 rounded-[0.7rem] px-3 py-2 text-left text-sm text-[#D94F70] hover:bg-[#E9CFBA]"
                     >
                       <LogOut size={14} /> Log out
                     </button>
@@ -179,7 +179,7 @@ export function SiteHeader() {
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#EFE7DA]"
+                    className="block rounded-[0.7rem] px-3 py-2 text-sm hover:bg-[#E9CFBA]"
                   >
                     Sign in / Create account
                   </Link>
@@ -206,10 +206,10 @@ export function SiteHeader() {
             <Link
               href="/"
               onClick={() => setMobileNavOpen(false)}
-              className="text-xl tracking-wide text-[#111111]"
+              className="text-xl tracking-wide text-[#3A2213]"
               style={{ fontFamily: "Playfair Display, serif" }}
             >
-              {brand.name.split(" ")[0]} <span className="text-[#B68D40] uppercase">{brand.name.split(" ")[1]}</span>
+              {brand.name.split(" ")[0]} <span className="text-[#B17F5E] uppercase">{brand.name.split(" ")[1]}</span>
             </Link>
             <button
               onClick={() => setMobileNavOpen(false)}
@@ -229,7 +229,7 @@ export function SiteHeader() {
                   href={item.href}
                   onClick={() => setMobileNavOpen(false)}
                   className={`rounded-[1rem] px-4 py-3 text-sm uppercase tracking-[0.24em] transition ${
-                    isActive ? "bg-[#EFE7DA] text-[#B68D40]" : "text-[#111111] hover:bg-[#EFE7DA]"
+                    isActive ? "bg-[#E9CFBA] text-[#B17F5E]" : "text-[#3A2213] hover:bg-[#E9CFBA]"
                   }`}
                 >
                   {item.label}
@@ -242,14 +242,14 @@ export function SiteHeader() {
             <Link
               href="/cart"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#EFE7DA]"
+              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#3A2213] hover:bg-[#E9CFBA]"
             >
               <ShoppingBag size={16} /> Cart {count > 0 ? `(${count})` : ""}
             </Link>
             <Link
               href="/wishlist"
               onClick={() => setMobileNavOpen(false)}
-              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#EFE7DA]"
+              className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#3A2213] hover:bg-[#E9CFBA]"
             >
               <Heart size={16} /> Wishlist
             </Link>
@@ -257,13 +257,13 @@ export function SiteHeader() {
             {user ? (
               <>
                 <p className="mt-4 px-4 text-xs text-gray-500">
-                  Signed in as <span className="text-[#111111]">{user.name}</span>
+                  Signed in as <span className="text-[#3A2213]">{user.name}</span>
                 </p>
                 {user.role === "owner" ? (
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileNavOpen(false)}
-                    className="rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#EFE7DA]"
+                    className="rounded-[1rem] px-4 py-3 text-sm text-[#3A2213] hover:bg-[#E9CFBA]"
                   >
                     Owner Dashboard
                   </Link>
@@ -271,7 +271,7 @@ export function SiteHeader() {
                   <Link
                     href="/orders"
                     onClick={() => setMobileNavOpen(false)}
-                    className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#111111] hover:bg-[#EFE7DA]"
+                    className="flex items-center gap-3 rounded-[1rem] px-4 py-3 text-sm text-[#3A2213] hover:bg-[#E9CFBA]"
                   >
                     <PackageSearch size={16} /> My Orders
                   </Link>
@@ -281,7 +281,7 @@ export function SiteHeader() {
                     logout();
                     setMobileNavOpen(false);
                   }}
-                  className="flex items-center gap-2 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#EFE7DA]"
+                  className="flex items-center gap-2 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#E9CFBA]"
                 >
                   <LogOut size={14} /> Log out
                 </button>
@@ -290,7 +290,7 @@ export function SiteHeader() {
               <Link
                 href="/login"
                 onClick={() => setMobileNavOpen(false)}
-                className="mt-4 rounded-[1rem] bg-[#111111] px-4 py-3 text-center text-sm text-white"
+                className="mt-4 rounded-[1rem] bg-[#3A2213] px-4 py-3 text-center text-sm text-white"
               >
                 Sign in / Create account
               </Link>
@@ -300,16 +300,16 @@ export function SiteHeader() {
 
             <p className="px-4 text-xs uppercase tracking-[0.24em] text-gray-500">Follow Us</p>
             <div className="mt-3 flex gap-2 px-4">
-              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full border border-black/10 p-2 text-[#111111]">
+              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full border border-black/10 p-2 text-[#3A2213]">
                 <FacebookIcon size={16} />
               </a>
-              <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full border border-black/10 p-2 text-[#111111]">
+              <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full border border-black/10 p-2 text-[#3A2213]">
                 <InstagramIcon size={16} />
               </a>
-              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="rounded-full border border-black/10 p-2 text-[#111111]">
+              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="rounded-full border border-black/10 p-2 text-[#3A2213]">
                 <YoutubeIcon size={16} />
               </a>
-              <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full border border-black/10 p-2 text-[#111111]">
+              <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full border border-black/10 p-2 text-[#3A2213]">
                 <MessageCircle size={16} />
               </a>
             </div>

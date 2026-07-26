@@ -16,22 +16,22 @@ const MAP_EMBED_SRC = `https://maps.google.com/maps?q=${MAP_QUERY}&t=&z=15&ie=UT
 
 export default function ContactPage() {
   return (
-    <main className="bg-[#F3EEE6]">
+    <main className="bg-[#FDF2EC]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Visit or Connect</p>
-            <h1 className="mt-3 text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>We would love to welcome you.</h1>
+            <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Visit or Connect</p>
+            <h1 className="mt-3 text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>We would love to welcome you.</h1>
             <div className="mt-8 space-y-4 text-sm text-gray-600">
               {/* NAP (Name/Address/Phone) as real, crawlable page text —
                   kept byte-for-byte consistent with the Google Business
                   Profile listing and the ClothingStore JSON-LD in
                   app/layout.tsx (SEO plan §6, §8). */}
-              <div className="flex gap-3"><MapPin size={16} className="mt-1 text-[#B68D40]" /><span>{legalEntity.address}</span></div>
-              <div className="flex gap-3"><Phone size={16} className="mt-1 text-[#B68D40]" /><a href={`tel:${legalEntity.phone.replace(/\s+/g, "")}`}>{legalEntity.phone}</a></div>
+              <div className="flex gap-3"><MapPin size={16} className="mt-1 text-[#B17F5E]" /><span>{legalEntity.address}</span></div>
+              <div className="flex gap-3"><Phone size={16} className="mt-1 text-[#B17F5E]" /><a href={`tel:${legalEntity.phone.replace(/\s+/g, "")}`}>{legalEntity.phone}</a></div>
               <div className="flex gap-3">
-                <MessageCircle size={16} className="mt-1 text-[#B68D40]" />
-                <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-[#B68D40]">
+                <MessageCircle size={16} className="mt-1 text-[#B17F5E]" />
+                <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="hover:text-[#B17F5E]">
                   Chat with us on WhatsApp
                 </a>
               </div>
@@ -45,7 +45,7 @@ export default function ContactPage() {
               <MessageCircle size={16} /> Message us on WhatsApp
             </a>
           </div>
-          <div className="rounded-[2rem] border border-black/5 bg-[#111111] p-8 text-white shadow-sm">
+          <div className="rounded-[2rem] border border-black/5 bg-[#3A2213] p-8 text-white shadow-sm">
             <div className="h-64 overflow-hidden rounded-[1.4rem]">
               <iframe
                 title="RUBYZ Ensemble location"

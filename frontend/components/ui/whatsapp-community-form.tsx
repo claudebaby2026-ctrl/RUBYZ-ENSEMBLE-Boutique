@@ -28,7 +28,7 @@ export function WhatsAppCommunityForm() {
 
   if (status === "done") {
     return (
-      <div className="mt-6 flex items-center justify-center gap-2 text-sm text-[#B68D40]">
+      <div className="mt-6 flex items-center justify-center gap-2 text-sm text-[#B17F5E]">
         <Check size={16} />
         <span>You&apos;re in! We&apos;ll save your number and reach out on WhatsApp.</span>
       </div>
@@ -44,7 +44,7 @@ export function WhatsAppCommunityForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
-          className="flex-1 rounded-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-[#B68D40]"
+          className="flex-1 rounded-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-[#B17F5E]"
         />
         <input
           type="tel"
@@ -52,12 +52,12 @@ export function WhatsAppCommunityForm() {
           value={whatsappNumber}
           onChange={(e) => setWhatsappNumber(e.target.value)}
           placeholder="Your WhatsApp number"
-          className="flex-1 rounded-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-[#B68D40]"
+          className="flex-1 rounded-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-[#B17F5E]"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="rounded-full bg-[#B68D40] px-6 py-3 text-sm font-medium text-[#111111] disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-full bg-[#B17F5E] px-6 py-3 text-sm font-medium text-[#3A2213] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === "loading" ? "Joining…" : "Join Now"}
         </button>

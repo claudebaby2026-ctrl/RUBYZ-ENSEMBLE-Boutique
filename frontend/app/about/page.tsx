@@ -22,11 +22,11 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <main className="bg-[#F3EEE6]">
+    <main className="bg-[#FDF2EC]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="rounded-[2rem] border border-black/5 bg-[#111111] p-8 text-white shadow-sm">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Our Story</p>
+          <div className="rounded-[2rem] border border-black/5 bg-[#3A2213] p-8 text-white shadow-sm">
+            <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Our Story</p>
             <h1 className="mt-3 text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
               Crafted with warmth, worn with confidence.
             </h1>
@@ -46,7 +46,7 @@ export default function AboutPage() {
             <div className="mt-8 space-y-4 border-t border-white/10 pt-6">
               {milestones.map((item) => (
                 <div key={item.year} className="flex gap-4">
-                  <span className="w-16 shrink-0 text-xs uppercase tracking-[0.24em] text-[#B68D40]">{item.year}</span>
+                  <span className="w-16 shrink-0 text-xs uppercase tracking-[0.24em] text-[#B17F5E]">{item.year}</span>
                   <p className="text-sm leading-6 text-gray-300">{item.text}</p>
                 </div>
               ))}
@@ -55,39 +55,39 @@ export default function AboutPage() {
 
           <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
-                <MapPin size={18} className="mt-0.5 shrink-0 text-[#B68D40]" />
+              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#E9CFBA] p-4">
+                <MapPin size={18} className="mt-0.5 shrink-0 text-[#B17F5E]" />
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">Visit the boutique</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">Visit the boutique</p>
                   <p className="mt-1 text-sm text-gray-600">Satyanagar, near Prayash Park, Bhubaneswar, Odisha</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
-                <Star size={18} className="mt-0.5 shrink-0 text-[#B68D40]" />
+              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#E9CFBA] p-4">
+                <Star size={18} className="mt-0.5 shrink-0 text-[#B17F5E]" />
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">5-star rated</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">5-star rated</p>
                   <p className="mt-1 text-sm text-gray-600">Rated by real customers on Google — not a marketing claim.</p>
                   <a
                     href={googleReviewsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-[#B68D40] hover:underline"
+                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-[#B17F5E] hover:underline"
                   >
                     See our Google Reviews <ExternalLink size={13} />
                   </a>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
-                <Truck size={18} className="mt-0.5 shrink-0 text-[#B68D40]" />
+              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#E9CFBA] p-4">
+                <Truck size={18} className="mt-0.5 shrink-0 text-[#B17F5E]" />
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">Pan-India delivery</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">Pan-India delivery</p>
                   <p className="mt-1 text-sm text-gray-600">The Bhubaneswar boutique experience, shipped nationwide.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
-                <Users size={18} className="mt-0.5 shrink-0 text-[#B68D40]" />
+              <div className="flex items-start gap-3 rounded-[1rem] border border-black/5 bg-[#E9CFBA] p-4">
+                <Users size={18} className="mt-0.5 shrink-0 text-[#B17F5E]" />
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">Founder-led</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">Founder-led</p>
                   <p className="mt-1 text-sm text-gray-600">Run by Ruby Hans and a close-knit team who know the collection by heart.</p>
                 </div>
               </div>
@@ -95,18 +95,18 @@ export default function AboutPage() {
 
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {values.map((item) => (
-                <div key={item.title} className="rounded-[1rem] border border-black/5 bg-[#EFE7DA] p-4">
-                  <p className="text-sm font-semibold text-[#111111]">{item.title}</p>
+                <div key={item.title} className="rounded-[1rem] border border-black/5 bg-[#E9CFBA] p-4">
+                  <p className="text-sm font-semibold text-[#3A2213]">{item.title}</p>
                   <p className="mt-2 text-sm text-gray-600">{item.body}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 rounded-[1rem] border border-dashed border-[#B68D40]/40 bg-white p-5">
+            <div className="mt-6 rounded-[1rem] border border-dashed border-[#B17F5E]/40 bg-white p-5">
               <p className="text-sm text-gray-600">
                 Have a question before you order? Reach the team directly on{" "}
-                <span className="font-semibold text-[#111111]">78730-11110</span> (11am – 8pm), or follow{" "}
-                <span className="font-semibold text-[#111111]">@rubyz.ensemble</span> for the latest arrivals.
+                <span className="font-semibold text-[#3A2213]">78730-11110</span> (11am – 8pm), or follow{" "}
+                <span className="font-semibold text-[#3A2213]">@rubyz.ensemble</span> for the latest arrivals.
               </p>
             </div>
           </div>
@@ -115,8 +115,8 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-7xl px-5 pb-12 lg:px-8 lg:pb-16">
         <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm lg:p-10">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Founder&apos;s Message</p>
-          <h2 className="mt-3 text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+          <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Founder&apos;s Message</p>
+          <h2 className="mt-3 text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
             Hello, beautiful ladies.
           </h2>
 
@@ -143,7 +143,7 @@ export default function AboutPage() {
                 href={googleReviewsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-[#B68D40] hover:underline"
+                className="font-medium text-[#B17F5E] hover:underline"
               >
                 Rubyz Ensemble, Bhubaneswar
               </a>
@@ -152,7 +152,7 @@ export default function AboutPage() {
           </div>
 
           <div className="mt-6 flex flex-col gap-3 border-t border-black/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm font-semibold text-[#111111]">
+            <p className="text-sm font-semibold text-[#3A2213]">
               Please join us for the latest updates on WhatsApp, YouTube, Facebook and Instagram.
             </p>
             <div className="flex items-center gap-3">
@@ -161,7 +161,7 @@ export default function AboutPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Join us on WhatsApp"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#EFE7DA] text-[#111111] transition hover:bg-[#B68D40] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#E9CFBA] text-[#3A2213] transition hover:bg-[#B17F5E] hover:text-white"
               >
                 <MessageCircle size={16} />
               </a>
@@ -170,7 +170,7 @@ export default function AboutPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Subscribe on YouTube"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#EFE7DA] text-[#111111] transition hover:bg-[#B68D40] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#E9CFBA] text-[#3A2213] transition hover:bg-[#B17F5E] hover:text-white"
               >
                 <YoutubeIcon size={16} />
               </a>
@@ -179,7 +179,7 @@ export default function AboutPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Follow us on Facebook"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#EFE7DA] text-[#111111] transition hover:bg-[#B68D40] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#E9CFBA] text-[#3A2213] transition hover:bg-[#B17F5E] hover:text-white"
               >
                 <FacebookIcon size={16} />
               </a>
@@ -188,14 +188,14 @@ export default function AboutPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Follow us on Instagram"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#EFE7DA] text-[#111111] transition hover:bg-[#B68D40] hover:text-white"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/5 bg-[#E9CFBA] text-[#3A2213] transition hover:bg-[#B17F5E] hover:text-white"
               >
                 <InstagramIcon size={16} />
               </a>
             </div>
           </div>
 
-          <p className="mt-6 text-sm font-medium text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+          <p className="mt-6 text-sm font-medium text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
             Awaiting to connect! — Ruby Hans
           </p>
         </div>

@@ -54,7 +54,7 @@ export function ProductImageGallery({
           />
         )
       ) : (
-        <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
+        <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
       )}
       {media.length > 1 && (
         <div className="mt-3 grid grid-cols-4 gap-2 sm:mt-4 sm:gap-3">
@@ -66,7 +66,7 @@ export function ProductImageGallery({
               aria-label={`Show ${alt} ${item.type} ${index + 1}`}
               aria-current={selected === index}
               className={`relative aspect-square overflow-hidden rounded-[1rem] border transition ${
-                selected === index ? "border-[#B68D40] ring-2 ring-[#B68D40]/40" : "border-black/5 hover:border-[#B68D40]/60"
+                selected === index ? "border-[#B17F5E] ring-2 ring-[#B17F5E]/40" : "border-black/5 hover:border-[#B17F5E]/60"
               }`}
             >
               {item.type === "video" ? (

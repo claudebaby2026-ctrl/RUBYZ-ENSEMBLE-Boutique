@@ -47,7 +47,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
                 key={s}
                 onClick={() => setSize(s)}
                 className={`rounded-full border px-4 py-2 text-sm ${
-                  size === s ? "border-[#111111] bg-[#111111] text-white" : "border-black/10 text-[#111111]"
+                  size === s ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-black/10 text-[#3A2213]"
                 }`}
               >
                 {s}
@@ -58,7 +58,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
       )}
 
       {!outOfStock && (
-        <p className="mt-6 flex items-center gap-2 text-sm font-medium text-[#B68D40]">
+        <p className="mt-6 flex items-center gap-2 text-sm font-medium text-[#B17F5E]">
           <Sparkles size={14} /> Only 1 piece available — this exact suit won&apos;t be restocked.
         </p>
       )}
@@ -67,7 +67,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
         <button
           onClick={handleAdd}
           disabled={outOfStock}
-          className="inline-flex items-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-full bg-[#3A2213] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
           {added ? <Check size={16} /> : <ShoppingBag size={16} />}
           {outOfStock ? "Out of Stock" : added ? "Added to Cart" : "Add to Cart"}
@@ -76,16 +76,16 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
           href={`https://wa.me/${brand.whatsappNumber}?text=${encodeURIComponent(`Hi! I'm interested in ${product.name} (₹${product.price}).`)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm font-medium text-[#111111]"
+          className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm font-medium text-[#3A2213]"
         >
           <MessageCircle size={16} /> WhatsApp Enquiry
         </a>
       </div>
 
       {added && (
-        <div className="mt-4 flex items-center gap-3 rounded-[1rem] bg-[#EFE7DA] p-3 text-sm text-[#111111]">
+        <div className="mt-4 flex items-center gap-3 rounded-[1rem] bg-[#E9CFBA] p-3 text-sm text-[#3A2213]">
           <span>Added to your cart.</span>
-          <Link href="/cart" onClick={() => router.refresh()} className="font-medium text-[#B68D40] underline">
+          <Link href="/cart" onClick={() => router.refresh()} className="font-medium text-[#B17F5E] underline">
             View Cart
           </Link>
         </div>

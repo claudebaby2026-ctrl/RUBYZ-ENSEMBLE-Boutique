@@ -90,7 +90,7 @@ export function AttributeMultiSelect({
               key={option}
               onClick={() => toggle(option)}
               className={`rounded-full border px-3 py-1.5 text-xs ${
-                selected ? "border-[#111111] bg-[#111111] text-white" : "border-black/10 text-[#111111]"
+                selected ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-black/10 text-[#3A2213]"
               }`}
             >
               {option}
@@ -114,7 +114,7 @@ export function AttributeMultiSelect({
               placeholder={`New ${label.toLowerCase()}…`}
               className="rounded-full border border-black/10 px-3 py-1.5 text-xs"
             />
-            <button type="button" onClick={confirmAdd} disabled={saving} className="text-xs text-[#111111] disabled:opacity-60">
+            <button type="button" onClick={confirmAdd} disabled={saving} className="text-xs text-[#3A2213] disabled:opacity-60">
               {saving && <Loader2 size={12} className="mr-1 inline animate-spin" />}Add
             </button>
             <button type="button" onClick={() => setAdding(false)} disabled={saving} className="text-xs text-gray-500">
@@ -219,7 +219,7 @@ export function AttributeSelect({
             type="button"
             onClick={confirmAdd}
             disabled={saving}
-            className="flex shrink-0 items-center gap-1 rounded-[1rem] border border-black/10 px-4 text-sm text-[#111111] hover:border-[#B68D40] disabled:opacity-60"
+            className="flex shrink-0 items-center gap-1 rounded-[1rem] border border-black/10 px-4 text-sm text-[#3A2213] hover:border-[#B17F5E] disabled:opacity-60"
           >
             {saving && <Loader2 size={14} className="animate-spin" />}
             Add

@@ -6,10 +6,10 @@ import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/soc
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-black/5 bg-[#1A1714] text-white">
+    <footer className="border-t border-black/5 bg-[#20130B] text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1fr_0.55fr_0.55fr_0.7fr_0.55fr_0.55fr] lg:px-8">
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">RUBYZ Ensemble</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B17F5E]">RUBYZ Ensemble</p>
           <h2 className="mt-3 text-2xl text-white" style={{ fontFamily: "Playfair Display, serif" }}>
             A boutique experience rooted in craftsmanship and grace.
           </h2>
@@ -19,7 +19,7 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Explore</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B17F5E]">Explore</p>
           <ul className="mt-4 space-y-3 text-sm text-gray-300">
             {footerLinks.map((link) => (
               <li key={link.href}>
@@ -36,7 +36,7 @@ export function SiteFooter() {
             so this top-level split stays the single clear entry point into
             the catalog rather than competing with garment-type links. */}
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Shop</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B17F5E]">Shop</p>
           <ul className="mt-4 space-y-3 text-sm text-gray-300">
             {productTypeLinks.map((link) => (
               <li key={link.slug}>
@@ -49,7 +49,7 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Store Location</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B17F5E]">Store Location</p>
           <p className="mt-4 text-sm leading-7 text-gray-300">
             RUBYZ-ENSEMBLE<br />
             Plot no 93,<br />
@@ -62,14 +62,14 @@ export function SiteFooter() {
             href="https://maps.google.com/?q=RUBYZ-ENSEMBLE+Boutique+Home-Town+Road+Satya+Nagar+Bhubaneswar"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-block text-sm text-[#B68D40] underline underline-offset-4 transition hover:text-white"
+            className="mt-3 inline-block text-sm text-[#B17F5E] underline underline-offset-4 transition hover:text-white"
           >
             View on Google Maps
           </a>
         </div>
 
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Follow Us</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B17F5E]">Follow Us</p>
           <div className="mt-4 flex gap-3">
             <a
               href={socialLinks.facebook}
@@ -110,7 +110,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Legal</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-[#B17F5E]">Legal</p>
           <ul className="mt-4 space-y-3 text-sm text-gray-300">
             {legalLinks.map((link) => (
               <li key={link.href}>

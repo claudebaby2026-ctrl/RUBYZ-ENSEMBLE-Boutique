@@ -14,7 +14,7 @@ function Stars({ rating }: { rating: number }) {
         <Star
           key={index}
           size={13}
-          className={index < Math.round(rating) ? "fill-[#B68D40] text-[#B68D40]" : "text-gray-300"}
+          className={index < Math.round(rating) ? "fill-[#B17F5E] text-[#B17F5E]" : "text-gray-300"}
         />
       ))}
     </div>
@@ -32,7 +32,7 @@ export function ProductCard({ product }: { product: Product }) {
         transition={{ duration: 0.2 }}
         className="group overflow-hidden rounded-[1.5rem] border border-black/5 bg-white p-3 shadow-[0_12px_40px_rgba(17,17,17,0.04)]"
       >
-        <div className="relative overflow-hidden rounded-[1.2rem] bg-[#EFE7DA] p-4">
+        <div className="relative overflow-hidden rounded-[1.2rem] bg-[#E9CFBA] p-4">
           <OutOfStockRibbon product={product} />
           <div className="absolute right-3 top-3">
             <LikeButton productId={product.id} />
@@ -44,9 +44,9 @@ export function ProductCard({ product }: { product: Product }) {
               className={`h-64 w-full rounded-[1rem] object-cover ${outOfStock ? "grayscale-[70%] opacity-70" : ""}`}
             />
           ) : (
-            <div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
+            <div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
           )}        <div className="mt-3 flex items-center justify-between">
-            <span className="rounded-full bg-[#111111] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white">
+            <span className="rounded-full bg-[#3A2213] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white">
               {product.badge}
             </span>
             <StockBadge product={product} className="text-[11px] uppercase tracking-[0.24em]" />
@@ -54,8 +54,8 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
 
         <div className="px-2 pb-2 pt-4">
-          <p className="text-[11px] uppercase tracking-[0.3em] text-[#B68D40]">RUBYZ Ensemble</p>
-          <span className="mt-2 block text-lg text-[#111111] group-hover:text-[#B68D40]">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-[#B17F5E]">RUBYZ Ensemble</p>
+          <span className="mt-2 block text-lg text-[#3A2213] group-hover:text-[#B17F5E]">
             {product.name}
           </span>
           <div className="mt-2 flex items-center gap-2">
@@ -63,7 +63,7 @@ export function ProductCard({ product }: { product: Product }) {
             <span className="text-xs text-gray-500">({product.sold})</span>
           </div>
           <div className="mt-3 flex items-center gap-2 text-sm">
-            <span className="font-semibold text-[#111111]">₹{product.price}</span>
+            <span className="font-semibold text-[#3A2213]">₹{product.price}</span>
             <span className="text-xs text-gray-400 line-through">₹{product.mrp}</span>
             {discount !== null && <span className="text-xs text-[#D94F70]">{discount}% OFF</span>}
           </div>

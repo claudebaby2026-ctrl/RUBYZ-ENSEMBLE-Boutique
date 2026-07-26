@@ -48,8 +48,8 @@ function LoginForm() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-5 py-16">
       <div className="text-center">
-        <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">RUBYZ Ensemble</p>
-        <h1 className="mt-2 text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+        <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">RUBYZ Ensemble</p>
+        <h1 className="mt-2 text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
           {mode === "login" ? "Welcome back" : "Create your account"}
         </h1>
         <p className="mt-2 text-sm text-gray-500">
@@ -127,7 +127,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm text-white disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-[#3A2213] px-6 py-3 text-sm text-white disabled:opacity-60"
         >
           {submitting && <Loader2 size={14} className="animate-spin" />}
           {submitting ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
@@ -141,7 +141,7 @@ function LoginForm() {
             setError(null);
             setMode(mode === "login" ? "signup" : "login");
           }}
-          className="text-[#B68D40] underline"
+          className="text-[#B17F5E] underline"
         >
           {mode === "login" ? "Create an account" : "Sign in instead"}
         </button>

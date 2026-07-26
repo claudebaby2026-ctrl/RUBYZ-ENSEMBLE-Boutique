@@ -37,7 +37,7 @@ export default function WishlistPage() {
 
   if (authLoading || !user) {
     return (
-      <main className="flex min-h-[60vh] items-center justify-center bg-[#F3EEE6]">
+      <main className="flex min-h-[60vh] items-center justify-center bg-[#FDF2EC]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Loading…
         </div>
@@ -46,9 +46,9 @@ export default function WishlistPage() {
   }
 
   return (
-    <main className="bg-[#F3EEE6]">
+    <main className="bg-[#FDF2EC]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
-        <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+        <h1 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
           Your Wishlist
         </h1>
         <p className="mt-2 text-sm text-gray-500">Pieces you&apos;ve saved to come back to.</p>
@@ -61,9 +61,9 @@ export default function WishlistPage() {
           <p className="mt-10 text-sm text-[#D94F70]">{error}</p>
         ) : products.length === 0 ? (
           <div className="mt-10 flex flex-col items-center gap-4 py-10 text-center">
-            <Heart size={36} className="text-[#B68D40]" />
+            <Heart size={36} className="text-[#B17F5E]" />
             <p className="text-sm text-gray-500">Nothing here yet — tap the heart on any piece to save it.</p>
-            <Link href="/collections" className="rounded-full bg-[#111111] px-6 py-3 text-sm text-white">
+            <Link href="/collections" className="rounded-full bg-[#3A2213] px-6 py-3 text-sm text-white">
               Browse Collections
             </Link>
           </div>

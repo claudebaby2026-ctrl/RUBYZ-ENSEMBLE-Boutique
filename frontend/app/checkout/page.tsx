@@ -108,7 +108,7 @@ export default function CheckoutPage() {
 
   if (!hydrated) {
     return (
-      <main className="flex min-h-[60vh] items-center justify-center bg-[#F3EEE6]">
+      <main className="flex min-h-[60vh] items-center justify-center bg-[#FDF2EC]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Loading checkout…
         </div>
@@ -118,15 +118,15 @@ export default function CheckoutPage() {
 
   if (sent) {
     return (
-      <main className="bg-[#F3EEE6]">
+      <main className="bg-[#FDF2EC]">
         <section className="mx-auto max-w-2xl px-5 py-20 text-center lg:px-8">
           <CheckCircle2 size={40} className="mx-auto mb-4 text-[#3A9D5D]" />
-          <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Sent to WhatsApp</h1>
+          <h1 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Sent to WhatsApp</h1>
           <p className="mt-3 text-sm text-gray-600">
             We&apos;ve opened WhatsApp with your order details. Please send the message so our team can confirm
             availability and pricing with you directly — nothing has been charged yet.
           </p>
-          <Link href="/" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm text-white">
+          <Link href="/" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#3A2213] px-6 py-3 text-sm text-white">
             Continue Shopping
           </Link>
         </section>
@@ -135,11 +135,11 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="bg-[#F3EEE6]">
+    <main className="bg-[#FDF2EC]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">
-            <h1 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Checkout</h1>
+            <h1 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Checkout</h1>
             <p className="mt-2 text-sm text-gray-500">
               We don&apos;t take payment on the site — choose delivery or pickup below and we&apos;ll send your
               order to WhatsApp. Share your name, phone and address there and our team will confirm availability
@@ -149,13 +149,13 @@ export default function CheckoutPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setMode("Delivery")}
-                  className={`rounded-full px-5 py-3 text-sm ${mode === "Delivery" ? "bg-[#111111] text-white" : "border border-black/10"}`}
+                  className={`rounded-full px-5 py-3 text-sm ${mode === "Delivery" ? "bg-[#3A2213] text-white" : "border border-black/10"}`}
                 >
                   Delivery
                 </button>
                 <button
                   onClick={() => setMode("Pickup")}
-                  className={`rounded-full px-5 py-3 text-sm ${mode === "Pickup" ? "bg-[#111111] text-white" : "border border-black/10"}`}
+                  className={`rounded-full px-5 py-3 text-sm ${mode === "Pickup" ? "bg-[#3A2213] text-white" : "border border-black/10"}`}
                 >
                   Pickup
                 </button>
@@ -164,7 +164,7 @@ export default function CheckoutPage() {
           </div>
 
           <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Order Summary</h2>
+            <h2 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Order Summary</h2>
             <div className="mt-6 space-y-3 text-sm text-gray-600">
               {items.map((item) => (
                 <div key={`${item.productId}-${item.size}`} className="flex flex-wrap justify-between gap-x-3 gap-y-1">
@@ -182,13 +182,13 @@ export default function CheckoutPage() {
                   <span>−₹{discount.toLocaleString()}</span>
                 </div>
               )}
-              <div className="mt-3 flex justify-between border-t border-black/5 pt-3 text-base font-semibold text-[#111111]"><span>Estimated Total</span><span>₹{total.toLocaleString()}</span></div>
+              <div className="mt-3 flex justify-between border-t border-black/5 pt-3 text-base font-semibold text-[#3A2213]"><span>Estimated Total</span><span>₹{total.toLocaleString()}</span></div>
               <p className="text-xs text-gray-400">Final pricing and delivery is confirmed by our team over WhatsApp.</p>
             </div>
 
             <div className="mt-6">
               {appliedCoupon ? (
-                <div className="flex items-center justify-between gap-2 rounded-2xl border border-[#3A9D5D]/30 bg-[#3A9D5D]/5 px-4 py-3 text-sm text-[#111111]">
+                <div className="flex items-center justify-between gap-2 rounded-2xl border border-[#3A9D5D]/30 bg-[#3A9D5D]/5 px-4 py-3 text-sm text-[#3A2213]">
                   <span className="flex items-center gap-2">
                     <Tag size={14} className="text-[#3A9D5D]" />
                     <strong className="tracking-[0.08em]">{appliedCoupon.code}</strong> applied
@@ -209,7 +209,7 @@ export default function CheckoutPage() {
                   <button
                     onClick={applyCoupon}
                     disabled={!couponInput.trim() || couponLoading}
-                    className="flex items-center gap-2 whitespace-nowrap rounded-[1rem] border border-[#111111] px-4 py-2.5 text-sm font-medium text-[#111111] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex items-center gap-2 whitespace-nowrap rounded-[1rem] border border-[#3A2213] px-4 py-2.5 text-sm font-medium text-[#3A2213] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {couponLoading && <Loader2 size={14} className="animate-spin" />}
                     Apply
@@ -224,23 +224,23 @@ export default function CheckoutPage() {
                 type="checkbox"
                 checked={agreedToTerms}
                 onChange={(e) => setAgreedToTerms(e.target.checked)}
-                className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/20 accent-[#111111]"
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/20 accent-[#3A2213]"
               />
               <span>
                 I have read, understood and agree to the{" "}
-                <Link href="/terms-and-conditions" target="_blank" className="underline hover:text-[#111111]">
+                <Link href="/terms-and-conditions" target="_blank" className="underline hover:text-[#3A2213]">
                   Terms &amp; Conditions
                 </Link>
                 ,{" "}
-                <Link href="/shipping-policy" target="_blank" className="underline hover:text-[#111111]">
+                <Link href="/shipping-policy" target="_blank" className="underline hover:text-[#3A2213]">
                   Shipping Policy
                 </Link>
                 ,{" "}
-                <Link href="/refund-policy" target="_blank" className="underline hover:text-[#111111]">
+                <Link href="/refund-policy" target="_blank" className="underline hover:text-[#3A2213]">
                   Cancellation &amp; Refund Policy
                 </Link>{" "}
                 and{" "}
-                <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#111111]">
+                <Link href="/privacy-policy" target="_blank" className="underline hover:text-[#3A2213]">
                   Privacy Policy
                 </Link>
                 .

@@ -153,7 +153,7 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
               }}
               className={`relative h-24 w-20 cursor-grab select-none overflow-hidden rounded-[0.8rem] border transition-colors active:cursor-grabbing ${
                 overIndex === index && dragIndex !== null && dragIndex !== index
-                  ? "border-[#B68D40] ring-2 ring-[#B68D40]/40"
+                  ? "border-[#B17F5E] ring-2 ring-[#B17F5E]/40"
                   : "border-black/10"
               } ${isDragging ? "opacity-90 shadow-lg" : ""}`}
             >
@@ -173,7 +173,7 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
             </div>
           );
         })}
-        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B68D40] hover:text-[#B68D40]">
+        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B17F5E] hover:text-[#B17F5E]">
           {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
           <span className="text-[10px]">{uploading ? "Uploading" : "Add photo"}</span>
           <input
@@ -230,7 +230,7 @@ function VideoUploader({ videos, onChange }: { videos: string[]; onChange: (vide
             </button>
           </div>
         ))}
-        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B68D40] hover:text-[#B68D40]">
+        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B17F5E] hover:text-[#B17F5E]">
           {uploading ? <Loader2 size={18} className="animate-spin" /> : <Video size={18} />}
           <span className="text-[10px]">{uploading ? "Uploading" : "Add video"}</span>
           <input
@@ -265,7 +265,7 @@ function SizePicker({ sizes, onChange }: { sizes: string[]; onChange: (sizes: st
             key={size}
             onClick={() => onChange(active ? sizes.filter((s) => s !== size) : [...sizes, size])}
             className={`rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.18em] ${
-              active ? "border-[#111111] bg-[#111111] text-white" : "border-black/10 text-gray-600 hover:border-[#B68D40]"
+              active ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-black/10 text-gray-600 hover:border-[#B17F5E]"
             }`}
           >
             {size}
@@ -300,14 +300,14 @@ function TagListInput({ tags, onChange, placeholder }: { tags: string[]; onChang
           placeholder={placeholder}
           className="w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm"
         />
-        <button type="button" onClick={addTag} className="shrink-0 rounded-[1rem] border border-black/10 px-4 text-sm text-[#111111] hover:border-[#B68D40]">
+        <button type="button" onClick={addTag} className="shrink-0 rounded-[1rem] border border-black/10 px-4 text-sm text-[#3A2213] hover:border-[#B17F5E]">
           Add
         </button>
       </div>
       {tags.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <span key={tag} className="flex items-center gap-1 rounded-full bg-[#EFE7DA] px-3 py-1 text-xs text-[#111111]">
+            <span key={tag} className="flex items-center gap-1 rounded-full bg-[#E9CFBA] px-3 py-1 text-xs text-[#3A2213]">
               {tag}
               <button type="button" onClick={() => onChange(tags.filter((t) => t !== tag))} aria-label={`Remove ${tag}`}>
                 <X size={11} />
@@ -330,16 +330,16 @@ function StatCard({ label, value, tone = "ink", icon: Icon }: {
     <div className="rounded-[1.2rem] border border-black/5 bg-white p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <p className="text-xs uppercase tracking-[0.24em] text-gray-500">{label}</p>
-        {Icon && <Icon size={16} className="text-[#B68D40]" />}
+        {Icon && <Icon size={16} className="text-[#B17F5E]" />}
       </div>
-      <p className={`text-2xl ${tone === "rose" ? "text-[#D94F70]" : "text-[#111111]"}`}>{value}</p>
+      <p className={`text-2xl ${tone === "rose" ? "text-[#D94F70]" : "text-[#3A2213]"}`}>{value}</p>
     </div>
   );
 }
 
 function StatusPill({ status }: { status: string }) {
   const bg = ({
-    Pending: "#B68D40",
+    Pending: "#B17F5E",
     Packed: "#5B7FBA",
     "Out for Delivery": "#D94F70",
     Delivered: "#3A9D5D",
@@ -358,14 +358,14 @@ function DashboardHome({ setActive, stats, outOfStockCount, loading }: {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Good morning 👋</h1>
+        <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Good morning 👋</h1>
         <p className="mt-1 text-sm text-gray-500">Here is how the boutique is performing today.</p>
       </div>
 
       {!loading && outOfStockCount > 0 && (
         <div className="flex flex-wrap items-center gap-3 rounded-[1.2rem] border border-[#EFD9B0] bg-[#FDF3E7] p-4">
-          <AlertTriangle size={18} className="shrink-0 text-[#B68D40]" />
-          <p className="text-sm text-[#111111]"><strong>{outOfStockCount} product(s)</strong> have sold their one available piece.</p>
+          <AlertTriangle size={18} className="shrink-0 text-[#B17F5E]" />
+          <p className="text-sm text-[#3A2213]"><strong>{outOfStockCount} product(s)</strong> have sold their one available piece.</p>
           <button onClick={() => setActive("inventory")} className="ml-auto text-xs uppercase tracking-[0.24em] underline">View</button>
         </div>
       )}
@@ -378,7 +378,7 @@ function DashboardHome({ setActive, stats, outOfStockCount, loading }: {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <button onClick={() => setActive("add")} className="flex items-center justify-between rounded-[1.2rem] bg-[#111111] p-5 text-white">
+        <button onClick={() => setActive("add")} className="flex items-center justify-between rounded-[1.2rem] bg-[#3A2213] p-5 text-white">
           <span>+ Add a new product, Instagram-style</span><ChevronRight size={16} />
         </button>
         <button onClick={() => setActive("orders")} className="flex items-center justify-between rounded-[1.2rem] border border-black/10 bg-white p-5">
@@ -457,11 +457,11 @@ function AddProduct({
     return (
       <div className="max-w-2xl rounded-[1.4rem] border border-black/5 bg-white p-10 text-center shadow-sm">
         <Check size={36} className="mx-auto mb-4 text-[#3A9D5D]" />
-        <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
+        <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
         <p className="mt-2 text-sm text-gray-500">&quot;{form.title}&quot; is now live in the store and inventory.</p>
         <button
           onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
-          className="mt-6 rounded-full bg-[#111111] px-8 py-3 text-sm text-white"
+          className="mt-6 rounded-full bg-[#3A2213] px-8 py-3 text-sm text-white"
         >
           Add Another Product
         </button>
@@ -471,12 +471,12 @@ function AddProduct({
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Add a Product</h1>
+      <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Add a Product</h1>
       <p className="mt-1 text-sm text-gray-500">Upload real photos of the outfit, then fill in the details.</p>
       <div className="mt-8 flex items-center gap-2">
         {steps.map((stepLabel, index) => (
           <div key={stepLabel} className="flex flex-1 items-center gap-2 text-xs text-gray-500">
-            <span className={`flex h-6 w-6 items-center justify-center rounded-full text-white ${step >= index + 1 ? "bg-[#111111]" : "bg-gray-300"}`}>{index + 1}</span>
+            <span className={`flex h-6 w-6 items-center justify-center rounded-full text-white ${step >= index + 1 ? "bg-[#3A2213]" : "bg-gray-300"}`}>{index + 1}</span>
             {stepLabel}
           </div>
         ))}
@@ -484,7 +484,7 @@ function AddProduct({
 
       {step === 1 && (
         <div className="mt-8 rounded-[1.4rem] border-2 border-dashed border-gray-300 p-10 text-center">
-          <Camera size={30} className="mx-auto mb-4 text-[#B68D40]" />
+          <Camera size={30} className="mx-auto mb-4 text-[#B17F5E]" />
           <p className="text-sm text-gray-600">Upload one or more photos of the outfit.</p>
           <div className="mt-5 flex justify-center">
             <ImageUploader images={images} onChange={setImages} />
@@ -493,7 +493,7 @@ function AddProduct({
           <div className="mt-5 flex justify-center">
             <VideoUploader videos={videos} onChange={setVideos} />
           </div>
-          <button onClick={() => setStep(2)} className="mt-6 rounded-full bg-[#111111] px-6 py-3 text-sm text-white">
+          <button onClick={() => setStep(2)} className="mt-6 rounded-full bg-[#3A2213] px-6 py-3 text-sm text-white">
             Continue
           </button>
         </div>
@@ -572,8 +572,8 @@ function AddProduct({
             </div>
             <div className="flex flex-wrap gap-3">
               <button onClick={() => setStep(1)} className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
-              <button onClick={() => setSaved(true)} className="flex items-center gap-2 rounded-full bg-[#EFE7DA] px-6 py-3 text-sm"><Save size={14} /> Save as Draft</button>
-              <button onClick={() => setStep(3)} className="rounded-full bg-[#111111] px-6 py-3 text-sm text-white sm:ml-auto">Continue</button>
+              <button onClick={() => setSaved(true)} className="flex items-center gap-2 rounded-full bg-[#E9CFBA] px-6 py-3 text-sm"><Save size={14} /> Save as Draft</button>
+              <button onClick={() => setStep(3)} className="rounded-full bg-[#3A2213] px-6 py-3 text-sm text-white sm:ml-auto">Continue</button>
             </div>
             {saved && <p className="text-xs text-gray-500">Saved locally — continue whenever you&apos;re ready.</p>}
           </div>
@@ -583,10 +583,10 @@ function AddProduct({
       {step === 3 && (
         <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-10 text-center shadow-sm">
           <Check size={36} className="mx-auto mb-4 text-[#3A9D5D]" />
-          <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Ready to Publish</h2>
+          <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Ready to Publish</h2>
           <p className="mt-2 text-sm text-gray-500">&quot;{form.title || "Untitled product"}&quot; will be saved to the database and go live instantly.</p>
           {error && <p className="mt-3 text-sm text-[#D94F70]">{error}</p>}
-          <button onClick={publish} disabled={publishing} className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#111111] px-8 py-3 text-sm text-white disabled:opacity-60">
+          <button onClick={publish} disabled={publishing} className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#3A2213] px-8 py-3 text-sm text-white disabled:opacity-60">
             {publishing && <Loader2 size={14} className="animate-spin" />}
             {publishing ? "Publishing…" : "Publish Product"}
           </button>
@@ -619,7 +619,7 @@ function ShipmentPill({ status }: { status?: string }) {
   const normalized = (status || "not_created").toLowerCase();
   const bg = ({
     not_created: "#999",
-    pending: "#B68D40",
+    pending: "#B17F5E",
     created: "#5B7FBA",
     failed: "#D94F70",
     delivered: "#3A9D5D",
@@ -653,7 +653,7 @@ function OrdersTable({
   return (
     <div className="overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
       <div className="flex items-baseline justify-between gap-3 border-b border-black/5 px-4 py-3">
-        <h2 className="text-sm font-medium uppercase tracking-[0.18em] text-[#111111]">
+        <h2 className="text-sm font-medium uppercase tracking-[0.18em] text-[#3A2213]">
           {title} <span className="text-gray-400">({orders.length})</span>
         </h2>
         {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
@@ -663,7 +663,7 @@ function OrdersTable({
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-sm">
-            <thead className="bg-[#F3EEE6] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+            <thead className="bg-[#FDF2EC] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
               <tr>
                 <th className="p-3">Order</th><th className="p-3">Customer</th><th className="p-3">Amount</th>
                 <th className="p-3">Placed</th><th className="p-3">Status</th><th className="p-3">Shipment</th>
@@ -676,7 +676,7 @@ function OrdersTable({
                   <tr
                     key={order.id}
                     onClick={() => onSelect(order)}
-                    className={`cursor-pointer border-t border-black/5 ${selected?.id === order.id ? "bg-[#F3EEE6]" : ""}`}
+                    className={`cursor-pointer border-t border-black/5 ${selected?.id === order.id ? "bg-[#FDF2EC]" : ""}`}
                   >
                     <td className="p-3">{order.id}</td>
                     <td className="p-3">{order.customerName}</td>
@@ -695,7 +695,7 @@ function OrdersTable({
                           <button
                             onClick={(e) => { e.stopPropagation(); onRetryShipment(order); }}
                             disabled={retryingId === order.id}
-                            className="mt-0.5 rounded-full border border-black/10 px-2.5 py-1 text-[11px] text-[#111111] disabled:opacity-50"
+                            className="mt-0.5 rounded-full border border-black/10 px-2.5 py-1 text-[11px] text-[#3A2213] disabled:opacity-50"
                           >
                             {retryingId === order.id ? "Retrying…" : "Create Shipment"}
                           </button>
@@ -788,8 +788,8 @@ function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated:
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.4rem] bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Log an Order</h2>
-          <button onClick={onClose} className="rounded-full p-1.5 text-gray-400 hover:text-[#111111]" aria-label="Close">
+          <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Log an Order</h2>
+          <button onClick={onClose} className="rounded-full p-1.5 text-gray-400 hover:text-[#3A2213]" aria-label="Close">
             <X size={18} />
           </button>
         </div>
@@ -805,8 +805,8 @@ function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated:
           </div>
           <input placeholder="Email (optional)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
           <div className="flex gap-2">
-            <button onClick={() => setMode("Delivery")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Delivery" ? "bg-[#111111] text-white" : "border border-black/10"}`}>Delivery</button>
-            <button onClick={() => setMode("Pickup")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Pickup" ? "bg-[#111111] text-white" : "border border-black/10"}`}>Pickup</button>
+            <button onClick={() => setMode("Delivery")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Delivery" ? "bg-[#3A2213] text-white" : "border border-black/10"}`}>Delivery</button>
+            <button onClick={() => setMode("Pickup")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Pickup" ? "bg-[#3A2213] text-white" : "border border-black/10"}`}>Pickup</button>
           </div>
           {mode === "Delivery" && (
             <>
@@ -822,8 +822,8 @@ function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated:
 
         <div className="mt-6">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-[#111111]">Items</p>
-            <button onClick={addLine} disabled={loadingProducts || products.length === 0} className="text-xs uppercase tracking-[0.18em] text-[#B68D40] hover:underline disabled:opacity-50">
+            <p className="text-sm font-semibold text-[#3A2213]">Items</p>
+            <button onClick={addLine} disabled={loadingProducts || products.length === 0} className="text-xs uppercase tracking-[0.18em] text-[#B17F5E] hover:underline disabled:opacity-50">
               + Add item
             </button>
           </div>
@@ -867,7 +867,7 @@ function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated:
             </div>
           )}
           {lines.length > 0 && (
-            <p className="mt-3 text-right text-sm font-semibold text-[#111111]">Total: ₹{total.toLocaleString()}</p>
+            <p className="mt-3 text-right text-sm font-semibold text-[#3A2213]">Total: ₹{total.toLocaleString()}</p>
           )}
         </div>
 
@@ -876,7 +876,7 @@ function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated:
         <button
           onClick={submit}
           disabled={!valid || submitting}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#3A2213] px-6 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitting && <Loader2 size={14} className="animate-spin" />}
           {submitting ? "Logging Order…" : "Log Order"}
@@ -945,12 +945,12 @@ function Orders() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Orders</h1>
+          <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Orders</h1>
           <p className="mt-1 text-sm text-gray-500">Log orders confirmed over WhatsApp or in person here.</p>
         </div>
         <button
           onClick={() => setShowLogOrder(true)}
-          className="flex items-center gap-2 rounded-full bg-[#111111] px-5 py-2.5 text-sm font-medium text-white"
+          className="flex items-center gap-2 rounded-full bg-[#3A2213] px-5 py-2.5 text-sm font-medium text-white"
         >
           <Plus size={16} /> Log Order
         </button>
@@ -997,7 +997,7 @@ function Orders() {
               <div>
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-lg text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>{selected.id}</p>
+                    <p className="text-lg text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>{selected.id}</p>
                     <p className="mt-1 text-sm text-gray-500">{selected.customerName} · {selected.phone}</p>
                   </div>
                   <StatusPill status={selected.status} />
@@ -1019,13 +1019,13 @@ function Orders() {
                   </p>
                 )}
                 <div className="mt-6 flex flex-wrap gap-2">
-                  <button onClick={() => advance(selected)} className="rounded-full bg-[#111111] px-4 py-2 text-xs text-white">Advance Status</button>
+                  <button onClick={() => advance(selected)} className="rounded-full bg-[#3A2213] px-4 py-2 text-xs text-white">Advance Status</button>
                   <button onClick={() => reject(selected)} className="rounded-full border border-[#D94F70] px-4 py-2 text-xs text-[#D94F70]">Reject</button>
                   {(selected.shipmentStatus === "not_created" || selected.shipmentStatus === "failed") && (
                     <button
                       onClick={() => retry(selected)}
                       disabled={retryingId === selected.id}
-                      className="rounded-full border border-black/10 px-4 py-2 text-xs text-[#111111] disabled:opacity-50"
+                      className="rounded-full border border-black/10 px-4 py-2 text-xs text-[#3A2213] disabled:opacity-50"
                     >
                       {retryingId === selected.id ? "Retrying…" : "Create Shipment"}
                     </button>
@@ -1118,7 +1118,7 @@ function EditProductModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5">
       <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.4rem] bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Edit Product</h3>
+          <h3 className="text-lg text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Edit Product</h3>
           <button onClick={onClose}><X size={18} /></button>
         </div>
         <div className="mt-5 space-y-3">
@@ -1260,7 +1260,7 @@ function EditProductModal({
         </div>
         <div className="mt-6 flex justify-end gap-3">
           <button onClick={onClose} className="rounded-full border border-black/10 px-5 py-2.5 text-sm">Cancel</button>
-          <button onClick={save} disabled={saving} className="rounded-full bg-[#111111] px-5 py-2.5 text-sm text-white disabled:opacity-60">{saving ? "Saving…" : "Save Changes"}</button>
+          <button onClick={save} disabled={saving} className="rounded-full bg-[#3A2213] px-5 py-2.5 text-sm text-white disabled:opacity-60">{saving ? "Saving…" : "Save Changes"}</button>
         </div>
       </div>
     </div>
@@ -1296,7 +1296,7 @@ function Inventory({
 
   return (
     <div>
-      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Inventory</h1>
+      <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Inventory</h1>
       <p className="mt-1 text-sm text-gray-500">Every product here is read straight from the database — edit or remove anytime.</p>
       {loading ? (
         <p className="mt-8 text-sm text-gray-400">Loading products…</p>
@@ -1310,12 +1310,12 @@ function Inventory({
                 {product.images?.[0] ? (
                   <img src={resolveImageUrl(product.images[0])} alt={product.name} className="h-12 w-10 shrink-0 rounded-[0.5rem] object-cover" />
                 ) : (
-                  <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#EFE7DA] text-gray-400">
+                  <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#E9CFBA] text-gray-400">
                     <ImageOff size={14} />
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="truncate text-sm text-[#111111]">{product.name}</p>
+                  <p className="truncate text-sm text-[#3A2213]">{product.name}</p>
                   <p className="text-xs text-gray-400">₹{product.price} · {product.category}</p>
                 </div>
               </div>
@@ -1323,7 +1323,7 @@ function Inventory({
                 <span className={`text-xs font-medium ${(product.stock ?? 0) > 0 ? "text-[#3A9D5D]" : "text-[#D94F70]"}`}>
                   {(product.stock ?? 0) > 0 ? "In Stock" : "Sold Out"}
                 </span>
-                <button onClick={() => setEditing(product)} className="rounded-full border border-black/10 p-2 text-[#111111]"><Pencil size={14} /></button>
+                <button onClick={() => setEditing(product)} className="rounded-full border border-black/10 p-2 text-[#3A2213]"><Pencil size={14} /></button>
                 <button onClick={() => remove(product)} disabled={deletingId === product.id} className="rounded-full border border-[#D94F70] p-2 text-[#D94F70] disabled:opacity-50">
                   {deletingId === product.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                 </button>
@@ -1361,7 +1361,7 @@ function Customers() {
 
   return (
     <div>
-      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Customers</h1>
+      <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Customers</h1>
       <p className="mt-1 text-sm text-gray-500">Every account that has signed in, with their order history at a glance.</p>
       {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
       {loading ? (
@@ -1383,7 +1383,7 @@ function Customers() {
             <tbody>
               {customers.map((c) => (
                 <tr key={c.id} className="border-b border-black/5 last:border-b-0">
-                  <td className="p-4 text-[#111111]">{c.name}</td>
+                  <td className="p-4 text-[#3A2213]">{c.name}</td>
                   <td className="p-4 text-gray-500">
                     <p>{c.email}</p>
                     {c.phone && <p className="text-xs text-gray-400">{c.phone}</p>}
@@ -1404,9 +1404,9 @@ function Customers() {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  Pending: "#B68D40",
+  Pending: "#B17F5E",
   Packed: "#3A9D5D",
-  "Out for Delivery": "#111111",
+  "Out for Delivery": "#3A2213",
   Delivered: "#2F7D46",
   Rejected: "#D94F70",
 };
@@ -1479,26 +1479,26 @@ function Analytics({ products }: { products: Product[] }) {
 
   return (
     <div>
-      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Analytics</h1>
+      <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Analytics</h1>
 
       {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
           <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Top Rated Product</p>
-          <p className="mt-3 text-lg text-[#111111]">{topByRating?.name ?? "—"}</p>
+          <p className="mt-3 text-lg text-[#3A2213]">{topByRating?.name ?? "—"}</p>
         </div>
         <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
           <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Best Seller</p>
-          <p className="mt-3 text-lg text-[#111111]">{topBySold?.name ?? "—"}</p>
+          <p className="mt-3 text-lg text-[#3A2213]">{topBySold?.name ?? "—"}</p>
         </div>
         <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
           <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Total Revenue</p>
-          <p className="mt-3 text-lg text-[#111111]">{loading ? "…" : `₹${totalRevenue.toLocaleString()}`}</p>
+          <p className="mt-3 text-lg text-[#3A2213]">{loading ? "…" : `₹${totalRevenue.toLocaleString()}`}</p>
         </div>
         <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
           <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Average Order Value</p>
-          <p className="mt-3 text-lg text-[#111111]">{loading ? "…" : `₹${averageOrderValue.toLocaleString()}`}</p>
+          <p className="mt-3 text-lg text-[#3A2213]">{loading ? "…" : `₹${averageOrderValue.toLocaleString()}`}</p>
         </div>
       </div>
 
@@ -1517,7 +1517,7 @@ function Analytics({ products }: { products: Product[] }) {
                   <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#9CA3AF" />
                   <YAxis tick={{ fontSize: 11 }} stroke="#9CA3AF" width={48} />
                   <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, "Revenue"]} />
-                  <Line type="monotone" dataKey="revenue" stroke="#B68D40" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="revenue" stroke="#B17F5E" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -1532,7 +1532,7 @@ function Analytics({ products }: { products: Product[] }) {
                   <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#9CA3AF" />
                   <YAxis tick={{ fontSize: 11 }} allowDecimals={false} stroke="#9CA3AF" width={32} />
                   <Tooltip />
-                  <Bar dataKey="orders" fill="#111111" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="orders" fill="#3A2213" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -1564,7 +1564,7 @@ function Analytics({ products }: { products: Product[] }) {
                   <XAxis type="number" tick={{ fontSize: 11 }} stroke="#9CA3AF" />
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} stroke="#9CA3AF" width={160} />
                   <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, "Revenue"]} />
-                  <Bar dataKey="revenue" fill="#B68D40" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="revenue" fill="#B17F5E" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -1637,7 +1637,7 @@ function Coupons() {
 
   return (
     <div>
-      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Coupons</h1>
+      <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Coupons</h1>
       <p className="mt-1 text-sm text-gray-500">Create and manage promo campaigns for festive launches and loyal customers.</p>
 
       <form onSubmit={submit} className="mt-8 grid gap-4 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
@@ -1688,7 +1688,7 @@ function Coupons() {
           <button
             type="submit"
             disabled={creating || !form.code.trim()}
-            className="flex items-center gap-2 rounded-full bg-[#111111] px-6 py-2.5 text-sm text-white disabled:opacity-50"
+            className="flex items-center gap-2 rounded-full bg-[#3A2213] px-6 py-2.5 text-sm text-white disabled:opacity-50"
           >
             {creating ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
             Create Coupon
@@ -1707,7 +1707,7 @@ function Coupons() {
           {coupons.map((c) => (
             <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 p-4 last:border-b-0">
               <div>
-                <p className="text-sm tracking-[0.1em] text-[#111111]">{c.code}</p>
+                <p className="text-sm tracking-[0.1em] text-[#3A2213]">{c.code}</p>
                 <p className="text-xs text-gray-400">
                   {c.discount_type === "percent" ? `${c.discount_value}% off` : `₹${c.discount_value} off`}
                   {" · "}{c.used_count} used{c.usage_limit ? ` / ${c.usage_limit}` : ""}
@@ -1720,7 +1720,7 @@ function Coupons() {
                 <button
                   onClick={() => toggleActive(c)}
                   disabled={busyId === c.id}
-                  className="rounded-full border border-black/10 p-2 text-[#111111] disabled:opacity-50"
+                  className="rounded-full border border-black/10 p-2 text-[#3A2213] disabled:opacity-50"
                   title={c.active ? "Pause coupon" : "Activate coupon"}
                 >
                   {busyId === c.id ? <Loader2 size={14} className="animate-spin" /> : c.active ? <X size={14} /> : <Check size={14} />}
@@ -1786,7 +1786,7 @@ function HomepageEditor({ products }: { products: Product[] }) {
   if (loading || !config) {
     return (
       <div>
-        <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1>
+        <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1>
         <p className="mt-8 text-sm text-gray-400">Loading…</p>
       </div>
     );
@@ -1794,7 +1794,7 @@ function HomepageEditor({ products }: { products: Product[] }) {
 
   return (
     <div>
-      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1>
+      <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1>
       <p className="mt-1 text-sm text-gray-500">Edit the hero copy and choose which products get featured on the storefront homepage.</p>
 
       <div className="mt-8 space-y-4 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
@@ -1838,13 +1838,13 @@ function HomepageEditor({ products }: { products: Product[] }) {
               return (
                 <label
                   key={p.id}
-                  className={`flex cursor-pointer items-center gap-3 rounded-[0.9rem] border p-3 text-sm ${checked ? "border-[#111111] bg-[#EFE7DA]" : "border-black/10"}`}
+                  className={`flex cursor-pointer items-center gap-3 rounded-[0.9rem] border p-3 text-sm ${checked ? "border-[#3A2213] bg-[#E9CFBA]" : "border-black/10"}`}
                 >
-                  <input type="checkbox" checked={checked} onChange={() => toggleFeatured(p.id)} className="accent-[#111111]" />
+                  <input type="checkbox" checked={checked} onChange={() => toggleFeatured(p.id)} className="accent-[#3A2213]" />
                   {p.images?.[0] ? (
                     <img src={resolveImageUrl(p.images[0])} alt={p.name} className="h-10 w-8 rounded-[0.4rem] object-cover" />
                   ) : (
-                    <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#EFE7DA] text-gray-400"><ImageOff size={12} /></div>
+                    <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#E9CFBA] text-gray-400"><ImageOff size={12} /></div>
                   )}
                   <span className="truncate">{p.name}</span>
                 </label>
@@ -1859,7 +1859,7 @@ function HomepageEditor({ products }: { products: Product[] }) {
       <button
         onClick={save}
         disabled={saving}
-        className="mt-6 flex items-center gap-2 rounded-full bg-[#111111] px-6 py-2.5 text-sm text-white disabled:opacity-50"
+        className="mt-6 flex items-center gap-2 rounded-full bg-[#3A2213] px-6 py-2.5 text-sm text-white disabled:opacity-50"
       >
         {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <Check size={14} /> : <Save size={14} />}
         {saved ? "Saved" : "Save Changes"}
@@ -1911,7 +1911,7 @@ function ShippingDefaultsEditor() {
   if (loading || !rows) {
     return (
       <div>
-        <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Shipping Defaults</h1>
+        <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Shipping Defaults</h1>
         <p className="mt-8 text-sm text-gray-400">Loading…</p>
       </div>
     );
@@ -1919,7 +1919,7 @@ function ShippingDefaultsEditor() {
 
   return (
     <div>
-      <h1 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Shipping Defaults</h1>
+      <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Shipping Defaults</h1>
       <p className="mt-1 text-sm text-gray-500">
         Fallback weight/dimensions used for shipping-rate lookups when a product doesn&apos;t have its own override.
         The &quot;__default__&quot; row is the store-wide fallback used when a category has no row of its own.
@@ -1928,7 +1928,7 @@ function ShippingDefaultsEditor() {
       <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] text-sm">
-            <thead className="bg-[#F3EEE6] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+            <thead className="bg-[#FDF2EC] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
               <tr>
                 <th className="p-3">Category</th>
                 <th className="p-3">Weight (kg)</th>
@@ -1940,7 +1940,7 @@ function ShippingDefaultsEditor() {
             <tbody>
               {rows.map((row, i) => (
                 <tr key={row.category} className="border-t border-black/5">
-                  <td className="p-3 font-medium text-[#111111]">
+                  <td className="p-3 font-medium text-[#3A2213]">
                     {row.category === "__default__" ? "Store-wide fallback" : row.category}
                   </td>
                   {(["weight", "length", "breadth", "height"] as const).map((field) => (
@@ -1964,7 +1964,7 @@ function ShippingDefaultsEditor() {
       <button
         onClick={save}
         disabled={saving}
-        className="mt-6 flex items-center gap-2 rounded-full bg-[#111111] px-6 py-2.5 text-sm text-white disabled:opacity-50"
+        className="mt-6 flex items-center gap-2 rounded-full bg-[#3A2213] px-6 py-2.5 text-sm text-white disabled:opacity-50"
       >
         {saving ? <Loader2 size={14} className="animate-spin" /> : saved ? <Check size={14} /> : <Save size={14} />}
         {saved ? "Saved" : "Save Changes"}
@@ -2026,7 +2026,7 @@ export default function DashboardPage() {
   // yet, never render owner data.
   if (authLoading || user?.role !== "owner") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F3EEE6]">
+      <div className="flex min-h-screen items-center justify-center bg-[#FDF2EC]">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Loader2 size={16} className="animate-spin" /> Checking your session…
         </div>
@@ -2037,7 +2037,7 @@ export default function DashboardPage() {
   const activeLabel = NAV.find((item) => item.id === active)?.label ?? "Dashboard";
 
   return (
-    <div className="min-h-screen bg-[#F3EEE6]">
+    <div className="min-h-screen bg-[#FDF2EC]">
       {/* Mobile top bar: hamburger + current section label, replaces the hidden sidebar */}
       <div className="flex items-center justify-between border-b border-black/5 bg-white px-5 py-4 lg:hidden">
         <button
@@ -2048,7 +2048,7 @@ export default function DashboardPage() {
         >
           <Menu size={18} />
         </button>
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#111111]">{activeLabel}</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#3A2213]">{activeLabel}</p>
         <div className="w-9" />
       </div>
 
@@ -2063,8 +2063,8 @@ export default function DashboardPage() {
           <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[82vw] max-w-xs flex-col overflow-y-auto bg-white p-6 shadow-2xl">
             <div className="mb-8 flex items-start justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Owner Panel</p>
-                <h2 className="mt-2 text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>RUBYZ Admin</h2>
+                <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Owner Panel</p>
+                <h2 className="mt-2 text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>RUBYZ Admin</h2>
                 <p className="mt-1 truncate text-xs text-gray-400">{user.email}</p>
               </div>
               <button onClick={() => setMobileNavOpen(false)} className="rounded-full border border-black/10 p-2" aria-label="Close menu">
@@ -2081,7 +2081,7 @@ export default function DashboardPage() {
                       setActive(item.id);
                       setMobileNavOpen(false);
                     }}
-                    className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#111111] text-white" : "text-[#111111] hover:bg-[#EFE7DA]"}`}
+                    className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#3A2213] text-white" : "text-[#3A2213] hover:bg-[#E9CFBA]"}`}
                   >
                     <Icon size={16} /> {item.label}
                   </button>
@@ -2092,7 +2092,7 @@ export default function DashboardPage() {
                   logout();
                   router.push("/login");
                 }}
-                className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#EFE7DA]"
+                className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#E9CFBA]"
               >
                 <LogOut size={16} /> Log out
               </button>
@@ -2104,15 +2104,15 @@ export default function DashboardPage() {
       <div className="mx-auto flex max-w-7xl gap-8 px-5 py-8 lg:px-8">
         <aside className="hidden w-72 shrink-0 rounded-[1.8rem] border border-black/5 bg-white p-6 shadow-sm lg:block">
           <div className="mb-8">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Owner Panel</p>
-            <h2 className="mt-2 text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>RUBYZ Admin</h2>
+            <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Owner Panel</p>
+            <h2 className="mt-2 text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>RUBYZ Admin</h2>
             <p className="mt-1 truncate text-xs text-gray-400">{user.email}</p>
           </div>
           <nav className="space-y-2">
             {NAV.map((item) => {
               const Icon = item.icon;
               return (
-                <button key={item.id} onClick={() => setActive(item.id)} className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#111111] text-white" : "text-[#111111] hover:bg-[#EFE7DA]"}`}>
+                <button key={item.id} onClick={() => setActive(item.id)} className={`flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm ${active === item.id ? "bg-[#3A2213] text-white" : "text-[#3A2213] hover:bg-[#E9CFBA]"}`}>
                   <Icon size={16} /> {item.label}
                 </button>
               );
@@ -2122,7 +2122,7 @@ export default function DashboardPage() {
                 logout();
                 router.push("/login");
               }}
-              className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#EFE7DA]"
+              className="flex w-full items-center gap-3 rounded-[1rem] px-4 py-3 text-left text-sm text-[#D94F70] hover:bg-[#E9CFBA]"
             >
               <LogOut size={16} /> Log out
             </button>

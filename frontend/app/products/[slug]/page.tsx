@@ -137,7 +137,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   };
 
   return (
-    <main className="bg-[#F3EEE6]">
+    <main className="bg-[#FDF2EC]">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
@@ -152,33 +152,33 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[1.5rem] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:rounded-[2rem] sm:p-5">
             <div className="mb-4 flex items-center justify-between">
-              <span className="rounded-full bg-[#111111] px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white">{product.badge}</span>
+              <span className="rounded-full bg-[#3A2213] px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white">{product.badge}</span>
               <LikeButton productId={product.id} className="rounded-full border border-black/10 p-2" />
             </div>
             {mainImage ? (
               <ProductImageGallery images={images} videos={videos} alt={product.name} fabric={product.fabric} />
             ) : (
-              <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
+              <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
             )}
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-[#B68D40]">Featured Piece</p>
-            <h1 className="mt-3 text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Featured Piece</p>
+            <h1 className="mt-3 text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
               {product.name}
             </h1>
             <p className="mt-4 text-sm leading-7 text-gray-600">{product.description}</p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
-              <span className="rounded-full bg-[#EFE7DA] px-3 py-1 text-sm text-[#111111]">{product.category}</span>
-              <span className="rounded-full bg-[#EFE7DA] px-3 py-1 text-sm text-[#111111]">{product.fabric}</span>
-              <span className="rounded-full bg-[#EFE7DA] px-3 py-1 text-sm text-[#111111]">{product.occasion}</span>
+              <span className="rounded-full bg-[#E9CFBA] px-3 py-1 text-sm text-[#3A2213]">{product.category}</span>
+              <span className="rounded-full bg-[#E9CFBA] px-3 py-1 text-sm text-[#3A2213]">{product.fabric}</span>
+              <span className="rounded-full bg-[#E9CFBA] px-3 py-1 text-sm text-[#3A2213]">{product.occasion}</span>
             </div>
 
             <div className="mt-8 flex items-end gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-gray-400">Price</p>
-                <p className="text-3xl text-[#111111]">₹{product.price}</p>
+                <p className="text-3xl text-[#3A2213]">₹{product.price}</p>
               </div>
               <p className="text-sm text-gray-400 line-through">₹{product.mrp}</p>
               {discount !== null && (
@@ -189,24 +189,24 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <AddToCartPanel product={product} image={images[0]} />
 
             <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
-              <h2 className="text-xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>Product Details</h2>
+              <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Product Details</h2>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">Fabric</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">Fabric</p>
                   <p className="mt-1 text-sm text-gray-600">{product.fabric}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">Availability</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">Availability</p>
                   <p className="mt-1 text-sm">
                     <StockBadge product={product} />
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">Sizes</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">Sizes</p>
                   <p className="mt-1 text-sm text-gray-600">{product.sizes.join(", ")}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#111111]">Care</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">Care</p>
                   <p className="mt-1 text-sm text-gray-600">{product.care.join(" • ")}</p>
                 </div>
               </div>
@@ -218,12 +218,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <section className="mx-auto max-w-7xl px-5 pb-16 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Related Pieces</p>
-            <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Related Pieces</p>
+            <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
               You may also love
             </h2>
           </div>
-          <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#111111] hover:text-[#B68D40]">View All</Link>
+          <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#3A2213] hover:text-[#B17F5E]">View All</Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {related.map((item) => (

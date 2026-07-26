@@ -65,7 +65,7 @@ export default function PrivacyPolicyPage() {
               <p>We do not sell your personal information. We share it only where necessary to run the business:</p>
               <ul className="list-disc space-y-1 pl-5">
                 <li>
-                  <span className="text-[#111111]">Order placement over WhatsApp</span> — when you tap &ldquo;Place
+                  <span className="text-[#3A2213]">Order placement over WhatsApp</span> — when you tap &ldquo;Place
                   order on WhatsApp&rdquo; at checkout, your name, phone number, delivery address and order summary
                   are sent as a WhatsApp message to our business number. That message is transmitted and stored by
                   WhatsApp/Meta in accordance with{" "}
@@ -82,16 +82,16 @@ export default function PrivacyPolicyPage() {
                   your order is confirmed.
                 </li>
                 <li>
-                  <span className="text-[#111111]">Shipping and logistics</span> — your name, phone number and
+                  <span className="text-[#3A2213]">Shipping and logistics</span> — your name, phone number and
                   delivery address are shared with the courier or delivery partner agreed upon for your order,
                   solely to dispatch and deliver it.
                 </li>
                 <li>
-                  <span className="text-[#111111]">Service providers</span> — hosting, analytics and communication
+                  <span className="text-[#3A2213]">Service providers</span> — hosting, analytics and communication
                   tools that help us run the storefront, bound by confidentiality obligations.
                 </li>
                 <li>
-                  <span className="text-[#111111]">Legal requirements</span> — where required to comply with law,
+                  <span className="text-[#3A2213]">Legal requirements</span> — where required to comply with law,
                   regulation, or a valid request from a public authority.
                 </li>
               </ul>

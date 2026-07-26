@@ -90,7 +90,7 @@ export default async function CategoryLandingPage({
   };
 
   return (
-    <main className="bg-[#F3EEE6]">
+    <main className="bg-[#FDF2EC]">
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
@@ -103,15 +103,15 @@ export default async function CategoryLandingPage({
       />
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <nav className="mb-6 text-xs uppercase tracking-[0.24em] text-gray-400">
-          <Link href="/" className="hover:text-[#B68D40]">Home</Link>
+          <Link href="/" className="hover:text-[#B17F5E]">Home</Link>
           <span className="mx-2">/</span>
-          <Link href="/collections" className="hover:text-[#B68D40]">Collections</Link>
+          <Link href="/collections" className="hover:text-[#B17F5E]">Collections</Link>
           <span className="mx-2">/</span>
-          <span className="text-[#111111]">{config.label}</span>
+          <span className="text-[#3A2213]">{config.label}</span>
         </nav>
 
-        <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Shop the Edit</p>
-        <h1 className="text-3xl text-[#111111] sm:text-4xl" style={{ fontFamily: "Playfair Display, serif" }}>
+        <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Shop the Edit</p>
+        <h1 className="text-3xl text-[#3A2213] sm:text-4xl" style={{ fontFamily: "Playfair Display, serif" }}>
           {config.label} Collection
         </h1>
         <p className="mt-5 max-w-3xl text-sm leading-7 text-gray-600">{config.intro}</p>
@@ -125,7 +125,7 @@ export default async function CategoryLandingPage({
         ) : (
           <div className="mt-10 rounded-[1.5rem] border border-black/5 bg-white p-8 text-sm text-gray-600 shadow-sm">
             New pieces in this edit are being added — in the meantime,{" "}
-            <Link href="/collections" className="text-[#B68D40] underline">
+            <Link href="/collections" className="text-[#B17F5E] underline">
               browse the full collection
             </Link>
             {" "}or message us on WhatsApp and we&apos;ll help you find the right piece.
@@ -141,7 +141,7 @@ export default async function CategoryLandingPage({
                 <Link
                   key={c.slug}
                   href={`/collections/${c.slug}`}
-                  className="rounded-full border border-black/10 px-3 py-1.5 text-xs text-[#111111] hover:border-[#B68D40] hover:text-[#B68D40]"
+                  className="rounded-full border border-black/10 px-3 py-1.5 text-xs text-[#3A2213] hover:border-[#B17F5E] hover:text-[#B17F5E]"
                 >
                   {c.label}
                 </Link>

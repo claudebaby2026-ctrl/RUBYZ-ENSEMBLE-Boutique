@@ -63,10 +63,10 @@ export default async function HomePage() {
     .map((p) => ({ id: p.id, name: p.name, image: resolveImageUrl(p.images![0]) }));
 
   return (
-    <main className="bg-[#F3EEE6] text-[#111111]">
+    <main className="bg-[#FDF2EC] text-[#3A2213]">
       {bannerText && (
-        <div className="flex items-center justify-center gap-2 bg-[#111111] px-5 py-2.5 text-center text-xs uppercase tracking-[0.24em] text-white">
-          <Megaphone size={13} className="shrink-0 text-[#B68D40]" />
+        <div className="flex items-center justify-center gap-2 bg-[#3A2213] px-5 py-2.5 text-center text-xs uppercase tracking-[0.24em] text-white">
+          <Megaphone size={13} className="shrink-0 text-[#B17F5E]" />
           <span>{bannerText}</span>
         </div>
       )}
@@ -78,8 +78,8 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Curated Edits</p>
-            <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Curated Edits</p>
+            <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
               Shop by Category
             </h2>
           </div>
@@ -91,11 +91,11 @@ export default async function HomePage() {
               href={category.href}
               className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1 sm:rounded-[1.5rem]"
             >
-              <div className="h-32 bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)] p-3 sm:h-48 sm:p-6">
+              <div className="h-32 bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)] p-3 sm:h-48 sm:p-6">
                 <div className="flex h-full flex-col justify-between rounded-[1rem] border border-white/60 bg-white/40 p-3 sm:p-5">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#B68D40] sm:text-xs sm:tracking-[0.28em]">Shop</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#B17F5E] sm:text-xs sm:tracking-[0.28em]">Shop</p>
                   <div>
-                    <h3 className="text-base text-[#111111] sm:text-xl" style={{ fontFamily: "Playfair Display, serif" }}>
+                    <h3 className="text-base text-[#3A2213] sm:text-xl" style={{ fontFamily: "Playfair Display, serif" }}>
                       {category.name}
                     </h3>
                     <p className="mt-1 text-xs text-gray-600 sm:mt-2 sm:text-sm">{category.tag}</p>
@@ -107,16 +107,16 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#EFE7DA] py-10 sm:py-16">
+      <section className="bg-[#E9CFBA] py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="mb-8 flex items-end justify-between">
             <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Owner&apos;s Picks</p>
-              <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+              <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Owner&apos;s Picks</p>
+              <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
                 Featured
               </h2>
             </div>
-            <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#111111] hover:text-[#B68D40]">
+            <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#3A2213] hover:text-[#B17F5E]">
               View All
             </Link>
           </div>
@@ -131,8 +131,8 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Most Loved</p>
-            <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Most Loved</p>
+            <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
               Best Sellers
             </h2>
           </div>
@@ -144,9 +144,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#111111] py-10 sm:py-16 text-white">
+      <section className="bg-[#3A2213] py-10 sm:py-16 text-white">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Inspired Looks</p>
+          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Inspired Looks</p>
           <h2 className="mb-8 text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
             Celebrity Inspired Looks
           </h2>
@@ -156,10 +156,10 @@ export default async function HomePage() {
               { name: "Sabyasachi", description: "Textural drama and heirloom elegance." },
             ].map((look) => (
               <div key={look.name} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-6">
-                <div className="mb-6 h-48 rounded-[1.2rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
+                <div className="mb-6 h-48 rounded-[1.2rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
                 <h3 className="text-xl">Inspired by {look.name}</h3>
                 <p className="mt-2 text-sm text-gray-300">{look.description}</p>
-                <Link href="/collections" className="mt-5 inline-flex items-center gap-2 text-sm uppercase tracking-[0.28em] text-[#B68D40]">
+                <Link href="/collections" className="mt-5 inline-flex items-center gap-2 text-sm uppercase tracking-[0.28em] text-[#B17F5E]">
                   Explore Collection <ArrowRight size={14} />
                 </Link>
               </div>
@@ -169,7 +169,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
-        <h2 className="mb-8 text-center text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+        <h2 className="mb-8 text-center text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
           Shop by Occasion
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-7">
@@ -181,16 +181,16 @@ export default async function HomePage() {
             <Link
               key={occasion}
               href={`/collections?occasion=${encodeURIComponent(occasion)}`}
-              className="group rounded-[1rem] border border-black/5 bg-white p-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-[#B68D40]/50 sm:p-4"
+              className="group rounded-[1rem] border border-black/5 bg-white p-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-[#B17F5E]/50 sm:p-4"
             >
-              <Gem size={18} className="mx-auto mb-2 text-[#B68D40] sm:mb-3" />
-              <p className="text-sm text-[#111111] group-hover:text-[#B68D40]">{occasion}</p>
+              <Gem size={18} className="mx-auto mb-2 text-[#B17F5E] sm:mb-3" />
+              <p className="text-sm text-[#3A2213] group-hover:text-[#B17F5E]">{occasion}</p>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="bg-[#EFE7DA] py-10 sm:py-16">
+      <section className="bg-[#E9CFBA] py-10 sm:py-16">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
           {[
             { icon: Sparkles, title: "Premium Fabrics" },
@@ -199,8 +199,8 @@ export default async function HomePage() {
             { icon: Truck, title: "Nationwide Shipping" },
           ].map(({ icon: Icon, title }) => (
             <div key={title} className="rounded-[1.2rem] bg-white p-6 text-center shadow-sm">
-              <Icon className="mx-auto mb-3 text-[#B68D40]" size={24} />
-              <p className="text-sm text-[#111111]">{title}</p>
+              <Icon className="mx-auto mb-3 text-[#B17F5E]" size={24} />
+              <p className="text-sm text-[#3A2213]">{title}</p>
             </div>
           ))}
         </div>
@@ -209,33 +209,33 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
-            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B68D40]">Made for You</p>
-            <h2 className="text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+            <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Made for You</p>
+            <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
               Tailoring that feels personal.
             </h2>
             <p className="mt-4 max-w-xl text-base leading-7 text-gray-600">
               Every piece can be tailored to your measurements. We offer bespoke alterations and made-to-measure refinement for a truly elevated fit.
             </p>
-            <Link href="/tailoring" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#111111] px-6 py-3 text-sm font-medium text-white">
+            <Link href="/tailoring" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#3A2213] px-6 py-3 text-sm font-medium text-white">
               Book Tailoring <ArrowRight size={16} />
             </Link>
           </div>
-          <div className="rounded-[1.5rem] border border-black/5 bg-[#111111] p-6 text-white">
-            <div className="h-60 rounded-[1.2rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]" />
+          <div className="rounded-[1.5rem] border border-black/5 bg-[#3A2213] p-6 text-white">
+            <div className="h-60 rounded-[1.2rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
           </div>
         </div>
       </section>
 
-      <section className="bg-[#EFE7DA] py-10 sm:py-16">
+      <section className="bg-[#E9CFBA] py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <h2 className="mb-8 text-center text-3xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2 className="mb-8 text-center text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
             Customer Reviews
           </h2>
           <div className="grid gap-6 md:grid-cols-3">
             {reviews.map((review) => (
               <div key={review.name} className="rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
                 <p className="text-sm leading-7 text-gray-700">“{review.text}”</p>
-                <p className="mt-4 text-xs uppercase tracking-[0.28em] text-[#B68D40]">{review.name}</p>
+                <p className="mt-4 text-xs uppercase tracking-[0.28em] text-[#B17F5E]">{review.name}</p>
               </div>
             ))}
           </div>
@@ -244,7 +244,7 @@ export default async function HomePage() {
               href={googleReviewsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#111111] transition hover:border-[#B68D40] hover:text-[#B68D40]"
+              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#3A2213] transition hover:border-[#B17F5E] hover:text-[#B17F5E]"
             >
               Read More on Google <ExternalLink size={15} />
             </a>
@@ -255,7 +255,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="mb-8 flex items-center justify-center gap-2">
           <Camera size={18} className="text-[#D94F70]" />
-          <h2 className="text-2xl text-[#111111]" style={{ fontFamily: "Playfair Display, serif" }}>
+          <h2 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
             @{brand.name.toLowerCase().replace(/\s+/g, "")}
           </h2>
         </div>
@@ -275,7 +275,7 @@ export default async function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`View ${brand.name} on Instagram`}
-              className="group relative aspect-square overflow-hidden rounded-[1rem] bg-[linear-gradient(135deg,_#EFE7DA_0%,_#DCC9A8_100%)]"
+              className="group relative aspect-square overflow-hidden rounded-[1rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]"
             >
               {tile.image && (
                 <img
@@ -295,16 +295,16 @@ export default async function HomePage() {
             href={socialLinks.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#111111] transition hover:border-[#B68D40] hover:text-[#B68D40]"
+            className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#3A2213] transition hover:border-[#B17F5E] hover:text-[#B17F5E]"
           >
             <InstagramIcon size={16} /> Follow Us
           </a>
         </div>
       </section>
 
-      <section className="bg-[#111111] py-10 sm:py-16 text-white">
+      <section className="bg-[#3A2213] py-10 sm:py-16 text-white">
         <div className="mx-auto max-w-xl px-5 text-center lg:px-8">
-          <p className="text-xs uppercase tracking-[0.28em] text-[#B68D40]">Hey Beautiful Ladies!</p>
+          <p className="text-xs uppercase tracking-[0.28em] text-[#B17F5E]">Hey Beautiful Ladies!</p>
           <h2 className="mt-2 text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
             Join Our Fashion Community on WhatsApp
           </h2>

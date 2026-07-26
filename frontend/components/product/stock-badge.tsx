@@ -3,7 +3,7 @@ import { getStockLabel, getStockStatus } from "@/lib/stock";
 
 const STATUS_CLASSES: Record<string, string> = {
   "out-of-stock": "text-[#B3261E]",
-  "in-stock": "text-[#B68D40]",
+  "in-stock": "text-[#B17F5E]",
 };
 
 /**

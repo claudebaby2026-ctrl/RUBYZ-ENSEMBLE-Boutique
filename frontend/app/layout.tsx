@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, Poppins } from "next/font/google";
+import { Playfair_Display, Inter, Poppins, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -19,6 +19,13 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-poppins",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["italic"],
+  variable: "--font-cormorant",
 });
 
 export const metadata: Metadata = {
@@ -94,8 +101,8 @@ const clothingStoreJsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} ${poppins.variable}`}>
-      <body className="min-h-screen bg-[#F3EEE6] text-[#111111] antialiased">
+    <html lang="en" className={`${playfair.variable} ${inter.variable} ${poppins.variable} ${cormorant.variable}`}>
+      <body className="min-h-screen bg-[#FDF2EC] text-[#3A2213] antialiased">
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
