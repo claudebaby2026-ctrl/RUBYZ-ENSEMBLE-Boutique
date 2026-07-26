@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-import { brand, footerLinks, legalEntity, legalLinks, socialLinks } from "@/lib/content";
+import { brand, footerLinks, legalLinks, socialLinks } from "@/lib/content";
 import { productTypeLinks } from "@/lib/seo-categories";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/social-icons";
 
@@ -51,11 +51,12 @@ export function SiteFooter() {
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B68D40]">Store Location</p>
           <p className="mt-4 text-sm leading-7 text-gray-300">
-            RUBYZ-ENSEMBLE Boutique<br />
-            Plot no 93<br />
-            Home-Town Road, near Prayash Park<br />
-            Satya Nagar, Bhubaneswar- 751007<br />
-            (+91) {legalEntity.phone.replace("+91 ", "")}
+            RUBYZ-ENSEMBLE<br />
+            Plot no 93,<br />
+            Home-Town Road,<br />
+            near Prayash Park,<br />
+            Satya Nagar,<br />
+            Bhubaneswar- 751007
           </p>
           <a
             href="https://maps.google.com/?q=RUBYZ-ENSEMBLE+Boutique+Home-Town+Road+Satya+Nagar+Bhubaneswar"
