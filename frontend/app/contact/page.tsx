@@ -19,10 +19,10 @@ export default function ContactPage() {
     <main className="bg-[#FDF2EC]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="rounded-[2rem] border border-black/5 bg-white p-8 shadow-sm">
+          <div className="rounded-[2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-8 shadow-sm">
             <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Visit or Connect</p>
             <h1 className="mt-3 text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>We would love to welcome you.</h1>
-            <div className="mt-8 space-y-4 text-sm text-gray-600">
+            <div className="mt-8 space-y-4 text-sm text-[#7A6D65]">
               {/* NAP (Name/Address/Phone) as real, crawlable page text —
                   kept byte-for-byte consistent with the Google Business
                   Profile listing and the ClothingStore JSON-LD in
@@ -45,7 +45,7 @@ export default function ContactPage() {
               <MessageCircle size={16} /> Message us on WhatsApp
             </a>
           </div>
-          <div className="rounded-[2rem] border border-black/5 bg-[#3A2213] p-8 text-white shadow-sm">
+          <div className="rounded-[2rem] border border-[#3A2213]/8 bg-[#3A2213] p-8 text-white shadow-sm">
             <div className="h-64 overflow-hidden rounded-[1.4rem]">
               <iframe
                 title="RUBYZ Ensemble location"

@@ -52,19 +52,19 @@ function LoginForm() {
         <h1 className="mt-2 text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
           {mode === "login" ? "Welcome back" : "Create your account"}
         </h1>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-[#8B7A6E]">
           {mode === "login"
             ? "Sign in to your account or the owner dashboard."
             : "Sign up to track orders and check out faster."}
         </p>
       </div>
 
-      <form onSubmit={submit} className="mt-8 space-y-4 rounded-[1.6rem] border border-black/5 bg-white p-6 shadow-sm">
+      <form onSubmit={submit} className="mt-8 space-y-4 rounded-[1.6rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
         {mode === "signup" && (
           <div>
-            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Full Name</label>
-            <div className="mt-1 flex items-center gap-2 rounded-[1rem] border border-black/10 px-3 py-3">
-              <UserIcon size={16} className="text-gray-400" />
+            <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Full Name</label>
+            <div className="mt-1 flex items-center gap-2 rounded-[1rem] border border-[#3A2213]/12 px-3 py-3">
+              <UserIcon size={16} className="text-[#A8968A]" />
               <input
                 required
                 value={form.name}
@@ -77,9 +77,9 @@ function LoginForm() {
         )}
 
         <div>
-          <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Email</label>
-          <div className="mt-1 flex items-center gap-2 rounded-[1rem] border border-black/10 px-3 py-3">
-            <Mail size={16} className="text-gray-400" />
+          <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Email</label>
+          <div className="mt-1 flex items-center gap-2 rounded-[1rem] border border-[#3A2213]/12 px-3 py-3">
+            <Mail size={16} className="text-[#A8968A]" />
             <input
               required
               type="email"
@@ -93,9 +93,9 @@ function LoginForm() {
 
         {mode === "signup" && (
           <div>
-            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Phone (optional)</label>
-            <div className="mt-1 flex items-center gap-2 rounded-[1rem] border border-black/10 px-3 py-3">
-              <Phone size={16} className="text-gray-400" />
+            <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Phone (optional)</label>
+            <div className="mt-1 flex items-center gap-2 rounded-[1rem] border border-[#3A2213]/12 px-3 py-3">
+              <Phone size={16} className="text-[#A8968A]" />
               <input
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -107,9 +107,9 @@ function LoginForm() {
         )}
 
         <div>
-          <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Password</label>
-          <div className="mt-1 flex items-center gap-2 rounded-[1rem] border border-black/10 px-3 py-3">
-            <Lock size={16} className="text-gray-400" />
+          <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Password</label>
+          <div className="mt-1 flex items-center gap-2 rounded-[1rem] border border-[#3A2213]/12 px-3 py-3">
+            <Lock size={16} className="text-[#A8968A]" />
             <input
               required
               type="password"
@@ -134,7 +134,7 @@ function LoginForm() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
+      <p className="mt-6 text-center text-sm text-[#8B7A6E]">
         {mode === "login" ? "New to RUBYZ Ensemble?" : "Already have an account?"}{" "}
         <button
           onClick={() => {
@@ -148,7 +148,7 @@ function LoginForm() {
       </p>
 
       {mode === "login" && (
-        <p className="mt-2 text-center text-xs text-gray-400">
+        <p className="mt-2 text-center text-xs text-[#A8968A]">
           Boutique owner? Sign in above with your owner email — you&apos;ll be taken straight to the dashboard.
         </p>
       )}

@@ -142,10 +142,10 @@ export function SiteHeader() {
               <User size={18} />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 top-12 w-48 rounded-[1rem] border border-black/5 bg-white p-2 text-[#3A2213] shadow-lg">
+              <div className="absolute right-0 top-12 w-48 rounded-[1rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-2 text-[#3A2213] shadow-lg">
                 {user ? (
                   <>
-                    <p className="truncate px-3 py-2 text-xs text-gray-500">
+                    <p className="truncate px-3 py-2 text-xs text-[#8B7A6E]">
                       Signed in as <span className="text-[#3A2213]">{user.name}</span>
                     </p>
                     {user.role === "owner" ? (
@@ -201,8 +201,8 @@ export function SiteHeader() {
           onClick={() => setMobileNavOpen(false)}
           className="fixed inset-0 z-40 bg-black/40"
         />
-        <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[82vw] max-w-xs flex-col bg-white shadow-2xl">
-          <div className="flex h-20 items-center justify-between border-b border-black/5 px-5">
+        <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[82vw] max-w-xs flex-col bg-[#FFFBF5] shadow-2xl">
+          <div className="flex h-20 items-center justify-between border-b border-[#3A2213]/8 px-5">
             <Link
               href="/"
               onClick={() => setMobileNavOpen(false)}
@@ -213,7 +213,7 @@ export function SiteHeader() {
             </Link>
             <button
               onClick={() => setMobileNavOpen(false)}
-              className="rounded-full border border-black/10 p-2"
+              className="rounded-full border border-[#3A2213]/12 p-2"
               aria-label="Close menu"
             >
               <X size={18} />
@@ -237,7 +237,7 @@ export function SiteHeader() {
               );
             })}
 
-            <div className="my-4 border-t border-black/5" />
+            <div className="my-4 border-t border-[#3A2213]/8" />
 
             <Link
               href="/cart"
@@ -256,7 +256,7 @@ export function SiteHeader() {
 
             {user ? (
               <>
-                <p className="mt-4 px-4 text-xs text-gray-500">
+                <p className="mt-4 px-4 text-xs text-[#8B7A6E]">
                   Signed in as <span className="text-[#3A2213]">{user.name}</span>
                 </p>
                 {user.role === "owner" ? (
@@ -296,20 +296,20 @@ export function SiteHeader() {
               </Link>
             )}
 
-            <div className="my-4 border-t border-black/5" />
+            <div className="my-4 border-t border-[#3A2213]/8" />
 
-            <p className="px-4 text-xs uppercase tracking-[0.24em] text-gray-500">Follow Us</p>
+            <p className="px-4 text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Follow Us</p>
             <div className="mt-3 flex gap-2 px-4">
-              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full border border-black/10 p-2 text-[#3A2213]">
+              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="rounded-full border border-[#3A2213]/12 p-2 text-[#3A2213]">
                 <FacebookIcon size={16} />
               </a>
-              <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full border border-black/10 p-2 text-[#3A2213]">
+              <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full border border-[#3A2213]/12 p-2 text-[#3A2213]">
                 <InstagramIcon size={16} />
               </a>
-              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="rounded-full border border-black/10 p-2 text-[#3A2213]">
+              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="rounded-full border border-[#3A2213]/12 p-2 text-[#3A2213]">
                 <YoutubeIcon size={16} />
               </a>
-              <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full border border-black/10 p-2 text-[#3A2213]">
+              <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full border border-[#3A2213]/12 p-2 text-[#3A2213]">
                 <MessageCircle size={16} />
               </a>
             </div>

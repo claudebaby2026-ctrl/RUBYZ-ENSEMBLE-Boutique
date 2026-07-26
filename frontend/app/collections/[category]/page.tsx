@@ -102,7 +102,7 @@ export default async function CategoryLandingPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
-        <nav className="mb-6 text-xs uppercase tracking-[0.24em] text-gray-400">
+        <nav className="mb-6 text-xs uppercase tracking-[0.24em] text-[#A8968A]">
           <Link href="/" className="hover:text-[#B17F5E]">Home</Link>
           <span className="mx-2">/</span>
           <Link href="/collections" className="hover:text-[#B17F5E]">Collections</Link>
@@ -114,7 +114,7 @@ export default async function CategoryLandingPage({
         <h1 className="text-3xl text-[#3A2213] sm:text-4xl" style={{ fontFamily: "Playfair Display, serif" }}>
           {config.label} Collection
         </h1>
-        <p className="mt-5 max-w-3xl text-sm leading-7 text-gray-600">{config.intro}</p>
+        <p className="mt-5 max-w-3xl text-sm leading-7 text-[#7A6D65]">{config.intro}</p>
 
         {matched.length > 0 ? (
           <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
@@ -123,7 +123,7 @@ export default async function CategoryLandingPage({
             ))}
           </div>
         ) : (
-          <div className="mt-10 rounded-[1.5rem] border border-black/5 bg-white p-8 text-sm text-gray-600 shadow-sm">
+          <div className="mt-10 rounded-[1.5rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-8 text-sm text-[#7A6D65] shadow-sm">
             New pieces in this edit are being added — in the meantime,{" "}
             <Link href="/collections" className="text-[#B17F5E] underline">
               browse the full collection
@@ -132,8 +132,8 @@ export default async function CategoryLandingPage({
           </div>
         )}
 
-        <div className="mt-12 border-t border-black/5 pt-8">
-          <p className="mb-3 text-xs uppercase tracking-[0.28em] text-gray-400">Explore other edits</p>
+        <div className="mt-12 border-t border-[#3A2213]/8 pt-8">
+          <p className="mb-3 text-xs uppercase tracking-[0.28em] text-[#A8968A]">Explore other edits</p>
           <div className="flex flex-wrap gap-2">
             {seoCategoryPages
               .filter((c) => c.slug !== config.slug)
@@ -141,7 +141,7 @@ export default async function CategoryLandingPage({
                 <Link
                   key={c.slug}
                   href={`/collections/${c.slug}`}
-                  className="rounded-full border border-black/10 px-3 py-1.5 text-xs text-[#3A2213] hover:border-[#B17F5E] hover:text-[#B17F5E]"
+                  className="rounded-full border border-[#3A2213]/12 px-3 py-1.5 text-xs text-[#3A2213] hover:border-[#B17F5E] hover:text-[#B17F5E]"
                 >
                   {c.label}
                 </Link>

@@ -39,14 +39,14 @@ export function UnstitchedTailoringNotice({ productSlug, productName }: { produc
 
   return (
     <div className="fixed inset-x-4 bottom-4 z-40 sm:inset-x-auto sm:bottom-6 sm:right-6 sm:max-w-sm">
-      <div className="rounded-[1.2rem] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(17,17,17,0.15)]">
+      <div className="rounded-[1.2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-4 shadow-[0_20px_60px_rgba(17,17,17,0.15)]">
         <div className="flex items-start gap-3">
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E9CFBA] text-[#B17F5E]">
             <Scissors size={16} />
           </span>
           <div className="flex-1">
             <p className="text-sm font-semibold text-[#3A2213]">This piece comes unstitched</p>
-            <p className="mt-1 text-xs leading-5 text-gray-500">
+            <p className="mt-1 text-xs leading-5 text-[#8B7A6E]">
               Want it tailored to your exact measurements? We offer custom fitting and stitching for this fabric.
             </p>
             <a
@@ -59,7 +59,7 @@ export function UnstitchedTailoringNotice({ productSlug, productName }: { produc
               <MessageCircle size={13} /> Ask about tailoring
             </a>
           </div>
-          <button onClick={dismiss} aria-label="Dismiss" className="text-gray-400 hover:text-gray-600">
+          <button onClick={dismiss} aria-label="Dismiss" className="text-[#A8968A] hover:text-[#7A6D65]">
             <X size={16} />
           </button>
         </div>

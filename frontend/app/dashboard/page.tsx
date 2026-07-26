@@ -130,7 +130,7 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
   return (
     <div>
       {images.length > 1 && (
-        <p className="mb-2 text-[11px] text-gray-500">Press and drag a photo to reorder — the first photo is the cover image.</p>
+        <p className="mb-2 text-[11px] text-[#8B7A6E]">Press and drag a photo to reorder — the first photo is the cover image.</p>
       )}
       <div className="flex flex-wrap gap-3">
         {images.map((img, index) => {
@@ -154,7 +154,7 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
               className={`relative h-24 w-20 cursor-grab select-none overflow-hidden rounded-[0.8rem] border transition-colors active:cursor-grabbing ${
                 overIndex === index && dragIndex !== null && dragIndex !== index
                   ? "border-[#B17F5E] ring-2 ring-[#B17F5E]/40"
-                  : "border-black/10"
+                  : "border-[#3A2213]/12"
               } ${isDragging ? "opacity-90 shadow-lg" : ""}`}
             >
               <img src={resolveImageUrl(img)} alt="Product" className="h-full w-full object-cover" draggable={false} />
@@ -173,7 +173,7 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
             </div>
           );
         })}
-        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B17F5E] hover:text-[#B17F5E]">
+        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-[#8B7A6E] hover:border-[#B17F5E] hover:text-[#B17F5E]">
           {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
           <span className="text-[10px]">{uploading ? "Uploading" : "Add photo"}</span>
           <input
@@ -219,7 +219,7 @@ function VideoUploader({ videos, onChange }: { videos: string[]; onChange: (vide
     <div>
       <div className="flex flex-wrap gap-3">
         {videos.map((v) => (
-          <div key={v} className="relative h-24 w-20 overflow-hidden rounded-[0.8rem] border border-black/10 bg-black">
+          <div key={v} className="relative h-24 w-20 overflow-hidden rounded-[0.8rem] border border-[#3A2213]/12 bg-black">
             <video src={resolveImageUrl(v)} className="h-full w-full object-cover" muted />
             <button
               onClick={() => removeVideo(v)}
@@ -230,7 +230,7 @@ function VideoUploader({ videos, onChange }: { videos: string[]; onChange: (vide
             </button>
           </div>
         ))}
-        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B17F5E] hover:text-[#B17F5E]">
+        <label className="flex h-24 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-[0.8rem] border-2 border-dashed border-gray-300 text-[#8B7A6E] hover:border-[#B17F5E] hover:text-[#B17F5E]">
           {uploading ? <Loader2 size={18} className="animate-spin" /> : <Video size={18} />}
           <span className="text-[10px]">{uploading ? "Uploading" : "Add video"}</span>
           <input
@@ -265,7 +265,7 @@ function SizePicker({ sizes, onChange }: { sizes: string[]; onChange: (sizes: st
             key={size}
             onClick={() => onChange(active ? sizes.filter((s) => s !== size) : [...sizes, size])}
             className={`rounded-full border px-3 py-1.5 text-xs uppercase tracking-[0.18em] ${
-              active ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-black/10 text-gray-600 hover:border-[#B17F5E]"
+              active ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-[#3A2213]/12 text-[#7A6D65] hover:border-[#B17F5E]"
             }`}
           >
             {size}
@@ -298,9 +298,9 @@ function TagListInput({ tags, onChange, placeholder }: { tags: string[]; onChang
             }
           }}
           placeholder={placeholder}
-          className="w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm"
+          className="w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm"
         />
-        <button type="button" onClick={addTag} className="shrink-0 rounded-[1rem] border border-black/10 px-4 text-sm text-[#3A2213] hover:border-[#B17F5E]">
+        <button type="button" onClick={addTag} className="shrink-0 rounded-[1rem] border border-[#3A2213]/12 px-4 text-sm text-[#3A2213] hover:border-[#B17F5E]">
           Add
         </button>
       </div>
@@ -327,9 +327,9 @@ function StatCard({ label, value, tone = "ink", icon: Icon }: {
   icon?: LucideIcon;
 }) {
   return (
-    <div className="rounded-[1.2rem] border border-black/5 bg-white p-5 shadow-sm">
+    <div className="rounded-[1.2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs uppercase tracking-[0.24em] text-gray-500">{label}</p>
+        <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">{label}</p>
         {Icon && <Icon size={16} className="text-[#B17F5E]" />}
       </div>
       <p className={`text-2xl ${tone === "rose" ? "text-[#D94F70]" : "text-[#3A2213]"}`}>{value}</p>
@@ -359,7 +359,7 @@ function DashboardHome({ setActive, stats, outOfStockCount, loading }: {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Good morning 👋</h1>
-        <p className="mt-1 text-sm text-gray-500">Here is how the boutique is performing today.</p>
+        <p className="mt-1 text-sm text-[#8B7A6E]">Here is how the boutique is performing today.</p>
       </div>
 
       {!loading && outOfStockCount > 0 && (
@@ -381,7 +381,7 @@ function DashboardHome({ setActive, stats, outOfStockCount, loading }: {
         <button onClick={() => setActive("add")} className="flex items-center justify-between rounded-[1.2rem] bg-[#3A2213] p-5 text-white">
           <span>+ Add a new product, Instagram-style</span><ChevronRight size={16} />
         </button>
-        <button onClick={() => setActive("orders")} className="flex items-center justify-between rounded-[1.2rem] border border-black/10 bg-white p-5">
+        <button onClick={() => setActive("orders")} className="flex items-center justify-between rounded-[1.2rem] border border-[#3A2213]/12 bg-[#FFFBF5] p-5">
           <span>View today&apos;s orders</span><FileSpreadsheet size={16} />
         </button>
       </div>
@@ -455,10 +455,10 @@ function AddProduct({
 
   if (published) {
     return (
-      <div className="max-w-2xl rounded-[1.4rem] border border-black/5 bg-white p-10 text-center shadow-sm">
+      <div className="max-w-2xl rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-10 text-center shadow-sm">
         <Check size={36} className="mx-auto mb-4 text-[#3A9D5D]" />
         <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
-        <p className="mt-2 text-sm text-gray-500">&quot;{form.title}&quot; is now live in the store and inventory.</p>
+        <p className="mt-2 text-sm text-[#8B7A6E]">&quot;{form.title}&quot; is now live in the store and inventory.</p>
         <button
           onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
           className="mt-6 rounded-full bg-[#3A2213] px-8 py-3 text-sm text-white"
@@ -472,10 +472,10 @@ function AddProduct({
   return (
     <div className="max-w-2xl">
       <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Add a Product</h1>
-      <p className="mt-1 text-sm text-gray-500">Upload real photos of the outfit, then fill in the details.</p>
+      <p className="mt-1 text-sm text-[#8B7A6E]">Upload real photos of the outfit, then fill in the details.</p>
       <div className="mt-8 flex items-center gap-2">
         {steps.map((stepLabel, index) => (
-          <div key={stepLabel} className="flex flex-1 items-center gap-2 text-xs text-gray-500">
+          <div key={stepLabel} className="flex flex-1 items-center gap-2 text-xs text-[#8B7A6E]">
             <span className={`flex h-6 w-6 items-center justify-center rounded-full text-white ${step >= index + 1 ? "bg-[#3A2213]" : "bg-gray-300"}`}>{index + 1}</span>
             {stepLabel}
           </div>
@@ -485,11 +485,11 @@ function AddProduct({
       {step === 1 && (
         <div className="mt-8 rounded-[1.4rem] border-2 border-dashed border-gray-300 p-10 text-center">
           <Camera size={30} className="mx-auto mb-4 text-[#B17F5E]" />
-          <p className="text-sm text-gray-600">Upload one or more photos of the outfit.</p>
+          <p className="text-sm text-[#7A6D65]">Upload one or more photos of the outfit.</p>
           <div className="mt-5 flex justify-center">
             <ImageUploader images={images} onChange={setImages} />
           </div>
-          <p className="mt-6 text-sm text-gray-600">Optionally, add one or more videos too.</p>
+          <p className="mt-6 text-sm text-[#7A6D65]">Optionally, add one or more videos too.</p>
           <div className="mt-5 flex justify-center">
             <VideoUploader videos={videos} onChange={setVideos} />
           </div>
@@ -500,20 +500,20 @@ function AddProduct({
       )}
 
       {step === 2 && (
-        <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
+        <div className="mt-8 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
           <div className="space-y-4">
             <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Title</label>
-              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
+              <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Title</label>
+              <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm" />
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Price (₹)</label>
-                <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
+                <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Price (₹)</label>
+                <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm" />
               </div>
               <div>
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">MRP (₹)</label>
-                <input value={form.mrp} onChange={(e) => setForm({ ...form, mrp: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
+                <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">MRP (₹)</label>
+                <input value={form.mrp} onChange={(e) => setForm({ ...form, mrp: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm" />
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
@@ -552,39 +552,39 @@ function AddProduct({
                 onOptionAdded={(value) => onAttributeAdded("occasion", value)}
               />
               <div>
-                <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Availability</label>
-                <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm">
+                <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Availability</label>
+                <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm">
                   {AVAILABILITY_OPTIONS.map((option) => <option key={option}>{option}</option>)}
                 </select>
               </div>
             </div>
             <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Description</label>
-              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} className="w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm" />
+              <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Description</label>
+              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} className="w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm" />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Available Sizes</label>
+              <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Available Sizes</label>
               <div className="mt-1"><SizePicker sizes={sizes} onChange={setSizes} /></div>
             </div>
             <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Care Instructions</label>
+              <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Care Instructions</label>
               <div className="mt-1"><TagListInput tags={care} onChange={setCare} placeholder="e.g. Dry clean only — press Enter" /></div>
             </div>
             <div className="flex flex-wrap gap-3">
-              <button onClick={() => setStep(1)} className="flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
+              <button onClick={() => setStep(1)} className="flex items-center gap-2 rounded-full border border-[#3A2213]/12 px-6 py-3 text-sm"><ChevronLeft size={14} /> Back</button>
               <button onClick={() => setSaved(true)} className="flex items-center gap-2 rounded-full bg-[#E9CFBA] px-6 py-3 text-sm"><Save size={14} /> Save as Draft</button>
               <button onClick={() => setStep(3)} className="rounded-full bg-[#3A2213] px-6 py-3 text-sm text-white sm:ml-auto">Continue</button>
             </div>
-            {saved && <p className="text-xs text-gray-500">Saved locally — continue whenever you&apos;re ready.</p>}
+            {saved && <p className="text-xs text-[#8B7A6E]">Saved locally — continue whenever you&apos;re ready.</p>}
           </div>
         </div>
       )}
 
       {step === 3 && (
-        <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-10 text-center shadow-sm">
+        <div className="mt-8 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-10 text-center shadow-sm">
           <Check size={36} className="mx-auto mb-4 text-[#3A9D5D]" />
           <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Ready to Publish</h2>
-          <p className="mt-2 text-sm text-gray-500">&quot;{form.title || "Untitled product"}&quot; will be saved to the database and go live instantly.</p>
+          <p className="mt-2 text-sm text-[#8B7A6E]">&quot;{form.title || "Untitled product"}&quot; will be saved to the database and go live instantly.</p>
           {error && <p className="mt-3 text-sm text-[#D94F70]">{error}</p>}
           <button onClick={publish} disabled={publishing} className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#3A2213] px-8 py-3 text-sm text-white disabled:opacity-60">
             {publishing && <Loader2 size={14} className="animate-spin" />}
@@ -651,19 +651,19 @@ function OrdersTable({
   retryingId: string | null;
 }) {
   return (
-    <div className="overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
-      <div className="flex items-baseline justify-between gap-3 border-b border-black/5 px-4 py-3">
+    <div className="overflow-hidden rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] shadow-sm">
+      <div className="flex items-baseline justify-between gap-3 border-b border-[#3A2213]/8 px-4 py-3">
         <h2 className="text-sm font-medium uppercase tracking-[0.18em] text-[#3A2213]">
-          {title} <span className="text-gray-400">({orders.length})</span>
+          {title} <span className="text-[#A8968A]">({orders.length})</span>
         </h2>
-        {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
+        {subtitle && <p className="text-xs text-[#A8968A]">{subtitle}</p>}
       </div>
       {orders.length === 0 ? (
-        <p className="p-5 text-sm text-gray-400">{emptyLabel}</p>
+        <p className="p-5 text-sm text-[#A8968A]">{emptyLabel}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px] text-sm">
-            <thead className="bg-[#FDF2EC] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+            <thead className="bg-[#FDF2EC] text-left text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">
               <tr>
                 <th className="p-3">Order</th><th className="p-3">Customer</th><th className="p-3">Amount</th>
                 <th className="p-3">Placed</th><th className="p-3">Status</th><th className="p-3">Shipment</th>
@@ -676,18 +676,18 @@ function OrdersTable({
                   <tr
                     key={order.id}
                     onClick={() => onSelect(order)}
-                    className={`cursor-pointer border-t border-black/5 ${selected?.id === order.id ? "bg-[#FDF2EC]" : ""}`}
+                    className={`cursor-pointer border-t border-[#3A2213]/8 ${selected?.id === order.id ? "bg-[#FDF2EC]" : ""}`}
                   >
                     <td className="p-3">{order.id}</td>
                     <td className="p-3">{order.customerName}</td>
                     <td className="p-3">₹{order.total}</td>
-                    <td className="p-3 text-gray-500">{formatOrderTimestamp(order.createdAt)}</td>
+                    <td className="p-3 text-[#8B7A6E]">{formatOrderTimestamp(order.createdAt)}</td>
                     <td className="p-3"><StatusPill status={order.status} /></td>
                     <td className="p-3">
                       <div className="flex flex-col items-start gap-1">
                         <ShipmentPill status={order.shipmentStatus} />
                         {order.awbCode && (
-                          <span className="text-[11px] text-gray-400">
+                          <span className="text-[11px] text-[#A8968A]">
                             AWB {order.awbCode}{order.courierName ? ` · ${order.courierName}` : ""}
                           </span>
                         )}
@@ -695,7 +695,7 @@ function OrdersTable({
                           <button
                             onClick={(e) => { e.stopPropagation(); onRetryShipment(order); }}
                             disabled={retryingId === order.id}
-                            className="mt-0.5 rounded-full border border-black/10 px-2.5 py-1 text-[11px] text-[#3A2213] disabled:opacity-50"
+                            className="mt-0.5 rounded-full border border-[#3A2213]/12 px-2.5 py-1 text-[11px] text-[#3A2213] disabled:opacity-50"
                           >
                             {retryingId === order.id ? "Retrying…" : "Create Shipment"}
                           </button>
@@ -786,35 +786,35 @@ function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated:
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.4rem] bg-white p-6 shadow-xl">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.4rem] bg-[#FFFBF5] p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Log an Order</h2>
-          <button onClick={onClose} className="rounded-full p-1.5 text-gray-400 hover:text-[#3A2213]" aria-label="Close">
+          <button onClick={onClose} className="rounded-full p-1.5 text-[#A8968A] hover:text-[#3A2213]" aria-label="Close">
             <X size={18} />
           </button>
         </div>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-[#8B7A6E]">
           For an order confirmed over WhatsApp or in person. This decrements stock immediately, same as an
           automated order would.
         </p>
 
         <div className="mt-5 space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
-            <input placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
-            <input placeholder="Phone number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+            <input placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-[0.8rem] border border-[#3A2213]/12 px-3 py-2.5 text-sm" />
+            <input placeholder="Phone number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="rounded-[0.8rem] border border-[#3A2213]/12 px-3 py-2.5 text-sm" />
           </div>
-          <input placeholder="Email (optional)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+          <input placeholder="Email (optional)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full rounded-[0.8rem] border border-[#3A2213]/12 px-3 py-2.5 text-sm" />
           <div className="flex gap-2">
-            <button onClick={() => setMode("Delivery")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Delivery" ? "bg-[#3A2213] text-white" : "border border-black/10"}`}>Delivery</button>
-            <button onClick={() => setMode("Pickup")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Pickup" ? "bg-[#3A2213] text-white" : "border border-black/10"}`}>Pickup</button>
+            <button onClick={() => setMode("Delivery")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Delivery" ? "bg-[#3A2213] text-white" : "border border-[#3A2213]/12"}`}>Delivery</button>
+            <button onClick={() => setMode("Pickup")} className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] ${mode === "Pickup" ? "bg-[#3A2213] text-white" : "border border-[#3A2213]/12"}`}>Pickup</button>
           </div>
           {mode === "Delivery" && (
             <>
-              <textarea placeholder="Delivery address" rows={2} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="w-full rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+              <textarea placeholder="Delivery address" rows={2} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="w-full rounded-[0.8rem] border border-[#3A2213]/12 px-3 py-2.5 text-sm" />
               <div className="grid grid-cols-3 gap-3">
-                <input placeholder="Pincode" inputMode="numeric" maxLength={6} value={form.pincode} onChange={(e) => setForm({ ...form, pincode: e.target.value.replace(/\D/g, "") })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
-                <input placeholder="City" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
-                <input placeholder="State" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} className="rounded-[0.8rem] border border-black/10 px-3 py-2.5 text-sm" />
+                <input placeholder="Pincode" inputMode="numeric" maxLength={6} value={form.pincode} onChange={(e) => setForm({ ...form, pincode: e.target.value.replace(/\D/g, "") })} className="rounded-[0.8rem] border border-[#3A2213]/12 px-3 py-2.5 text-sm" />
+                <input placeholder="City" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="rounded-[0.8rem] border border-[#3A2213]/12 px-3 py-2.5 text-sm" />
+                <input placeholder="State" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} className="rounded-[0.8rem] border border-[#3A2213]/12 px-3 py-2.5 text-sm" />
               </div>
             </>
           )}
@@ -828,27 +828,27 @@ function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated:
             </button>
           </div>
           {loadingProducts ? (
-            <p className="mt-3 text-sm text-gray-400">Loading products…</p>
+            <p className="mt-3 text-sm text-[#A8968A]">Loading products…</p>
           ) : lines.length === 0 ? (
-            <p className="mt-3 text-sm text-gray-400">No items added yet.</p>
+            <p className="mt-3 text-sm text-[#A8968A]">No items added yet.</p>
           ) : (
             <div className="mt-3 space-y-2">
               {lines.map((line, index) => {
                 const product = products.find((p) => p.id === line.productId);
                 const sizes = product?.sizes?.length ? product.sizes : ["Free Size"];
                 return (
-                  <div key={index} className="flex flex-wrap items-center gap-2 rounded-[0.8rem] border border-black/10 p-2.5">
+                  <div key={index} className="flex flex-wrap items-center gap-2 rounded-[0.8rem] border border-[#3A2213]/12 p-2.5">
                     <select
                       value={line.productId}
                       onChange={(e) => {
                         const p = products.find((prod) => prod.id === Number(e.target.value));
                         updateLine(index, { productId: Number(e.target.value), size: p?.sizes?.[0] || "Free Size" });
                       }}
-                      className="min-w-0 flex-1 rounded-[0.6rem] border border-black/10 px-2 py-1.5 text-sm"
+                      className="min-w-0 flex-1 rounded-[0.6rem] border border-[#3A2213]/12 px-2 py-1.5 text-sm"
                     >
                       {products.map((p) => <option key={p.id} value={p.id}>{p.name} — ₹{p.price}</option>)}
                     </select>
-                    <select value={line.size} onChange={(e) => updateLine(index, { size: e.target.value })} className="rounded-[0.6rem] border border-black/10 px-2 py-1.5 text-sm">
+                    <select value={line.size} onChange={(e) => updateLine(index, { size: e.target.value })} className="rounded-[0.6rem] border border-[#3A2213]/12 px-2 py-1.5 text-sm">
                       {sizes.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                     <input
@@ -856,9 +856,9 @@ function LogOrderModal({ onClose, onCreated }: { onClose: () => void; onCreated:
                       min={1}
                       value={line.quantity}
                       onChange={(e) => updateLine(index, { quantity: Math.max(1, Number(e.target.value) || 1) })}
-                      className="w-16 rounded-[0.6rem] border border-black/10 px-2 py-1.5 text-sm"
+                      className="w-16 rounded-[0.6rem] border border-[#3A2213]/12 px-2 py-1.5 text-sm"
                     />
-                    <button onClick={() => removeLine(index)} className="rounded-full p-1.5 text-gray-400 hover:text-[#D94F70]" aria-label="Remove item">
+                    <button onClick={() => removeLine(index)} className="rounded-full p-1.5 text-[#A8968A] hover:text-[#D94F70]" aria-label="Remove item">
                       <X size={14} />
                     </button>
                   </div>
@@ -946,7 +946,7 @@ function Orders() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Orders</h1>
-          <p className="mt-1 text-sm text-gray-500">Log orders confirmed over WhatsApp or in person here.</p>
+          <p className="mt-1 text-sm text-[#8B7A6E]">Log orders confirmed over WhatsApp or in person here.</p>
         </div>
         <button
           onClick={() => setShowLogOrder(true)}
@@ -966,9 +966,9 @@ function Orders() {
       )}
       {retryError && <p className="mt-4 text-sm text-[#D94F70]">{retryError}</p>}
       {loading ? (
-        <p className="mt-8 text-sm text-gray-400">Loading orders…</p>
+        <p className="mt-8 text-sm text-[#A8968A]">Loading orders…</p>
       ) : orders.length === 0 ? (
-        <p className="mt-8 text-sm text-gray-400">No orders yet.</p>
+        <p className="mt-8 text-sm text-[#A8968A]">No orders yet.</p>
       ) : (
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
           <div className="space-y-6">
@@ -992,29 +992,29 @@ function Orders() {
               retryingId={retryingId}
             />
           </div>
-          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
-            {!selected ? <p className="text-sm text-gray-400">Select an order to see details.</p> : (
+          <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
+            {!selected ? <p className="text-sm text-[#A8968A]">Select an order to see details.</p> : (
               <div>
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-lg text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>{selected.id}</p>
-                    <p className="mt-1 text-sm text-gray-500">{selected.customerName} · {selected.phone}</p>
+                    <p className="mt-1 text-sm text-[#8B7A6E]">{selected.customerName} · {selected.phone}</p>
                   </div>
                   <StatusPill status={selected.status} />
                 </div>
-                <p className="mt-3 text-xs uppercase tracking-[0.18em] text-gray-400">
+                <p className="mt-3 text-xs uppercase tracking-[0.18em] text-[#A8968A]">
                   Placed {new Date(selected.createdAt).toLocaleString(undefined, {
                     day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit",
                   })}
                 </p>
-                <p className="mt-5 text-sm text-gray-600"><strong>Items:</strong> {selected.items.map((i) => `${i.name} x${i.quantity}`).join(", ")}</p>
-                <p className="mt-2 text-sm text-gray-600"><strong>Mode:</strong> {selected.mode}</p>
-                <p className="mt-2 text-sm text-gray-600"><strong>Total:</strong> ₹{selected.total}</p>
-                <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
+                <p className="mt-5 text-sm text-[#7A6D65]"><strong>Items:</strong> {selected.items.map((i) => `${i.name} x${i.quantity}`).join(", ")}</p>
+                <p className="mt-2 text-sm text-[#7A6D65]"><strong>Mode:</strong> {selected.mode}</p>
+                <p className="mt-2 text-sm text-[#7A6D65]"><strong>Total:</strong> ₹{selected.total}</p>
+                <div className="mt-3 flex items-center gap-2 text-sm text-[#7A6D65]">
                   <strong>Shipment:</strong> <ShipmentPill status={selected.shipmentStatus} />
                 </div>
                 {selected.awbCode && (
-                  <p className="mt-2 text-sm text-gray-600">
+                  <p className="mt-2 text-sm text-[#7A6D65]">
                     <strong>AWB:</strong> {selected.awbCode}{selected.courierName ? ` · ${selected.courierName}` : ""}
                   </p>
                 )}
@@ -1025,7 +1025,7 @@ function Orders() {
                     <button
                       onClick={() => retry(selected)}
                       disabled={retryingId === selected.id}
-                      className="rounded-full border border-black/10 px-4 py-2 text-xs text-[#3A2213] disabled:opacity-50"
+                      className="rounded-full border border-[#3A2213]/12 px-4 py-2 text-xs text-[#3A2213] disabled:opacity-50"
                     >
                       {retryingId === selected.id ? "Retrying…" : "Create Shipment"}
                     </button>
@@ -1116,36 +1116,36 @@ function EditProductModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.4rem] bg-white p-6 shadow-xl">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[1.4rem] bg-[#FFFBF5] p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h3 className="text-lg text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Edit Product</h3>
           <button onClick={onClose}><X size={18} /></button>
         </div>
         <div className="mt-5 space-y-3">
           <div>
-            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Photos</label>
+            <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Photos</label>
             <div className="mt-1">
               <ImageUploader images={images} onChange={setImages} />
             </div>
           </div>
           <div>
-            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Videos</label>
+            <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Videos</label>
             <div className="mt-1">
               <VideoUploader videos={videos} onChange={setVideos} />
             </div>
           </div>
           <div>
-            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Name</label>
-            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+            <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Name</label>
+            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-2 text-sm" />
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Price</label>
-              <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+              <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Price</label>
+              <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">MRP</label>
-              <input value={form.mrp} onChange={(e) => setForm({ ...form, mrp: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+              <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">MRP</label>
+              <input value={form.mrp} onChange={(e) => setForm({ ...form, mrp: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-2 text-sm" />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1184,73 +1184,73 @@ function EditProductModal({
               onOptionAdded={(value) => onAttributeAdded("occasion", value)}
             />
             <div>
-              <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Availability</label>
-              <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm">
+              <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Availability</label>
+              <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-2 text-sm">
                 {AVAILABILITY_OPTIONS.map((option) => <option key={option}>{option}</option>)}
               </select>
             </div>
           </div>
           <div>
-            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Description</label>
-            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-2 text-sm" />
+            <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Description</label>
+            <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-2 text-sm" />
           </div>
           <div>
-            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Available Sizes</label>
+            <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Available Sizes</label>
             <div className="mt-1"><SizePicker sizes={sizes} onChange={setSizes} /></div>
           </div>
           <div>
-            <label className="text-xs uppercase tracking-[0.24em] text-gray-500">Care Instructions</label>
+            <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Care Instructions</label>
             <div className="mt-1"><TagListInput tags={care} onChange={setCare} placeholder="e.g. Dry clean only — press Enter" /></div>
           </div>
-          <div className="rounded-[1rem] border border-black/10 p-3">
+          <div className="rounded-[1rem] border border-[#3A2213]/12 p-3">
             <button
               type="button"
               onClick={() => setShowShipping((v) => !v)}
-              className="flex w-full items-center justify-between text-xs uppercase tracking-[0.24em] text-gray-500"
+              className="flex w-full items-center justify-between text-xs uppercase tracking-[0.24em] text-[#8B7A6E]"
             >
               Shipping override (optional)
               <ChevronRight size={14} className={`transition-transform ${showShipping ? "rotate-90" : ""}`} />
             </button>
             {showShipping && (
               <div className="mt-3 space-y-2">
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-[#A8968A]">
                   Leave blank to use the category or store-wide default from Shipping Defaults.
                 </p>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Weight (kg)</label>
+                    <label className="text-[11px] uppercase tracking-[0.18em] text-[#A8968A]">Weight (kg)</label>
                     <input
                       value={shipping.weight}
                       onChange={(e) => setShipping({ ...shipping, weight: e.target.value })}
                       placeholder="—"
-                      className="mt-1 w-full rounded-[0.7rem] border border-black/10 px-2.5 py-2 text-sm"
+                      className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 px-2.5 py-2 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Length (cm)</label>
+                    <label className="text-[11px] uppercase tracking-[0.18em] text-[#A8968A]">Length (cm)</label>
                     <input
                       value={shipping.length}
                       onChange={(e) => setShipping({ ...shipping, length: e.target.value })}
                       placeholder="—"
-                      className="mt-1 w-full rounded-[0.7rem] border border-black/10 px-2.5 py-2 text-sm"
+                      className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 px-2.5 py-2 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Breadth (cm)</label>
+                    <label className="text-[11px] uppercase tracking-[0.18em] text-[#A8968A]">Breadth (cm)</label>
                     <input
                       value={shipping.breadth}
                       onChange={(e) => setShipping({ ...shipping, breadth: e.target.value })}
                       placeholder="—"
-                      className="mt-1 w-full rounded-[0.7rem] border border-black/10 px-2.5 py-2 text-sm"
+                      className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 px-2.5 py-2 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.18em] text-gray-400">Height (cm)</label>
+                    <label className="text-[11px] uppercase tracking-[0.18em] text-[#A8968A]">Height (cm)</label>
                     <input
                       value={shipping.height}
                       onChange={(e) => setShipping({ ...shipping, height: e.target.value })}
                       placeholder="—"
-                      className="mt-1 w-full rounded-[0.7rem] border border-black/10 px-2.5 py-2 text-sm"
+                      className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 px-2.5 py-2 text-sm"
                     />
                   </div>
                 </div>
@@ -1259,7 +1259,7 @@ function EditProductModal({
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-3">
-          <button onClick={onClose} className="rounded-full border border-black/10 px-5 py-2.5 text-sm">Cancel</button>
+          <button onClick={onClose} className="rounded-full border border-[#3A2213]/12 px-5 py-2.5 text-sm">Cancel</button>
           <button onClick={save} disabled={saving} className="rounded-full bg-[#3A2213] px-5 py-2.5 text-sm text-white disabled:opacity-60">{saving ? "Saving…" : "Save Changes"}</button>
         </div>
       </div>
@@ -1297,33 +1297,33 @@ function Inventory({
   return (
     <div>
       <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Inventory</h1>
-      <p className="mt-1 text-sm text-gray-500">Every product here is read straight from the database — edit or remove anytime.</p>
+      <p className="mt-1 text-sm text-[#8B7A6E]">Every product here is read straight from the database — edit or remove anytime.</p>
       {loading ? (
-        <p className="mt-8 text-sm text-gray-400">Loading products…</p>
+        <p className="mt-8 text-sm text-[#A8968A]">Loading products…</p>
       ) : products.length === 0 ? (
-        <p className="mt-8 text-sm text-gray-400">No products yet. Add your first one from &quot;Add Product&quot;.</p>
+        <p className="mt-8 text-sm text-[#A8968A]">No products yet. Add your first one from &quot;Add Product&quot;.</p>
       ) : (
-        <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
+        <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] shadow-sm">
           {products.map((product) => (
-            <div key={product.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 p-4 last:border-b-0">
+            <div key={product.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-[#3A2213]/8 p-4 last:border-b-0">
               <div className="flex min-w-0 items-center gap-3">
                 {product.images?.[0] ? (
                   <img src={resolveImageUrl(product.images[0])} alt={product.name} className="h-12 w-10 shrink-0 rounded-[0.5rem] object-cover" />
                 ) : (
-                  <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#E9CFBA] text-gray-400">
+                  <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#E9CFBA] text-[#A8968A]">
                     <ImageOff size={14} />
                   </div>
                 )}
                 <div className="min-w-0">
                   <p className="truncate text-sm text-[#3A2213]">{product.name}</p>
-                  <p className="text-xs text-gray-400">₹{product.price} · {product.category}</p>
+                  <p className="text-xs text-[#A8968A]">₹{product.price} · {product.category}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <span className={`text-xs font-medium ${(product.stock ?? 0) > 0 ? "text-[#3A9D5D]" : "text-[#D94F70]"}`}>
                   {(product.stock ?? 0) > 0 ? "In Stock" : "Sold Out"}
                 </span>
-                <button onClick={() => setEditing(product)} className="rounded-full border border-black/10 p-2 text-[#3A2213]"><Pencil size={14} /></button>
+                <button onClick={() => setEditing(product)} className="rounded-full border border-[#3A2213]/12 p-2 text-[#3A2213]"><Pencil size={14} /></button>
                 <button onClick={() => remove(product)} disabled={deletingId === product.id} className="rounded-full border border-[#D94F70] p-2 text-[#D94F70] disabled:opacity-50">
                   {deletingId === product.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                 </button>
@@ -1362,17 +1362,17 @@ function Customers() {
   return (
     <div>
       <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Customers</h1>
-      <p className="mt-1 text-sm text-gray-500">Every account that has signed in, with their order history at a glance.</p>
+      <p className="mt-1 text-sm text-[#8B7A6E]">Every account that has signed in, with their order history at a glance.</p>
       {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
       {loading ? (
-        <p className="mt-8 text-sm text-gray-400">Loading customers…</p>
+        <p className="mt-8 text-sm text-[#A8968A]">Loading customers…</p>
       ) : customers.length === 0 ? (
-        <p className="mt-8 text-sm text-gray-400">No customer accounts yet — this fills in as people sign up and check out.</p>
+        <p className="mt-8 text-sm text-[#A8968A]">No customer accounts yet — this fills in as people sign up and check out.</p>
       ) : (
-        <div className="mt-8 overflow-x-auto rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
+        <div className="mt-8 overflow-x-auto rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] shadow-sm">
           <table className="w-full min-w-[560px] text-left text-sm">
             <thead>
-              <tr className="border-b border-black/5 text-xs uppercase tracking-[0.18em] text-gray-500">
+              <tr className="border-b border-[#3A2213]/8 text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">
                 <th className="p-4 font-normal">Name</th>
                 <th className="p-4 font-normal">Contact</th>
                 <th className="p-4 font-normal">Orders</th>
@@ -1382,15 +1382,15 @@ function Customers() {
             </thead>
             <tbody>
               {customers.map((c) => (
-                <tr key={c.id} className="border-b border-black/5 last:border-b-0">
+                <tr key={c.id} className="border-b border-[#3A2213]/8 last:border-b-0">
                   <td className="p-4 text-[#3A2213]">{c.name}</td>
-                  <td className="p-4 text-gray-500">
+                  <td className="p-4 text-[#8B7A6E]">
                     <p>{c.email}</p>
-                    {c.phone && <p className="text-xs text-gray-400">{c.phone}</p>}
+                    {c.phone && <p className="text-xs text-[#A8968A]">{c.phone}</p>}
                   </td>
-                  <td className="p-4 text-gray-500">{c.ordersCount}</td>
-                  <td className="p-4 text-gray-500">₹{c.totalSpent.toLocaleString("en-IN")}</td>
-                  <td className="p-4 text-gray-500">
+                  <td className="p-4 text-[#8B7A6E]">{c.ordersCount}</td>
+                  <td className="p-4 text-[#8B7A6E]">₹{c.totalSpent.toLocaleString("en-IN")}</td>
+                  <td className="p-4 text-[#8B7A6E]">
                     {c.lastOrderAt ? formatOrderTimestamp(c.lastOrderAt) : "—"}
                   </td>
                 </tr>
@@ -1484,32 +1484,32 @@ function Analytics({ products }: { products: Product[] }) {
       {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Top Rated Product</p>
+        <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Top Rated Product</p>
           <p className="mt-3 text-lg text-[#3A2213]">{topByRating?.name ?? "—"}</p>
         </div>
-        <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Best Seller</p>
+        <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Best Seller</p>
           <p className="mt-3 text-lg text-[#3A2213]">{topBySold?.name ?? "—"}</p>
         </div>
-        <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Total Revenue</p>
+        <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Total Revenue</p>
           <p className="mt-3 text-lg text-[#3A2213]">{loading ? "…" : `₹${totalRevenue.toLocaleString()}`}</p>
         </div>
-        <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Average Order Value</p>
+        <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Average Order Value</p>
           <p className="mt-3 text-lg text-[#3A2213]">{loading ? "…" : `₹${averageOrderValue.toLocaleString()}`}</p>
         </div>
       </div>
 
       {loading ? (
-        <p className="mt-8 text-sm text-gray-400">Loading order data…</p>
+        <p className="mt-8 text-sm text-[#A8968A]">Loading order data…</p>
       ) : orders.length === 0 ? (
-        <p className="mt-8 text-sm text-gray-400">No orders yet — charts will appear once orders start coming in.</p>
+        <p className="mt-8 text-sm text-[#A8968A]">No orders yet — charts will appear once orders start coming in.</p>
       ) : (
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm lg:col-span-2">
-            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Revenue — Last 14 Days</p>
+          <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm lg:col-span-2">
+            <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Revenue — Last 14 Days</p>
             <div className="mt-4 h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={revenueByDay} margin={{ top: 5, right: 12, left: 0, bottom: 0 }}>
@@ -1523,8 +1523,8 @@ function Analytics({ products }: { products: Product[] }) {
             </div>
           </div>
 
-          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Order Volume — Last 14 Days</p>
+          <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Order Volume — Last 14 Days</p>
             <div className="mt-4 h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={revenueByDay} margin={{ top: 5, right: 12, left: 0, bottom: 0 }}>
@@ -1538,8 +1538,8 @@ function Analytics({ products }: { products: Product[] }) {
             </div>
           </div>
 
-          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Orders by Status</p>
+          <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Orders by Status</p>
             <div className="mt-4 h-56">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -1555,8 +1555,8 @@ function Analytics({ products }: { products: Product[] }) {
             </div>
           </div>
 
-          <div className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm lg:col-span-2">
-            <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Top Products by Revenue</p>
+          <div className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm lg:col-span-2">
+            <p className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Top Products by Revenue</p>
             <div className="mt-4 h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topProductsByRevenue} layout="vertical" margin={{ top: 5, right: 24, left: 12, bottom: 0 }}>
@@ -1638,31 +1638,31 @@ function Coupons() {
   return (
     <div>
       <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Coupons</h1>
-      <p className="mt-1 text-sm text-gray-500">Create and manage promo campaigns for festive launches and loyal customers.</p>
+      <p className="mt-1 text-sm text-[#8B7A6E]">Create and manage promo campaigns for festive launches and loyal customers.</p>
 
-      <form onSubmit={submit} className="mt-8 grid gap-4 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+      <form onSubmit={submit} className="mt-8 grid gap-4 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Code</label>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Code</label>
           <input
             value={form.code}
             onChange={(e) => setForm({ ...form, code: e.target.value })}
             placeholder="FESTIVE25"
-            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm uppercase"
+            className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 p-2.5 text-sm uppercase"
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Type</label>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Type</label>
           <select
             value={form.discount_type}
             onChange={(e) => setForm({ ...form, discount_type: e.target.value as "percent" | "flat" })}
-            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+            className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 p-2.5 text-sm"
           >
             <option value="percent">Percent off</option>
             <option value="flat">Flat ₹ off</option>
           </select>
         </div>
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">
             {form.discount_type === "percent" ? "Discount %" : "Discount ₹"}
           </label>
           <input
@@ -1670,18 +1670,18 @@ function Coupons() {
             min={0}
             value={form.discount_value}
             onChange={(e) => setForm({ ...form, discount_value: e.target.value })}
-            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+            className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 p-2.5 text-sm"
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Usage limit</label>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Usage limit</label>
           <input
             type="number"
             min={0}
             value={form.usage_limit}
             onChange={(e) => setForm({ ...form, usage_limit: e.target.value })}
             placeholder="Unlimited"
-            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+            className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 p-2.5 text-sm"
           />
         </div>
         <div className="sm:col-span-2 lg:col-span-4">
@@ -1699,28 +1699,28 @@ function Coupons() {
       {error && <p className="mt-4 text-sm text-[#D94F70]">{error}</p>}
 
       {loading ? (
-        <p className="mt-8 text-sm text-gray-400">Loading coupons…</p>
+        <p className="mt-8 text-sm text-[#A8968A]">Loading coupons…</p>
       ) : coupons.length === 0 ? (
-        <p className="mt-8 text-sm text-gray-400">No coupons yet — create your first campaign above.</p>
+        <p className="mt-8 text-sm text-[#A8968A]">No coupons yet — create your first campaign above.</p>
       ) : (
-        <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
+        <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] shadow-sm">
           {coupons.map((c) => (
-            <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 p-4 last:border-b-0">
+            <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-[#3A2213]/8 p-4 last:border-b-0">
               <div>
                 <p className="text-sm tracking-[0.1em] text-[#3A2213]">{c.code}</p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-[#A8968A]">
                   {c.discount_type === "percent" ? `${c.discount_value}% off` : `₹${c.discount_value} off`}
                   {" · "}{c.used_count} used{c.usage_limit ? ` / ${c.usage_limit}` : ""}
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`text-xs uppercase tracking-[0.18em] ${c.active ? "text-green-600" : "text-gray-400"}`}>
+                <span className={`text-xs uppercase tracking-[0.18em] ${c.active ? "text-green-600" : "text-[#A8968A]"}`}>
                   {c.active ? "Active" : "Paused"}
                 </span>
                 <button
                   onClick={() => toggleActive(c)}
                   disabled={busyId === c.id}
-                  className="rounded-full border border-black/10 p-2 text-[#3A2213] disabled:opacity-50"
+                  className="rounded-full border border-[#3A2213]/12 p-2 text-[#3A2213] disabled:opacity-50"
                   title={c.active ? "Pause coupon" : "Activate coupon"}
                 >
                   {busyId === c.id ? <Loader2 size={14} className="animate-spin" /> : c.active ? <X size={14} /> : <Check size={14} />}
@@ -1763,10 +1763,10 @@ function HeroImageUploader({ image, onChange }: { image: string | null | undefin
   return (
     <div>
       {image ? (
-        <div className="relative h-40 w-full max-w-sm overflow-hidden rounded-[0.9rem] border border-black/10 sm:h-48">
+        <div className="relative h-40 w-full max-w-sm overflow-hidden rounded-[0.9rem] border border-[#3A2213]/12 sm:h-48">
           <img src={resolveImageUrl(image)} alt="Hero background" className="h-full w-full object-cover" />
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-black/50 p-2">
-            <label className="flex cursor-pointer items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-medium text-[#3A2213] hover:bg-white">
+            <label className="flex cursor-pointer items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-medium text-[#3A2213] hover:bg-[#FFFBF5]">
               {uploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
               {uploading ? "Uploading" : "Replace"}
               <input
@@ -1779,7 +1779,7 @@ function HeroImageUploader({ image, onChange }: { image: string | null | undefin
             </label>
             <button
               onClick={() => onChange(null)}
-              className="flex items-center gap-1 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-medium text-[#D94F70] hover:bg-white"
+              className="flex items-center gap-1 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-medium text-[#D94F70] hover:bg-[#FFFBF5]"
               type="button"
             >
               <X size={12} /> Remove
@@ -1787,7 +1787,7 @@ function HeroImageUploader({ image, onChange }: { image: string | null | undefin
           </div>
         </div>
       ) : (
-        <label className="flex h-40 w-full max-w-sm cursor-pointer flex-col items-center justify-center gap-2 rounded-[0.9rem] border-2 border-dashed border-gray-300 text-gray-500 hover:border-[#B17F5E] hover:text-[#B17F5E] sm:h-48">
+        <label className="flex h-40 w-full max-w-sm cursor-pointer flex-col items-center justify-center gap-2 rounded-[0.9rem] border-2 border-dashed border-gray-300 text-[#8B7A6E] hover:border-[#B17F5E] hover:text-[#B17F5E] sm:h-48">
           {uploading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
           <span className="text-xs">{uploading ? "Uploading…" : "Upload hero background photo"}</span>
           <input
@@ -1850,7 +1850,7 @@ function HomepageEditor({ products }: { products: Product[] }) {
     return (
       <div>
         <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1>
-        <p className="mt-8 text-sm text-gray-400">Loading…</p>
+        <p className="mt-8 text-sm text-[#A8968A]">Loading…</p>
       </div>
     );
   }
@@ -1858,38 +1858,38 @@ function HomepageEditor({ products }: { products: Product[] }) {
   return (
     <div>
       <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Homepage Editor</h1>
-      <p className="mt-1 text-sm text-gray-500">Edit the hero copy and choose which products get featured on the storefront homepage.</p>
+      <p className="mt-1 text-sm text-[#8B7A6E]">Edit the hero copy and choose which products get featured on the storefront homepage.</p>
 
-      <div className="mt-8 space-y-4 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
+      <div className="mt-8 space-y-4 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Hero Heading</label>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Hero Heading</label>
           <input
             value={config.hero_heading}
             onChange={(e) => setConfig({ ...config, hero_heading: e.target.value })}
-            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+            className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 p-2.5 text-sm"
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Hero Subheading</label>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Hero Subheading</label>
           <textarea
             value={config.hero_subheading}
             onChange={(e) => setConfig({ ...config, hero_subheading: e.target.value })}
             rows={2}
-            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+            className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 p-2.5 text-sm"
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Announcement Banner (optional)</label>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Announcement Banner (optional)</label>
           <input
             value={config.banner_text}
             onChange={(e) => setConfig({ ...config, banner_text: e.target.value })}
             placeholder="e.g. Free shipping on orders above ₹4999"
-            className="mt-1 w-full rounded-[0.7rem] border border-black/10 p-2.5 text-sm"
+            className="mt-1 w-full rounded-[0.7rem] border border-[#3A2213]/12 p-2.5 text-sm"
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-gray-500">Hero Background Image</label>
-          <p className="mb-2 mt-0.5 text-xs text-gray-400">Shown behind the hero heading on the homepage. Leave empty to use the default dark background.</p>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Hero Background Image</label>
+          <p className="mb-2 mt-0.5 text-xs text-[#A8968A]">Shown behind the hero heading on the homepage. Leave empty to use the default dark background.</p>
           <HeroImageUploader
             image={config.hero_image}
             onChange={(url) => setConfig({ ...config, hero_image: url })}
@@ -1897,11 +1897,11 @@ function HomepageEditor({ products }: { products: Product[] }) {
         </div>
       </div>
 
-      <div className="mt-6 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
-        <p className="text-xs uppercase tracking-[0.18em] text-gray-500">Featured Products</p>
-        <p className="mt-1 text-xs text-gray-400">Selected products appear in the homepage&apos;s featured module.</p>
+      <div className="mt-6 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
+        <p className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Featured Products</p>
+        <p className="mt-1 text-xs text-[#A8968A]">Selected products appear in the homepage&apos;s featured module.</p>
         {products.length === 0 ? (
-          <p className="mt-4 text-sm text-gray-400">Add products from &quot;Add Product&quot; first.</p>
+          <p className="mt-4 text-sm text-[#A8968A]">Add products from &quot;Add Product&quot; first.</p>
         ) : (
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((p) => {
@@ -1909,13 +1909,13 @@ function HomepageEditor({ products }: { products: Product[] }) {
               return (
                 <label
                   key={p.id}
-                  className={`flex cursor-pointer items-center gap-3 rounded-[0.9rem] border p-3 text-sm ${checked ? "border-[#3A2213] bg-[#E9CFBA]" : "border-black/10"}`}
+                  className={`flex cursor-pointer items-center gap-3 rounded-[0.9rem] border p-3 text-sm ${checked ? "border-[#3A2213] bg-[#E9CFBA]" : "border-[#3A2213]/12"}`}
                 >
                   <input type="checkbox" checked={checked} onChange={() => toggleFeatured(p.id)} className="accent-[#3A2213]" />
                   {p.images?.[0] ? (
                     <img src={resolveImageUrl(p.images[0])} alt={p.name} className="h-10 w-8 rounded-[0.4rem] object-cover" />
                   ) : (
-                    <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#E9CFBA] text-gray-400"><ImageOff size={12} /></div>
+                    <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#E9CFBA] text-[#A8968A]"><ImageOff size={12} /></div>
                   )}
                   <span className="truncate">{p.name}</span>
                 </label>
@@ -1983,7 +1983,7 @@ function ShippingDefaultsEditor() {
     return (
       <div>
         <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Shipping Defaults</h1>
-        <p className="mt-8 text-sm text-gray-400">Loading…</p>
+        <p className="mt-8 text-sm text-[#A8968A]">Loading…</p>
       </div>
     );
   }
@@ -1991,15 +1991,15 @@ function ShippingDefaultsEditor() {
   return (
     <div>
       <h1 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Shipping Defaults</h1>
-      <p className="mt-1 text-sm text-gray-500">
+      <p className="mt-1 text-sm text-[#8B7A6E]">
         Fallback weight/dimensions used for shipping-rate lookups when a product doesn&apos;t have its own override.
         The &quot;__default__&quot; row is the store-wide fallback used when a category has no row of its own.
       </p>
 
-      <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm">
+      <div className="mt-8 overflow-hidden rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] text-sm">
-            <thead className="bg-[#FDF2EC] text-left text-xs uppercase tracking-[0.24em] text-gray-500">
+            <thead className="bg-[#FDF2EC] text-left text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">
               <tr>
                 <th className="p-3">Category</th>
                 <th className="p-3">Weight (kg)</th>
@@ -2010,7 +2010,7 @@ function ShippingDefaultsEditor() {
             </thead>
             <tbody>
               {rows.map((row, i) => (
-                <tr key={row.category} className="border-t border-black/5">
+                <tr key={row.category} className="border-t border-[#3A2213]/8">
                   <td className="p-3 font-medium text-[#3A2213]">
                     {row.category === "__default__" ? "Store-wide fallback" : row.category}
                   </td>
@@ -2019,7 +2019,7 @@ function ShippingDefaultsEditor() {
                       <input
                         value={row[field]}
                         onChange={(e) => updateRow(i, field, e.target.value)}
-                        className="w-20 rounded-[0.6rem] border border-black/10 px-2 py-1.5 text-sm"
+                        className="w-20 rounded-[0.6rem] border border-[#3A2213]/12 px-2 py-1.5 text-sm"
                       />
                     </td>
                   ))}
@@ -2098,7 +2098,7 @@ export default function DashboardPage() {
   if (authLoading || user?.role !== "owner") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#FDF2EC]">
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-[#8B7A6E]">
           <Loader2 size={16} className="animate-spin" /> Checking your session…
         </div>
       </div>
@@ -2110,10 +2110,10 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#FDF2EC]">
       {/* Mobile top bar: hamburger + current section label, replaces the hidden sidebar */}
-      <div className="flex items-center justify-between border-b border-black/5 bg-white px-5 py-4 lg:hidden">
+      <div className="flex items-center justify-between border-b border-[#3A2213]/8 bg-[#FFFBF5] px-5 py-4 lg:hidden">
         <button
           onClick={() => setMobileNavOpen(true)}
-          className="rounded-full border border-black/10 p-2"
+          className="rounded-full border border-[#3A2213]/12 p-2"
           aria-label="Open dashboard menu"
           aria-expanded={mobileNavOpen}
         >
@@ -2131,14 +2131,14 @@ export default function DashboardPage() {
             onClick={() => setMobileNavOpen(false)}
             className="fixed inset-0 z-40 bg-black/40"
           />
-          <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[82vw] max-w-xs flex-col overflow-y-auto bg-white p-6 shadow-2xl">
+          <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[82vw] max-w-xs flex-col overflow-y-auto bg-[#FFFBF5] p-6 shadow-2xl">
             <div className="mb-8 flex items-start justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Owner Panel</p>
                 <h2 className="mt-2 text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>RUBYZ Admin</h2>
-                <p className="mt-1 truncate text-xs text-gray-400">{user.email}</p>
+                <p className="mt-1 truncate text-xs text-[#A8968A]">{user.email}</p>
               </div>
-              <button onClick={() => setMobileNavOpen(false)} className="rounded-full border border-black/10 p-2" aria-label="Close menu">
+              <button onClick={() => setMobileNavOpen(false)} className="rounded-full border border-[#3A2213]/12 p-2" aria-label="Close menu">
                 <X size={18} />
               </button>
             </div>
@@ -2173,11 +2173,11 @@ export default function DashboardPage() {
       )}
 
       <div className="mx-auto flex max-w-7xl gap-8 px-5 py-8 lg:px-8">
-        <aside className="hidden w-72 shrink-0 rounded-[1.8rem] border border-black/5 bg-white p-6 shadow-sm lg:block">
+        <aside className="hidden w-72 shrink-0 rounded-[1.8rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm lg:block">
           <div className="mb-8">
             <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Owner Panel</p>
             <h2 className="mt-2 text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>RUBYZ Admin</h2>
-            <p className="mt-1 truncate text-xs text-gray-400">{user.email}</p>
+            <p className="mt-1 truncate text-xs text-[#A8968A]">{user.email}</p>
           </div>
           <nav className="space-y-2">
             {NAV.map((item) => {
@@ -2200,7 +2200,7 @@ export default function DashboardPage() {
           </nav>
         </aside>
 
-        <main className="flex-1 rounded-[2rem] border border-black/5 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
+        <main className="flex-1 rounded-[2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-4 shadow-sm sm:p-6 lg:p-8">
           {active === "home" && <DashboardHome setActive={setActive} stats={stats} outOfStockCount={outOfStockCount} loading={loading} />}
           {active === "add" && (
             <AddProduct onCreated={refresh} attributeOptions={attributeOptions} onAttributeAdded={handleAttributeAdded} />

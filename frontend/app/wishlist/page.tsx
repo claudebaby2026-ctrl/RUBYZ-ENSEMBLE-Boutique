@@ -38,7 +38,7 @@ export default function WishlistPage() {
   if (authLoading || !user) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center bg-[#FDF2EC]">
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-[#8B7A6E]">
           <Loader2 size={16} className="animate-spin" /> Loading…
         </div>
       </main>
@@ -51,10 +51,10 @@ export default function WishlistPage() {
         <h1 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
           Your Wishlist
         </h1>
-        <p className="mt-2 text-sm text-gray-500">Pieces you&apos;ve saved to come back to.</p>
+        <p className="mt-2 text-sm text-[#8B7A6E]">Pieces you&apos;ve saved to come back to.</p>
 
         {loading ? (
-          <div className="mt-16 flex items-center justify-center gap-2 text-sm text-gray-500">
+          <div className="mt-16 flex items-center justify-center gap-2 text-sm text-[#8B7A6E]">
             <Loader2 size={16} className="animate-spin" /> Loading your wishlist…
           </div>
         ) : error ? (
@@ -62,7 +62,7 @@ export default function WishlistPage() {
         ) : products.length === 0 ? (
           <div className="mt-10 flex flex-col items-center gap-4 py-10 text-center">
             <Heart size={36} className="text-[#B17F5E]" />
-            <p className="text-sm text-gray-500">Nothing here yet — tap the heart on any piece to save it.</p>
+            <p className="text-sm text-[#8B7A6E]">Nothing here yet — tap the heart on any piece to save it.</p>
             <Link href="/collections" className="rounded-full bg-[#3A2213] px-6 py-3 text-sm text-white">
               Browse Collections
             </Link>

@@ -80,8 +80,8 @@ export function AttributeMultiSelect({
 
   return (
     <div>
-      <label className="text-xs uppercase tracking-[0.24em] text-gray-500">{label}</label>
-      <div className="mt-1 flex flex-wrap gap-2 rounded-[1rem] border border-black/10 p-3">
+      <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">{label}</label>
+      <div className="mt-1 flex flex-wrap gap-2 rounded-[1rem] border border-[#3A2213]/12 p-3">
         {allOptions.map((option) => {
           const selected = values.includes(option);
           return (
@@ -90,7 +90,7 @@ export function AttributeMultiSelect({
               key={option}
               onClick={() => toggle(option)}
               className={`rounded-full border px-3 py-1.5 text-xs ${
-                selected ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-black/10 text-[#3A2213]"
+                selected ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-[#3A2213]/12 text-[#3A2213]"
               }`}
             >
               {option}
@@ -112,12 +112,12 @@ export function AttributeMultiSelect({
                 }
               }}
               placeholder={`New ${label.toLowerCase()}…`}
-              className="rounded-full border border-black/10 px-3 py-1.5 text-xs"
+              className="rounded-full border border-[#3A2213]/12 px-3 py-1.5 text-xs"
             />
             <button type="button" onClick={confirmAdd} disabled={saving} className="text-xs text-[#3A2213] disabled:opacity-60">
               {saving && <Loader2 size={12} className="mr-1 inline animate-spin" />}Add
             </button>
-            <button type="button" onClick={() => setAdding(false)} disabled={saving} className="text-xs text-gray-500">
+            <button type="button" onClick={() => setAdding(false)} disabled={saving} className="text-xs text-[#8B7A6E]">
               Cancel
             </button>
           </div>
@@ -125,7 +125,7 @@ export function AttributeMultiSelect({
           <button
             type="button"
             onClick={() => { setDraft(""); setError(null); setAdding(true); }}
-            className="rounded-full border border-dashed border-black/20 px-3 py-1.5 text-xs text-gray-500"
+            className="rounded-full border border-dashed border-black/20 px-3 py-1.5 text-xs text-[#8B7A6E]"
           >
             + Add new {label.toLowerCase()}…
           </button>
@@ -198,7 +198,7 @@ export function AttributeSelect({
   if (adding) {
     return (
       <div>
-        <label className="text-xs uppercase tracking-[0.24em] text-gray-500">{label}</label>
+        <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">{label}</label>
         <div className="mt-1 flex gap-2">
           <input
             autoFocus
@@ -213,13 +213,13 @@ export function AttributeSelect({
               }
             }}
             placeholder={`New ${label.toLowerCase()}…`}
-            className="w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm"
+            className="w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm"
           />
           <button
             type="button"
             onClick={confirmAdd}
             disabled={saving}
-            className="flex shrink-0 items-center gap-1 rounded-[1rem] border border-black/10 px-4 text-sm text-[#3A2213] hover:border-[#B17F5E] disabled:opacity-60"
+            className="flex shrink-0 items-center gap-1 rounded-[1rem] border border-[#3A2213]/12 px-4 text-sm text-[#3A2213] hover:border-[#B17F5E] disabled:opacity-60"
           >
             {saving && <Loader2 size={14} className="animate-spin" />}
             Add
@@ -228,7 +228,7 @@ export function AttributeSelect({
             type="button"
             onClick={cancelAdding}
             disabled={saving}
-            className="shrink-0 rounded-[1rem] border border-black/10 px-4 text-sm text-gray-500"
+            className="shrink-0 rounded-[1rem] border border-[#3A2213]/12 px-4 text-sm text-[#8B7A6E]"
           >
             Cancel
           </button>
@@ -240,7 +240,7 @@ export function AttributeSelect({
 
   return (
     <div>
-      <label className="text-xs uppercase tracking-[0.24em] text-gray-500">{label}</label>
+      <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">{label}</label>
       <select
         value={value}
         onChange={(e) => {
@@ -250,7 +250,7 @@ export function AttributeSelect({
             onChange(e.target.value);
           }
         }}
-        className="mt-1 w-full rounded-[1rem] border border-black/10 px-3 py-3 text-sm"
+        className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm"
       >
         {value && !options.includes(value) && <option value={value}>{value}</option>}
         {options.map((option) => (

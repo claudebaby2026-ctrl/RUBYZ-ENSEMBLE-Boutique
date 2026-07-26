@@ -30,7 +30,7 @@ export function ProductCard({ product }: { product: Product }) {
       <motion.article
         whileHover={{ y: -4, scale: 1.01 }}
         transition={{ duration: 0.2 }}
-        className="group overflow-hidden rounded-[1.5rem] border border-black/5 bg-white p-3 shadow-[0_12px_40px_rgba(17,17,17,0.04)]"
+        className="group overflow-hidden rounded-[1.5rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-3 shadow-[0_12px_40px_rgba(17,17,17,0.04)]"
       >
         <div className="relative overflow-hidden rounded-[1.2rem] bg-[#E9CFBA] p-4">
           <OutOfStockRibbon product={product} />
@@ -60,11 +60,11 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
           <div className="mt-2 flex items-center gap-2">
             <Stars rating={product.rating} />
-            <span className="text-xs text-gray-500">({product.sold})</span>
+            <span className="text-xs text-[#8B7A6E]">({product.sold})</span>
           </div>
           <div className="mt-3 flex items-center gap-2 text-sm">
             <span className="font-semibold text-[#3A2213]">₹{product.price}</span>
-            <span className="text-xs text-gray-400 line-through">₹{product.mrp}</span>
+            <span className="text-xs text-[#A8968A] line-through">₹{product.mrp}</span>
             {discount !== null && <span className="text-xs text-[#D94F70]">{discount}% OFF</span>}
           </div>
         </div>

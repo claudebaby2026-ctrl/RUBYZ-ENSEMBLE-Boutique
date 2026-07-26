@@ -72,9 +72,7 @@ export default async function HomePage() {
         </div>
       )}
 
-      <section className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-16">
-        <AnimatedHero heading={heroHeading} subheading={heroSubheading} imageUrl={heroImage} />
-      </section>
+      <AnimatedHero heading={heroHeading} subheading={heroSubheading} imageUrl={heroImage} />
 
       <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
@@ -90,7 +88,7 @@ export default async function HomePage() {
             <Link
               key={category.name}
               href={category.href}
-              className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white shadow-sm transition hover:-translate-y-1 sm:rounded-[1.5rem]"
+              className="group overflow-hidden rounded-[1.2rem] border border-[#3A2213]/8 bg-[#FFFBF5] shadow-sm transition hover:-translate-y-1 sm:rounded-[1.5rem]"
             >
               <div className="h-32 bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)] p-3 sm:h-48 sm:p-6">
                 <div className="flex h-full flex-col justify-between rounded-[1rem] border border-white/60 bg-white/40 p-3 sm:p-5">
@@ -99,7 +97,7 @@ export default async function HomePage() {
                     <h3 className="text-base text-[#3A2213] sm:text-xl" style={{ fontFamily: "Playfair Display, serif" }}>
                       {category.name}
                     </h3>
-                    <p className="mt-1 text-xs text-gray-600 sm:mt-2 sm:text-sm">{category.tag}</p>
+                    <p className="mt-1 text-xs text-[#7A6D65] sm:mt-2 sm:text-sm">{category.tag}</p>
                   </div>
                 </div>
               </div>
@@ -182,7 +180,7 @@ export default async function HomePage() {
             <Link
               key={occasion}
               href={`/collections?occasion=${encodeURIComponent(occasion)}`}
-              className="group rounded-[1rem] border border-black/5 bg-white p-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-[#B17F5E]/50 sm:p-4"
+              className="group rounded-[1rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-[#B17F5E]/50 sm:p-4"
             >
               <Gem size={18} className="mx-auto mb-2 text-[#B17F5E] sm:mb-3" />
               <p className="text-sm text-[#3A2213] group-hover:text-[#B17F5E]">{occasion}</p>
@@ -199,7 +197,7 @@ export default async function HomePage() {
             { icon: Check, title: "Handpicked Collections" },
             { icon: Truck, title: "Nationwide Shipping" },
           ].map(({ icon: Icon, title }) => (
-            <div key={title} className="rounded-[1.2rem] bg-white p-6 text-center shadow-sm">
+            <div key={title} className="rounded-[1.2rem] bg-[#FFFBF5] p-6 text-center shadow-sm">
               <Icon className="mx-auto mb-3 text-[#B17F5E]" size={24} />
               <p className="text-sm text-[#3A2213]">{title}</p>
             </div>
@@ -214,14 +212,14 @@ export default async function HomePage() {
             <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
               Tailoring that feels personal.
             </h2>
-            <p className="mt-4 max-w-xl text-base leading-7 text-gray-600">
+            <p className="mt-4 max-w-xl text-base leading-7 text-[#7A6D65]">
               Every piece can be tailored to your measurements. We offer bespoke alterations and made-to-measure refinement for a truly elevated fit.
             </p>
             <Link href="/tailoring" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#3A2213] px-6 py-3 text-sm font-medium text-white">
               Book Tailoring <ArrowRight size={16} />
             </Link>
           </div>
-          <div className="rounded-[1.5rem] border border-black/5 bg-[#3A2213] p-6 text-white">
+          <div className="rounded-[1.5rem] border border-[#3A2213]/8 bg-[#3A2213] p-6 text-white">
             <div className="h-60 rounded-[1.2rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
           </div>
         </div>
@@ -234,8 +232,8 @@ export default async function HomePage() {
           </h2>
           <div className="grid gap-6 md:grid-cols-3">
             {reviews.map((review) => (
-              <div key={review.name} className="rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
-                <p className="text-sm leading-7 text-gray-700">“{review.text}”</p>
+              <div key={review.name} className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
+                <p className="text-sm leading-7 text-[#5C4E44]">“{review.text}”</p>
                 <p className="mt-4 text-xs uppercase tracking-[0.28em] text-[#B17F5E]">{review.name}</p>
               </div>
             ))}
@@ -245,7 +243,7 @@ export default async function HomePage() {
               href={googleReviewsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#3A2213] transition hover:border-[#B17F5E] hover:text-[#B17F5E]"
+              className="inline-flex items-center gap-2 rounded-full border border-[#3A2213]/12 bg-[#FFFBF5] px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#3A2213] transition hover:border-[#B17F5E] hover:text-[#B17F5E]"
             >
               Read More on Google <ExternalLink size={15} />
             </a>
@@ -296,7 +294,7 @@ export default async function HomePage() {
             href={socialLinks.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#3A2213] transition hover:border-[#B17F5E] hover:text-[#B17F5E]"
+            className="inline-flex items-center gap-2 rounded-full border border-[#3A2213]/12 px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#3A2213] transition hover:border-[#B17F5E] hover:text-[#B17F5E]"
           >
             <InstagramIcon size={16} /> Follow Us
           </a>
@@ -309,7 +307,7 @@ export default async function HomePage() {
           <h2 className="mt-2 text-2xl" style={{ fontFamily: "Playfair Display, serif" }}>
             Join Our Fashion Community on WhatsApp
           </h2>
-          <p className="mt-3 text-sm text-gray-400">
+          <p className="mt-3 text-sm text-[#A8968A]">
             Early access to new collections and styling notes. To view our WhatsApp status, please
             fill the form below — and save our WhatsApp number, {legalEntity.phone}, so we can
             reach you to place orders in future.

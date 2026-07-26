@@ -150,10 +150,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       />
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[1.5rem] border border-black/5 bg-white p-4 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:rounded-[2rem] sm:p-5">
+          <div className="rounded-[1.5rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-4 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:rounded-[2rem] sm:p-5">
             <div className="mb-4 flex items-center justify-between">
               <span className="rounded-full bg-[#3A2213] px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white">{product.badge}</span>
-              <LikeButton productId={product.id} className="rounded-full border border-black/10 p-2" />
+              <LikeButton productId={product.id} className="rounded-full border border-[#3A2213]/12 p-2" />
             </div>
             {mainImage ? (
               <ProductImageGallery images={images} videos={videos} alt={product.name} fabric={product.fabric} />
@@ -167,7 +167,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <h1 className="mt-3 text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
               {product.name}
             </h1>
-            <p className="mt-4 text-sm leading-7 text-gray-600">{product.description}</p>
+            <p className="mt-4 text-sm leading-7 text-[#7A6D65]">{product.description}</p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-[#E9CFBA] px-3 py-1 text-sm text-[#3A2213]">{product.category}</span>
@@ -177,10 +177,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             <div className="mt-8 flex items-end gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-gray-400">Price</p>
+                <p className="text-xs uppercase tracking-[0.28em] text-[#A8968A]">Price</p>
                 <p className="text-3xl text-[#3A2213]">₹{product.price}</p>
               </div>
-              <p className="text-sm text-gray-400 line-through">₹{product.mrp}</p>
+              <p className="text-sm text-[#A8968A] line-through">₹{product.mrp}</p>
               {discount !== null && (
                 <span className="rounded-full bg-[#D94F70]/10 px-2.5 py-1 text-xs font-semibold text-[#D94F70]">{discount}% OFF</span>
               )}
@@ -188,12 +188,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             <AddToCartPanel product={product} image={images[0]} />
 
-            <div className="mt-8 rounded-[1.4rem] border border-black/5 bg-white p-6 shadow-sm">
+            <div className="mt-8 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
               <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Product Details</h2>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <div>
                   <p className="text-sm font-semibold text-[#3A2213]">Fabric</p>
-                  <p className="mt-1 text-sm text-gray-600">{product.fabric}</p>
+                  <p className="mt-1 text-sm text-[#7A6D65]">{product.fabric}</p>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[#3A2213]">Availability</p>
@@ -203,11 +203,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[#3A2213]">Sizes</p>
-                  <p className="mt-1 text-sm text-gray-600">{product.sizes.join(", ")}</p>
+                  <p className="mt-1 text-sm text-[#7A6D65]">{product.sizes.join(", ")}</p>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-[#3A2213]">Care</p>
-                  <p className="mt-1 text-sm text-gray-600">{product.care.join(" • ")}</p>
+                  <p className="mt-1 text-sm text-[#7A6D65]">{product.care.join(" • ")}</p>
                 </div>
               </div>
             </div>

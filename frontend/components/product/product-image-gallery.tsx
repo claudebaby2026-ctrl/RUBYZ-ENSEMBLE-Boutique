@@ -66,7 +66,7 @@ export function ProductImageGallery({
               aria-label={`Show ${alt} ${item.type} ${index + 1}`}
               aria-current={selected === index}
               className={`relative aspect-square overflow-hidden rounded-[1rem] border transition ${
-                selected === index ? "border-[#B17F5E] ring-2 ring-[#B17F5E]/40" : "border-black/5 hover:border-[#B17F5E]/60"
+                selected === index ? "border-[#B17F5E] ring-2 ring-[#B17F5E]/40" : "border-[#3A2213]/8 hover:border-[#B17F5E]/60"
               }`}
             >
               {item.type === "video" ? (

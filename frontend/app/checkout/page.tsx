@@ -109,7 +109,7 @@ export default function CheckoutPage() {
   if (!hydrated) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center bg-[#FDF2EC]">
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-[#8B7A6E]">
           <Loader2 size={16} className="animate-spin" /> Loading checkout…
         </div>
       </main>
@@ -122,7 +122,7 @@ export default function CheckoutPage() {
         <section className="mx-auto max-w-2xl px-5 py-20 text-center lg:px-8">
           <CheckCircle2 size={40} className="mx-auto mb-4 text-[#3A9D5D]" />
           <h1 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Sent to WhatsApp</h1>
-          <p className="mt-3 text-sm text-gray-600">
+          <p className="mt-3 text-sm text-[#7A6D65]">
             We&apos;ve opened WhatsApp with your order details. Please send the message so our team can confirm
             availability and pricing with you directly — nothing has been charged yet.
           </p>
@@ -138,9 +138,9 @@ export default function CheckoutPage() {
     <main className="bg-[#FDF2EC]">
       <section className="mx-auto max-w-7xl px-5 py-12 lg:px-8 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">
+          <div className="rounded-[2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
             <h1 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Checkout</h1>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-[#8B7A6E]">
               We don&apos;t take payment on the site — choose delivery or pickup below and we&apos;ll send your
               order to WhatsApp. Share your name, phone and address there and our team will confirm availability
               and pricing with you directly.
@@ -149,13 +149,13 @@ export default function CheckoutPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setMode("Delivery")}
-                  className={`rounded-full px-5 py-3 text-sm ${mode === "Delivery" ? "bg-[#3A2213] text-white" : "border border-black/10"}`}
+                  className={`rounded-full px-5 py-3 text-sm ${mode === "Delivery" ? "bg-[#3A2213] text-white" : "border border-[#3A2213]/12"}`}
                 >
                   Delivery
                 </button>
                 <button
                   onClick={() => setMode("Pickup")}
-                  className={`rounded-full px-5 py-3 text-sm ${mode === "Pickup" ? "bg-[#3A2213] text-white" : "border border-black/10"}`}
+                  className={`rounded-full px-5 py-3 text-sm ${mode === "Pickup" ? "bg-[#3A2213] text-white" : "border border-[#3A2213]/12"}`}
                 >
                   Pickup
                 </button>
@@ -163,9 +163,9 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm">
+          <div className="rounded-[2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
             <h2 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Order Summary</h2>
-            <div className="mt-6 space-y-3 text-sm text-gray-600">
+            <div className="mt-6 space-y-3 text-sm text-[#7A6D65]">
               {items.map((item) => (
                 <div key={`${item.productId}-${item.size}`} className="flex flex-wrap justify-between gap-x-3 gap-y-1">
                   <span>{item.name} ({item.size}) x{item.quantity}</span>
@@ -182,8 +182,8 @@ export default function CheckoutPage() {
                   <span>−₹{discount.toLocaleString()}</span>
                 </div>
               )}
-              <div className="mt-3 flex justify-between border-t border-black/5 pt-3 text-base font-semibold text-[#3A2213]"><span>Estimated Total</span><span>₹{total.toLocaleString()}</span></div>
-              <p className="text-xs text-gray-400">Final pricing and delivery is confirmed by our team over WhatsApp.</p>
+              <div className="mt-3 flex justify-between border-t border-[#3A2213]/8 pt-3 text-base font-semibold text-[#3A2213]"><span>Estimated Total</span><span>₹{total.toLocaleString()}</span></div>
+              <p className="text-xs text-[#A8968A]">Final pricing and delivery is confirmed by our team over WhatsApp.</p>
             </div>
 
             <div className="mt-6">
@@ -193,7 +193,7 @@ export default function CheckoutPage() {
                     <Tag size={14} className="text-[#3A9D5D]" />
                     <strong className="tracking-[0.08em]">{appliedCoupon.code}</strong> applied
                   </span>
-                  <button onClick={removeCoupon} className="rounded-full p-1 text-gray-500 hover:text-[#D94F70]" aria-label="Remove coupon">
+                  <button onClick={removeCoupon} className="rounded-full p-1 text-[#8B7A6E] hover:text-[#D94F70]" aria-label="Remove coupon">
                     <X size={14} />
                   </button>
                 </div>
@@ -204,7 +204,7 @@ export default function CheckoutPage() {
                     value={couponInput}
                     onChange={(e) => { setCouponInput(e.target.value); setCouponError(null); }}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); applyCoupon(); } }}
-                    className="flex-1 rounded-[1rem] border border-black/10 px-4 py-2.5 text-sm uppercase"
+                    className="flex-1 rounded-[1rem] border border-[#3A2213]/12 px-4 py-2.5 text-sm uppercase"
                   />
                   <button
                     onClick={applyCoupon}
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
               {couponError && <p className="mt-2 text-xs text-[#D94F70]">{couponError}</p>}
             </div>
 
-            <label className="mt-6 flex items-start gap-3 text-xs leading-5 text-gray-600">
+            <label className="mt-6 flex items-start gap-3 text-xs leading-5 text-[#7A6D65]">
               <input
                 type="checkbox"
                 checked={agreedToTerms}
@@ -255,7 +255,7 @@ export default function CheckoutPage() {
               Send Order via WhatsApp
             </button>
             {!valid && (
-              <p className="mt-3 text-center text-xs text-gray-400">
+              <p className="mt-3 text-center text-xs text-[#A8968A]">
                 Please agree to the Terms &amp; Conditions and related policies to continue.
               </p>
             )}

@@ -40,14 +40,14 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
     <div>
       {sizes.length > 0 && (
         <div className="mt-6">
-          <p className="text-xs uppercase tracking-[0.28em] text-gray-400">Size</p>
+          <p className="text-xs uppercase tracking-[0.28em] text-[#A8968A]">Size</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {sizes.map((s) => (
               <button
                 key={s}
                 onClick={() => setSize(s)}
                 className={`rounded-full border px-4 py-2 text-sm ${
-                  size === s ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-black/10 text-[#3A2213]"
+                  size === s ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-[#3A2213]/12 text-[#3A2213]"
                 }`}
               >
                 {s}
@@ -76,7 +76,7 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
           href={`https://wa.me/${brand.whatsappNumber}?text=${encodeURIComponent(`Hi! I'm interested in ${product.name} (₹${product.price}).`)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 text-sm font-medium text-[#3A2213]"
+          className="inline-flex items-center gap-2 rounded-full border border-[#3A2213]/12 px-6 py-3 text-sm font-medium text-[#3A2213]"
         >
           <MessageCircle size={16} /> WhatsApp Enquiry
         </a>

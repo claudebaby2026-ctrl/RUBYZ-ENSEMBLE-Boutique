@@ -43,7 +43,7 @@ export default function OrdersPage() {
   if (authLoading || !user) {
     return (
       <main className="flex min-h-[60vh] items-center justify-center bg-[#FDF2EC]">
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-[#8B7A6E]">
           <Loader2 size={16} className="animate-spin" /> Loading…
         </div>
       </main>
@@ -56,10 +56,10 @@ export default function OrdersPage() {
         <h1 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
           Your Orders
         </h1>
-        <p className="mt-2 text-sm text-gray-500">Every order you&apos;ve placed, with the latest shipment status.</p>
+        <p className="mt-2 text-sm text-[#8B7A6E]">Every order you&apos;ve placed, with the latest shipment status.</p>
 
         {loading ? (
-          <div className="mt-16 flex items-center justify-center gap-2 text-sm text-gray-500">
+          <div className="mt-16 flex items-center justify-center gap-2 text-sm text-[#8B7A6E]">
             <Loader2 size={16} className="animate-spin" /> Loading your orders…
           </div>
         ) : error ? (
@@ -67,7 +67,7 @@ export default function OrdersPage() {
         ) : orders.length === 0 ? (
           <div className="mt-10 flex flex-col items-center gap-4 py-10 text-center">
             <PackageSearch size={36} className="text-[#B17F5E]" />
-            <p className="text-sm text-gray-500">You haven&apos;t placed any orders yet.</p>
+            <p className="text-sm text-[#8B7A6E]">You haven&apos;t placed any orders yet.</p>
             <Link href="/collections" className="rounded-full bg-[#3A2213] px-6 py-3 text-sm text-white">
               Browse Collections
             </Link>
@@ -75,11 +75,11 @@ export default function OrdersPage() {
         ) : (
           <div className="mt-8 space-y-4">
             {orders.map((order) => (
-              <div key={order.id} className="rounded-[1.4rem] border border-black/5 bg-white p-5 shadow-sm">
+              <div key={order.id} className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-sm">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="text-sm font-medium text-[#3A2213]">{order.id}</p>
-                    <p className="mt-1 text-xs text-gray-400">
+                    <p className="mt-1 text-xs text-[#A8968A]">
                       {new Date(order.createdAt).toLocaleString(undefined, {
                         day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit",
                       })}
@@ -87,17 +87,17 @@ export default function OrdersPage() {
                   </div>
                   <StatusBadge status={order.status} />
                 </div>
-                <p className="mt-3 text-sm text-gray-600">
+                <p className="mt-3 text-sm text-[#7A6D65]">
                   {order.items.map((i) => `${i.name} x${i.quantity}`).join(", ")}
                 </p>
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                   <p className="text-sm font-medium text-[#3A2213]">₹{order.total.toLocaleString()}</p>
-                  <div className="text-right text-xs text-gray-500">
+                  <div className="text-right text-xs text-[#8B7A6E]">
                     <p>
                       Shipment: <span className="font-medium text-[#3A2213]">{humanizeShipmentStatus(order.shipmentStatus)}</span>
                     </p>
                     {order.awbCode && (
-                      <p className="mt-0.5 text-gray-400">
+                      <p className="mt-0.5 text-[#A8968A]">
                         AWB {order.awbCode}{order.courierName ? ` · ${order.courierName}` : ""}
                       </p>
                     )}

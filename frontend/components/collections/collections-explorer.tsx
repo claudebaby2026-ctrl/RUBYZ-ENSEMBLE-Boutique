@@ -209,7 +209,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     <div className="space-y-6">
       <div>
         <p className="text-sm font-semibold text-[#3A2213]">Category</p>
-        <div className="mt-3 space-y-2 text-sm text-gray-600">
+        <div className="mt-3 space-y-2 text-sm text-[#7A6D65]">
           {categoryOptions.map((category) => (
             <label key={category} className="flex items-center gap-2 py-0.5">
               <input
@@ -235,7 +235,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             onChange={(e) => setMaxPrice(Number(e.target.value))}
             className="w-full accent-[#B17F5E]"
           />
-          <div className="mt-2 flex justify-between text-sm text-gray-600">
+          <div className="mt-2 flex justify-between text-sm text-[#7A6D65]">
             <span>₹{MIN_PRICE.toLocaleString()}</span>
             <span>Up to ₹{maxPrice.toLocaleString()}</span>
           </div>
@@ -243,7 +243,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
       </div>
       <div>
         <p className="text-sm font-semibold text-[#3A2213]">Fabric</p>
-        <div className="mt-3 space-y-2 text-sm text-gray-600">
+        <div className="mt-3 space-y-2 text-sm text-[#7A6D65]">
           {fabricOptions.map((fabric) => (
             <label key={fabric} className="flex items-center gap-2 py-0.5">
               <input
@@ -259,7 +259,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
       </div>
       <div>
         <p className="text-sm font-semibold text-[#3A2213]">Occasion</p>
-        <div className="mt-3 space-y-2 text-sm text-gray-600">
+        <div className="mt-3 space-y-2 text-sm text-[#7A6D65]">
           {occasionOptions.map((occasion) => (
             <label key={occasion} className="flex items-center gap-2 py-0.5">
               <input
@@ -275,7 +275,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
       </div>
       <div>
         <p className="text-sm font-semibold text-[#3A2213]">Color</p>
-        <div className="mt-3 space-y-2 text-sm text-gray-600">
+        <div className="mt-3 space-y-2 text-sm text-[#7A6D65]">
           {colorOptions.map((color) => (
             <label key={color} className="flex items-center gap-2 py-0.5">
               <input
@@ -294,23 +294,23 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
 
   return (
     <>
-      <div className="flex flex-col gap-6 rounded-[2rem] border border-black/5 bg-white p-5 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:p-8 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-6 rounded-[2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-5 shadow-[0_20px_60px_rgba(17,17,17,0.06)] sm:p-8 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Collections</p>
           <h1 className="mt-2 text-2xl text-[#3A2213] sm:text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
             Curated for celebration, comfort, and couture.
           </h1>
         </div>
-        <div className="flex w-full items-center gap-3 rounded-full border border-black/10 bg-[#E9CFBA] px-4 py-3 lg:w-auto">
-          <Search size={16} className="shrink-0 text-gray-500" />
+        <div className="flex w-full items-center gap-3 rounded-full border border-[#3A2213]/12 bg-[#E9CFBA] px-4 py-3 lg:w-auto">
+          <Search size={16} className="shrink-0 text-[#8B7A6E]" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search silhouettes, fabrics, occasions…"
-            className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-gray-400 lg:w-56"
+            className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-[#A8968A] lg:w-56"
           />
           {query && (
-            <button aria-label="Clear search" onClick={() => setQuery("")} className="shrink-0 text-gray-400 hover:text-[#3A2213]">
+            <button aria-label="Clear search" onClick={() => setQuery("")} className="shrink-0 text-[#A8968A] hover:text-[#3A2213]">
               <X size={14} />
             </button>
           )}
@@ -323,7 +323,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
           top-level category, not just another facet. Mobile gets a fixed
           3-up grid with short labels so it doesn't wrap into a blob inside
           the rounded container; sm+ switches to an auto-width pill row. */}
-      <div className="mt-6 grid grid-cols-3 gap-1.5 rounded-2xl border border-black/10 bg-white p-1.5 shadow-sm sm:inline-flex sm:w-auto sm:gap-2 sm:rounded-full">
+      <div className="mt-6 grid grid-cols-3 gap-1.5 rounded-2xl border border-[#3A2213]/12 bg-[#FFFBF5] p-1.5 shadow-sm sm:inline-flex sm:w-auto sm:gap-2 sm:rounded-full">
         {(
           [
             { value: "all", label: "All Pieces", short: "All" },
@@ -337,7 +337,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             className={`rounded-full px-2 py-2.5 text-center text-xs font-medium leading-tight transition sm:px-5 sm:text-sm ${
               selectedType === tab.value
                 ? "bg-[#3A2213] text-white"
-                : "text-gray-600 hover:bg-[#E9CFBA]"
+                : "text-[#7A6D65] hover:bg-[#E9CFBA]"
             }`}
           >
             <span className="sm:hidden">{tab.short}</span>
@@ -348,7 +348,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr]">
         {/* Desktop sidebar — always visible from lg upward. */}
-        <aside className="hidden h-fit rounded-[1.5rem] border border-black/5 bg-white p-6 shadow-sm lg:block">
+        <aside className="hidden h-fit rounded-[1.5rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm lg:block">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={16} className="text-[#B17F5E]" />
@@ -364,8 +364,8 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         </aside>
 
         <div>
-          <div className="mb-5 flex flex-col gap-3 rounded-[1rem] border border-black/5 bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-gray-600">
+          <div className="mb-5 flex flex-col gap-3 rounded-[1rem] border border-[#3A2213]/8 bg-[#FFFBF5] px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-[#7A6D65]">
               {query.trim() ? (
                 <>Showing {filtered.length} result{filtered.length === 1 ? "" : "s"} for &ldquo;{query.trim()}&rdquo;</>
               ) : (
@@ -377,7 +377,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
                   so this is the only way to reach filters on a phone. */}
               <button
                 onClick={() => setFiltersOpen(true)}
-                className="relative flex items-center gap-2 rounded-full border border-black/10 bg-[#E9CFBA] px-4 py-2 text-sm lg:hidden"
+                className="relative flex items-center gap-2 rounded-full border border-[#3A2213]/12 bg-[#E9CFBA] px-4 py-2 text-sm lg:hidden"
               >
                 <SlidersHorizontal size={15} className="text-[#B17F5E]" />
                 Filters
@@ -390,7 +390,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortOption)}
-                className="rounded-full border border-black/10 bg-[#E9CFBA] px-3 py-2 text-sm"
+                className="rounded-full border border-[#3A2213]/12 bg-[#E9CFBA] px-3 py-2 text-sm"
               >
                 <option>Featured</option>
                 <option>Price: Low to High</option>
@@ -400,11 +400,11 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
           </div>
 
           {filtered.length === 0 ? (
-            <div className="rounded-[1.5rem] border border-dashed border-black/10 bg-white p-10 text-center sm:p-16">
+            <div className="rounded-[1.5rem] border border-dashed border-[#3A2213]/12 bg-[#FFFBF5] p-10 text-center sm:p-16">
               <p className="text-lg text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
                 No pieces match your search
               </p>
-              <p className="mt-2 text-sm text-gray-500">Try a different keyword or clear your filters.</p>
+              <p className="mt-2 text-sm text-[#8B7A6E]">Try a different keyword or clear your filters.</p>
               {hasActiveFilters && (
                 <button onClick={clearFilters} className="mt-5 rounded-full bg-[#3A2213] px-6 py-2.5 text-sm text-white">
                   Clear filters
@@ -430,15 +430,15 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             onClick={() => setFiltersOpen(false)}
             className="fixed inset-0 z-40 bg-black/40"
           />
-          <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[86vw] max-w-sm flex-col bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-black/5 px-5 py-5">
+          <div className="fixed inset-y-0 left-0 z-50 flex h-full w-[86vw] max-w-sm flex-col bg-[#FFFBF5] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#3A2213]/8 px-5 py-5">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal size={16} className="text-[#B17F5E]" />
                 <p className="text-sm font-semibold uppercase tracking-[0.28em]">Filters</p>
               </div>
               <button
                 onClick={() => setFiltersOpen(false)}
-                className="rounded-full border border-black/10 p-2"
+                className="rounded-full border border-[#3A2213]/12 p-2"
                 aria-label="Close filters"
               >
                 <X size={18} />
@@ -447,11 +447,11 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
 
             <div className="flex-1 overflow-y-auto px-5 py-6">{filterFields}</div>
 
-            <div className="flex gap-3 border-t border-black/5 px-5 py-4">
+            <div className="flex gap-3 border-t border-[#3A2213]/8 px-5 py-4">
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="flex-1 rounded-full border border-black/10 px-4 py-3 text-sm font-medium text-[#3A2213]"
+                  className="flex-1 rounded-full border border-[#3A2213]/12 px-4 py-3 text-sm font-medium text-[#3A2213]"
                 >
                   Clear all
                 </button>

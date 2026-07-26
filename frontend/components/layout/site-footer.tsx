@@ -6,14 +6,14 @@ import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/soc
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-black/5 bg-[#20130B] text-white">
+    <footer className="border-t border-[#3A2213]/8 bg-[#20130B] text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1fr_0.55fr_0.55fr_0.7fr_0.55fr_0.55fr] lg:px-8">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[#B17F5E]">RUBYZ Ensemble</p>
           <h2 className="mt-3 text-2xl text-white" style={{ fontFamily: "Playfair Display, serif" }}>
             A boutique experience rooted in craftsmanship and grace.
           </h2>
-          <p className="mt-4 max-w-sm text-sm leading-7 text-gray-400">
+          <p className="mt-4 max-w-sm text-sm leading-7 text-[#A8968A]">
             From premium ethnicwear to tailoring and styling, every interaction is designed to feel intimate, elegant, and effortless.
           </p>
         </div>
@@ -127,7 +127,7 @@ export function SiteFooter() {
           pages themselves live in the "Legal" column above so they're not
           duplicated down here. */}
       <div className="border-t border-white/10">
-        <div className="mx-auto px-5 py-5 text-center text-xs text-gray-500 lg:px-8">
+        <div className="mx-auto px-5 py-5 text-center text-xs text-[#8B7A6E] lg:px-8">
           <p>© {new Date().getFullYear()} {brand.name}. All rights reserved.</p>
         </div>
       </div>

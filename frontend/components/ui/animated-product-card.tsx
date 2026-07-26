@@ -32,7 +32,7 @@ export function AnimatedProductCard({ product }: { product: Product }) {
       <motion.article
         whileHover={{ y: -4, scale: 1.01 }}
         transition={{ duration: 0.2 }}
-        className="group overflow-hidden rounded-[1.2rem] border border-black/5 bg-white p-2 shadow-[0_12px_40px_rgba(17,17,17,0.04)] sm:rounded-[1.5rem] sm:p-3"
+        className="group overflow-hidden rounded-[1.2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-2 shadow-[0_12px_40px_rgba(17,17,17,0.04)] sm:rounded-[1.5rem] sm:p-3"
       >
         <div className="relative overflow-hidden rounded-[1rem] bg-[#E9CFBA] p-2 sm:rounded-[1.2rem] sm:p-4">
           <OutOfStockRibbon product={product} />
@@ -63,11 +63,11 @@ export function AnimatedProductCard({ product }: { product: Product }) {
           </span>
           <div className="mt-1.5 flex items-center gap-2 sm:mt-2">
             <Stars rating={product.rating} />
-            <span className="text-[11px] text-gray-500 sm:text-xs">({product.sold})</span>
+            <span className="text-[11px] text-[#8B7A6E] sm:text-xs">({product.sold})</span>
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs sm:mt-3 sm:gap-2 sm:text-sm">
             <span className="font-semibold text-[#3A2213]">₹{product.price}</span>
-            <span className="text-[11px] text-gray-400 line-through sm:text-xs">₹{product.mrp}</span>
+            <span className="text-[11px] text-[#A8968A] line-through sm:text-xs">₹{product.mrp}</span>
             {discount !== null && <span className="text-[11px] text-[#D94F70] sm:text-xs">{discount}% OFF</span>}
           </div>
         </div>
