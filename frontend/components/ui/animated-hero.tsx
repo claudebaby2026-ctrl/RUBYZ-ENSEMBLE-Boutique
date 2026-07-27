@@ -8,7 +8,7 @@ import { brand } from "@/lib/content";
 
 // How long each hero photo stays on screen before cross-fading to the next
 // one. Only matters when there's more than one image configured.
-const SLIDE_INTERVAL_MS = 6000;
+const SLIDE_INTERVAL_MS = 3000;
 
 function HeroSlideshow({ images }: { images: string[] }) {
   const [index, setIndex] = useState(0);
