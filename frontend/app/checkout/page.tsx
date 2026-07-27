@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2, Tag, X } from "lucide-react";
 import { useCart } from "@/lib/useCart";
-import { getCartDeliveryFee } from "@/lib/cart";
+import { getCartDeliveryFee, getAutoDiscount } from "@/lib/cart";
 import { brand } from "@/lib/content";
 import { validateCoupon, type Coupon } from "@/lib/api";
 
@@ -43,7 +43,7 @@ export default function CheckoutPage() {
   // details directly over WhatsApp, so this is just the flat per-suit
   // estimate (₹100/suit) shown up front for the customer's reference.
   const deliveryFee = mode === "Delivery" ? getCartDeliveryFee(items) : 0;
-  const discount = appliedCoupon
+  const couponDiscount = appliedCoupon
     ? Math.min(
         appliedCoupon.discount_type === "flat"
           ? appliedCoupon.discount_value
@@ -51,6 +51,11 @@ export default function CheckoutPage() {
         subtotal
       )
     : 0;
+  // Automatic 10% storewide discount — applies on top of any coupon,
+  // computed off whatever's left of the subtotal after the coupon, never
+  // off the delivery fee.
+  const autoDiscount = getAutoDiscount(subtotal - couponDiscount);
+  const discount = couponDiscount + autoDiscount;
   const total = subtotal - discount + deliveryFee;
 
   const valid = agreedToTerms;
@@ -90,7 +95,8 @@ export default function CheckoutPage() {
       "",
       `Subtotal: ₹${subtotal.toLocaleString()}`,
     ];
-    if (appliedCoupon) lines.push(`Coupon (${appliedCoupon.code}): −₹${discount.toLocaleString()}`);
+    if (appliedCoupon) lines.push(`Coupon (${appliedCoupon.code}): −₹${couponDiscount.toLocaleString()}`);
+    if (autoDiscount > 0) lines.push(`Discount (10%): −₹${autoDiscount.toLocaleString()}`);
     lines.push(`${mode === "Delivery" ? `Delivery: ₹${deliveryFee}` : "Pickup: in-store"}`);
     lines.push(`Estimated total: ₹${total.toLocaleString()}`);
     lines.push("");
@@ -179,7 +185,13 @@ export default function CheckoutPage() {
               {appliedCoupon && (
                 <div className="flex justify-between text-[#3A9D5D]">
                   <span>Coupon ({appliedCoupon.code})</span>
-                  <span>−₹{discount.toLocaleString()}</span>
+                  <span>−₹{couponDiscount.toLocaleString()}</span>
+                </div>
+              )}
+              {autoDiscount > 0 && (
+                <div className="flex justify-between text-[#B17F5E]">
+                  <span>Discount (10%)</span>
+                  <span>−₹{autoDiscount.toLocaleString()}</span>
                 </div>
               )}
               <div className="mt-3 flex justify-between border-t border-[#3A2213]/8 pt-3 text-base font-semibold text-[#3A2213]"><span>Estimated Total</span><span>₹{total.toLocaleString()}</span></div>

@@ -9,6 +9,16 @@ const CART_EVENT = "rubyz-cart-changed";
 // cart, not a single flat fee for the whole order.
 export const DELIVERY_FEE_PER_ITEM = 100;
 
+// Storewide automatic discount applied to every cart's subtotal — never to
+// the delivery fee, and unrelated to whatever MRP-vs-price markdown a
+// product page already shows. Applies automatically, with no coupon code
+// needed. Must match backend Settings.AUTO_DISCOUNT_PERCENT
+// (backend/app/config.py) — this constant is display-only; the backend
+// independently recomputes the real discount/total server-side in
+// app/crud/order.py::price_cart, so the amount actually charged can never
+// drift from what's shown here even if this constant gets out of sync.
+export const AUTO_DISCOUNT_PERCENT = 10;
+
 export type CartItem = {
   productId: number;
   slug: string;
@@ -105,6 +115,13 @@ export function getCartSubtotal(items?: CartItem[]): number {
 // isn't selected (e.g. in-store pickup).
 export function getCartDeliveryFee(items?: CartItem[]): number {
   return getCartCount(items) * DELIVERY_FEE_PER_ITEM;
+}
+
+// The automatic 10% discount, computed off a given amount (pass the
+// subtotal, or the subtotal after a coupon discount — never the delivery
+// fee). Floored to whole rupees to match the backend's integer math.
+export function getAutoDiscount(amount: number): number {
+  return Math.floor((Math.max(0, amount) * AUTO_DISCOUNT_PERCENT) / 100);
 }
 
 export { CART_EVENT };

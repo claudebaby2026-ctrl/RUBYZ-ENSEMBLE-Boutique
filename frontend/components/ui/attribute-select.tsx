@@ -176,6 +176,7 @@ export function AttributeSelect({
   options,
   onChange,
   onOptionAdded,
+  onOptionDeleted,
 }: {
   label: string;
   type: AttributeType;
@@ -183,11 +184,29 @@ export function AttributeSelect({
   options: string[];
   onChange: (value: string) => void;
   onOptionAdded: (value: string) => void;
+  onOptionDeleted?: (value: string) => void | Promise<void>;
 }) {
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const removeCurrent = async () => {
+    if (!onOptionDeleted || !value) return;
+    if (!confirm(`Delete "${value}"? It will no longer appear as an option to pick from.`)) return;
+    setDeleting(true);
+    setError(null);
+    try {
+      await onOptionDeleted(value);
+      const next = options.find((o) => o !== value);
+      if (next) onChange(next);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not delete");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const startAdding = () => {
     setDraft("");
@@ -274,25 +293,40 @@ export function AttributeSelect({
   return (
     <div>
       <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => {
-          if (e.target.value === ADD_NEW) {
-            startAdding();
-          } else {
-            onChange(e.target.value);
-          }
-        }}
-        className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm"
-      >
-        {value && !options.includes(value) && <option value={value}>{value}</option>}
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-        <option value={ADD_NEW}>+ Add new {label.toLowerCase()}…</option>
-      </select>
+      <div className="mt-1 flex gap-2">
+        <select
+          value={value}
+          onChange={(e) => {
+            if (e.target.value === ADD_NEW) {
+              startAdding();
+            } else {
+              onChange(e.target.value);
+            }
+          }}
+          className="w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm"
+        >
+          {value && !options.includes(value) && <option value={value}>{value}</option>}
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+          <option value={ADD_NEW}>+ Add new {label.toLowerCase()}…</option>
+        </select>
+        {onOptionDeleted && (
+          <button
+            type="button"
+            onClick={removeCurrent}
+            disabled={deleting || !value}
+            aria-label={`Delete ${value}`}
+            title={`Delete "${value}"`}
+            className="shrink-0 rounded-[1rem] border border-[#3A2213]/12 px-3 text-sm text-[#8B7A6E] hover:border-[#D94F70] hover:text-[#D94F70] disabled:opacity-60"
+          >
+            {deleting ? <Loader2 size={14} className="animate-spin" /> : "×"}
+          </button>
+        )}
+      </div>
+      {error && <p className="mt-1 text-xs text-[#D94F70]">{error}</p>}
     </div>
   );
 }

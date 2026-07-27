@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Loader2, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/useCart";
-import { getCartDeliveryFee } from "@/lib/cart";
+import { getCartDeliveryFee, getAutoDiscount } from "@/lib/cart";
 import { useRouter } from "next/navigation";
 
 const MODE_KEY = "rubyz_delivery_mode";
@@ -23,7 +23,8 @@ export default function CartPage() {
   };
 
   const deliveryFee = mode === "Delivery" && items.length > 0 ? getCartDeliveryFee(items) : 0;
-  const total = subtotal + deliveryFee;
+  const autoDiscount = getAutoDiscount(subtotal);
+  const total = subtotal - autoDiscount + deliveryFee;
 
   if (!hydrated) {
     return (
@@ -88,6 +89,9 @@ export default function CartPage() {
             <h2 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Order Summary</h2>
             <div className="mt-6 space-y-3 text-sm text-[#7A6D65]">
               <div className="flex justify-between"><span>Subtotal</span><span>₹{subtotal.toLocaleString()}</span></div>
+              {autoDiscount > 0 && (
+                <div className="flex justify-between text-[#B17F5E]"><span>Discount (10%)</span><span>−₹{autoDiscount.toLocaleString()}</span></div>
+              )}
               <div className="flex justify-between"><span>Delivery</span><span>{deliveryFee ? `₹${deliveryFee}` : "Free"}</span></div>
               <div className="mt-3 border-t border-[#3A2213]/8 pt-3 flex justify-between text-base font-semibold text-[#3A2213]"><span>Total</span><span>₹{total.toLocaleString()}</span></div>
             </div>

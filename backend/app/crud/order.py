@@ -187,19 +187,31 @@ def price_cart(
     # discount itself is computed from the DB-sourced `subtotal` above,
     # not anything the client sent.
     coupon = None
-    discount = 0
+    coupon_discount = 0
     if coupon_code:
         try:
             coupon = coupon_crud.validate_coupon(db, coupon_code, for_update=lock)
         except CouponValidationError as exc:
             raise CouponError(str(exc)) from exc
         if coupon.discount_type == "flat":
-            discount = coupon.discount_value
+            coupon_discount = coupon.discount_value
         else:
-            discount = (subtotal * coupon.discount_value) // 100
+            coupon_discount = (subtotal * coupon.discount_value) // 100
         # Never let a coupon push the subtotal below zero (e.g. a flat
         # discount larger than the cart).
-        discount = max(0, min(discount, subtotal))
+        coupon_discount = max(0, min(coupon_discount, subtotal))
+
+    # Storewide automatic discount (see Settings.AUTO_DISCOUNT_PERCENT) —
+    # applies to every cart automatically, on top of any coupon, and is
+    # unrelated to the per-product MRP-vs-price markdown shown on the
+    # product page. Computed on the subtotal only, never on the delivery
+    # fee, and applied after the coupon so the combined discount can never
+    # exceed the subtotal.
+    remaining_after_coupon = subtotal - coupon_discount
+    auto_discount = (remaining_after_coupon * settings.AUTO_DISCOUNT_PERCENT) // 100
+    auto_discount = max(0, min(auto_discount, remaining_after_coupon))
+
+    discount = coupon_discount + auto_discount
 
     delivery_fee = settings.DELIVERY_FEE if mode == "Delivery" else 0
     total = subtotal - discount + delivery_fee

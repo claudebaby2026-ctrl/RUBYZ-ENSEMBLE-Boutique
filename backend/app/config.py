@@ -29,6 +29,15 @@ class Settings:
     # (see app/crud/order.py::create_order) instead of trusting the client.
     DELIVERY_FEE: int = int(os.getenv("DELIVERY_FEE", "150"))
 
+    # Storewide automatic discount applied to every cart's subtotal (never
+    # to the delivery fee), independent of any per-product MRP-vs-price
+    # markdown shown on the product page and independent of coupon codes —
+    # both can apply at once. Percent of subtotal, 0-100. Computed
+    # server-side in app/crud/order.py::price_cart, same place coupon
+    # discounts are computed, so the client-shown cart/checkout total can
+    # never drift from what's actually charged.
+    AUTO_DISCOUNT_PERCENT: int = int(os.getenv("AUTO_DISCOUNT_PERCENT", "10"))
+
     # --- Auth ---
     # JWT_SECRET MUST be overridden in production via the environment / .env
     # file. The fallback below is only for zero-config local development.
