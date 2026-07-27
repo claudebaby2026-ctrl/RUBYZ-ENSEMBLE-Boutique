@@ -12,6 +12,9 @@ class HomepageConfigUpdate(BaseModel):
     hero_image_3: Optional[str] = None
     hero_image_4: Optional[str] = None
     featured_product_ids: List[int] = []
+    look_image_manish: Optional[str] = None
+    look_image_sabyasachi: Optional[str] = None
+    tailoring_image: Optional[str] = None
 
 
 class HomepageConfigOut(BaseModel):
@@ -25,3 +28,6 @@ class HomepageConfigOut(BaseModel):
     hero_image_3: Optional[str] = None
     hero_image_4: Optional[str] = None
     featured_product_ids: List[int]
+    look_image_manish: Optional[str] = None
+    look_image_sabyasachi: Optional[str] = None
+    tailoring_image: Optional[str] = None

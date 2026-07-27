@@ -33,3 +33,9 @@ class HomepageConfig(Base):
     # Comma-separated product ids, kept simple since this is a single-row
     # config table (no need for a join table for one editable list).
     featured_product_ids = Column(Text, default="")
+    # "Celebrity Inspired Looks" section on the storefront homepage — the two
+    # designer-inspired cards. Same upload/resolve pattern as hero_image.
+    look_image_manish = Column(String, nullable=True)
+    look_image_sabyasachi = Column(String, nullable=True)
+    # "Tailoring that feels personal" section photo. Same pattern as above.
+    tailoring_image = Column(String, nullable=True)

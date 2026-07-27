@@ -188,11 +188,27 @@ export default async function HomePage() {
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             {[
-              { name: "Manish Malhotra", description: "Regal shimmer with couture energy." },
-              { name: "Sabyasachi", description: "Textural drama and heirloom elegance." },
+              {
+                name: "Manish Malhotra",
+                description: "Regal shimmer with couture energy.",
+                image: resolveImageUrl(homepageConfig.look_image_manish),
+              },
+              {
+                name: "Sabyasachi",
+                description: "Textural drama and heirloom elegance.",
+                image: resolveImageUrl(homepageConfig.look_image_sabyasachi),
+              },
             ].map((look) => (
               <div key={look.name} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-6">
-                <div className="mb-6 h-48 rounded-[1.2rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
+                {look.image ? (
+                  <img
+                    src={look.image}
+                    alt={`Inspired by ${look.name}`}
+                    className="mb-6 h-48 w-full rounded-[1.2rem] object-cover"
+                  />
+                ) : (
+                  <div className="mb-6 h-48 rounded-[1.2rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
+                )}
                 <h3 className="text-xl">Inspired by {look.name}</h3>
                 <p className="mt-2 text-sm text-gray-300">{look.description}</p>
                 <Link href="/collections" className="mt-5 inline-flex items-center gap-2 text-sm uppercase tracking-[0.28em] text-[#B17F5E]">
@@ -235,7 +251,15 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="rounded-[1.5rem] border border-[#3A2213]/8 bg-[#3A2213] p-6 text-white">
-            <div className="h-60 rounded-[1.2rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
+            {resolveImageUrl(homepageConfig.tailoring_image) ? (
+              <img
+                src={resolveImageUrl(homepageConfig.tailoring_image)}
+                alt="Tailoring that feels personal"
+                className="h-60 w-full rounded-[1.2rem] object-cover"
+              />
+            ) : (
+              <div className="h-60 rounded-[1.2rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
+            )}
           </div>
         </div>
       </section>

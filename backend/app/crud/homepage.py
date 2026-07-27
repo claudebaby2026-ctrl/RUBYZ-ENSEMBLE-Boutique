@@ -32,6 +32,9 @@ def to_out_dict(config: HomepageConfig) -> dict:
         "hero_image_3": config.hero_image_3 or None,
         "hero_image_4": config.hero_image_4 or None,
         "featured_product_ids": _parse_ids(config.featured_product_ids or ""),
+        "look_image_manish": config.look_image_manish or None,
+        "look_image_sabyasachi": config.look_image_sabyasachi or None,
+        "tailoring_image": config.tailoring_image or None,
     }
 
 
@@ -45,6 +48,9 @@ def update_config(db: Session, payload: HomepageConfigUpdate) -> HomepageConfig:
     config.hero_image_3 = payload.hero_image_3 or None
     config.hero_image_4 = payload.hero_image_4 or None
     config.featured_product_ids = ",".join(str(i) for i in payload.featured_product_ids)
+    config.look_image_manish = payload.look_image_manish or None
+    config.look_image_sabyasachi = payload.look_image_sabyasachi or None
+    config.tailoring_image = payload.tailoring_image or None
     db.commit()
     db.refresh(config)
     return config

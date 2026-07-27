@@ -168,6 +168,11 @@ export type HomepageConfig = {
   hero_image_3?: string | null;
   hero_image_4?: string | null;
   featured_product_ids: number[];
+  // "Celebrity Inspired Looks" cards + "Tailoring that feels personal" photo
+  // on the storefront homepage. Same upload/resolve pattern as hero_image.
+  look_image_manish?: string | null;
+  look_image_sabyasachi?: string | null;
+  tailoring_image?: string | null;
 };
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {

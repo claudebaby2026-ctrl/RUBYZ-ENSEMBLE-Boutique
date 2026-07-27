@@ -1898,6 +1898,42 @@ function HomepageEditor({ products }: { products: Product[] }) {
         </div>
       </div>
 
+      <div className="mt-6 space-y-4 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Celebrity Inspired Looks</label>
+          <p className="mb-3 mt-0.5 text-xs text-[#A8968A]">
+            Photos for the two designer-inspired cards on the homepage. Leave empty to keep the default placeholder.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="mb-1.5 text-[11px] font-medium text-[#8B7A6E]">Inspired by Manish Malhotra</p>
+              <HeroImageUploader
+                image={config.look_image_manish}
+                onChange={(url) => setConfig({ ...config, look_image_manish: url })}
+              />
+            </div>
+            <div>
+              <p className="mb-1.5 text-[11px] font-medium text-[#8B7A6E]">Inspired by Sabyasachi</p>
+              <HeroImageUploader
+                image={config.look_image_sabyasachi}
+                onChange={(url) => setConfig({ ...config, look_image_sabyasachi: url })}
+              />
+            </div>
+          </div>
+        </div>
+        <div>
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Tailoring Section Photo</label>
+          <p className="mb-3 mt-0.5 text-xs text-[#A8968A]">
+            Shown next to &quot;Tailoring that feels personal&quot; on the homepage. Leave empty to keep the default
+            placeholder.
+          </p>
+          <HeroImageUploader
+            image={config.tailoring_image}
+            onChange={(url) => setConfig({ ...config, tailoring_image: url })}
+          />
+        </div>
+      </div>
+
       <div className="mt-6 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
         <p className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Featured Products</p>
         <p className="mt-1 text-xs text-[#A8968A]">Selected products appear in the homepage&apos;s featured module.</p>

@@ -200,3 +200,11 @@ def run_migrations(engine: Engine) -> None:
         if not _has_column(engine, "homepage_config", column):
             with engine.begin() as conn:
                 conn.execute(text(f"ALTER TABLE homepage_config ADD COLUMN {column} VARCHAR"))
+
+    # Storefront "Celebrity Inspired Looks" cards + "Tailoring that feels
+    # personal" photo — same additive/nullable treatment as the hero images
+    # above, uploaded via the same dashboard Homepage Editor.
+    for column in ("look_image_manish", "look_image_sabyasachi", "tailoring_image"):
+        if not _has_column(engine, "homepage_config", column):
+            with engine.begin() as conn:
+                conn.execute(text(f"ALTER TABLE homepage_config ADD COLUMN {column} VARCHAR"))
