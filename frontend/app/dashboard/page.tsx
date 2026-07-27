@@ -32,7 +32,7 @@ import { AttributeSelect } from "@/components/ui/attribute-select";
 // Product fields backed by the taxonomy (attributes) table — dropdown +
 // "add new" everywhere they're edited, instead of free text.
 export type AttributeOptions = Record<AttributeType, string[]>;
-const EMPTY_ATTRIBUTE_OPTIONS: AttributeOptions = { category: [], occasion: [], color: [], fabric: [] };
+const EMPTY_ATTRIBUTE_OPTIONS: AttributeOptions = { category: [], fabric: [] };
 
 const NAV = [
   { id: "home", label: "Dashboard", icon: LayoutGrid },
@@ -2038,10 +2038,16 @@ export default function DashboardPage() {
       ]);
       setProducts(productsData);
       setStats(statsData);
-      const grouped: AttributeOptions = { category: [], occasion: [], color: [], fabric: [] };
+      const grouped: AttributeOptions = { category: [], fabric: [] };
       const ids: Record<string, number> = {};
       for (const attribute of attributesData) {
-        if (!grouped[attribute.type]) grouped[attribute.type] = [];
+        // Skip any attribute type this dashboard doesn't have a slot for
+        // (e.g. "occasion"/"color" rows the backend may still return from
+        // GET /attributes with no type filter) instead of crashing — a
+        // crash here used to silently abort this whole function before
+        // setAttributeOptions ever ran, which is why category options
+        // stopped loading at all.
+        if (!(attribute.type in grouped)) continue;
         grouped[attribute.type].push(attribute.value);
         ids[`${attribute.type}:${attribute.value}`] = attribute.id;
       }
