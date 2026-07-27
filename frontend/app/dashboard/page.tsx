@@ -27,7 +27,7 @@ import {
   ApiError,
 } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
-import { AttributeSelect } from "@/components/ui/attribute-select";
+import { AttributeSelect, AttributeMultiSelect } from "@/components/ui/attribute-select";
 
 // Product fields backed by the taxonomy (attributes) table — dropdown +
 // "add new" everywhere they're edited, instead of free text.
@@ -517,12 +517,12 @@ function AddProduct({
               </div>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <AttributeSelect
+              <AttributeMultiSelect
                 label="Category"
                 type="category"
-                value={form.categories[0]}
+                values={form.categories}
                 options={attributeOptions.category}
-                onChange={(value) => setForm({ ...form, categories: [value] })}
+                onChange={(values) => setForm({ ...form, categories: values })}
                 onOptionAdded={(value) => onAttributeAdded("category", value)}
                 onOptionDeleted={(value) => onAttributeDeleted("category", value)}
               />
@@ -1132,12 +1132,12 @@ function EditProductModal({
             </div>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <AttributeSelect
+            <AttributeMultiSelect
               label="Category"
               type="category"
-              value={form.categories[0]}
+              values={form.categories}
               options={attributeOptions.category}
-              onChange={(value) => setForm({ ...form, categories: [value] })}
+              onChange={(values) => setForm({ ...form, categories: values })}
               onOptionAdded={(value) => onAttributeAdded("category", value)}
               onOptionDeleted={(value) => onAttributeDeleted("category", value)}
             />

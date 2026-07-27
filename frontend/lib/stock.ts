@@ -1,4 +1,5 @@
 import type { Product } from "@/lib/content";
+import { isUnstitchedProduct } from "@/lib/tailoring";
 
 // RUBYZ keeps exactly one piece per suit — every product is a single,
 // one-of-a-kind unit, so stock is binary (0 or 1). There's no "low stock"
@@ -31,20 +32,19 @@ export function getStockLabel(
 ): string {
   const status = getStockStatus(product);
   if (status === "out-of-stock") return "Out of Stock";
-  // In-stock items show their stitched/unstitched classification instead
-  // of a generic count. Left blank until the product is classified.
+  // In-stock items show their unstitched/ready-made classification
+  // instead of a generic count.
   return getStitchLabel(product.category, product.fabric);
 }
 
 /**
- * "Stitched" / "Unstitched" based on the category or fabric text
- * mentioning it, or "" when neither has been classified yet.
+ * "Unstitched" / "Ready-made" classification for a product card. Uses the
+ * same category/fabric-text check as the unstitched tailoring notice
+ * (isUnstitchedProduct) so the two stay in sync — anything not flagged as
+ * unstitched is shown as "Ready-made" rather than left blank.
  */
 export function getStitchLabel(category?: string, fabric?: string): string {
-  const haystack = `${category ?? ""} ${fabric ?? ""}`.toLowerCase();
-  if (haystack.includes("unstitch")) return "Unstitched";
-  if (haystack.includes("stitch")) return "Stitched";
-  return "";
+  return isUnstitchedProduct(category, fabric) ? "Unstitched" : "Ready-made";
 }
 
 /**
