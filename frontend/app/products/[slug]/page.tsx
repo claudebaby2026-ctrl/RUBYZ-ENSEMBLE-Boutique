@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug, getProducts, resolveImageUrl } from "@/lib/api";
+import { toTitleCase } from "@/lib/format";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { AddToCartPanel } from "@/components/product/add-to-cart-panel";
 import { LikeButton } from "@/components/product/like-button";
@@ -42,7 +43,7 @@ export async function generateMetadata({
   // layout.tsx's title.template ("%s | RUBYZ Ensemble") already appends the
   // brand, so the per-product title just needs the product name itself —
   // avoids double-appending "RUBYZ Ensemble".
-  const title = product.name;
+  const title = toTitleCase(product.name);
   const description = truncate(
     `${product.description} ₹${product.price}. Shop luxury ethnic wear at RUBYZ Ensemble, Bhubaneswar.`,
     155
@@ -163,7 +164,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Featured Piece</p>
             <h1 className="mt-3 text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
-              {product.name}
+              {toTitleCase(product.name)}
             </h1>
             <p className="mt-4 text-sm leading-7 text-[#7A6D65]">{product.description}</p>
 
