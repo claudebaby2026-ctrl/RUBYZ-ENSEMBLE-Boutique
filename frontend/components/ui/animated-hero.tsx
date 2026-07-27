@@ -1,34 +1,75 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
 import { brand } from "@/lib/content";
+
+// How long each hero photo stays on screen before cross-fading to the next
+// one. Only matters when there's more than one image configured.
+const SLIDE_INTERVAL_MS = 6000;
+
+function HeroSlideshow({ images }: { images: string[] }) {
+  const [index, setIndex] = useState(0);
+  // Clamped rather than reset via an effect, so if the set of images
+  // shrinks (e.g. the owner removes one in the dashboard) this never
+  // points past the end — no extra render cycle needed.
+  const safeIndex = index % images.length;
+
+  useEffect(() => {
+    if (images.length < 2) return;
+    const timer = setInterval(() => {
+      setIndex((current) => (current + 1) % images.length);
+    }, SLIDE_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [images.length]);
+
+  return (
+    <AnimatePresence>
+      <motion.img
+        key={images[safeIndex]}
+        src={images[safeIndex]}
+        alt=""
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1 }}
+        className="absolute inset-0 h-full w-full object-cover object-[center_20%]"
+      />
+    </AnimatePresence>
+  );
+}
 
 export function AnimatedHero({
   heading,
   subheading,
   imageUrl,
+  imageUrls,
 }: {
   heading?: string;
   subheading?: string;
   imageUrl?: string | null;
+  // Optional additional hero photos (Dashboard → Homepage Editor). When
+  // more than one image is present across imageUrl + imageUrls, the hero
+  // cross-fades between them on a timer instead of showing a static photo.
+  imageUrls?: (string | null | undefined)[];
 } = {}) {
-  // When the owner has uploaded a hero photo (Dashboard → Homepage Editor),
-  // it becomes a true full-bleed background — edge to edge, flush against
-  // the header, with the copy overlaid directly on the photo (no inset
-  // card). Without one, this falls back to the original inset dark card
-  // layout so the section never looks broken.
-  if (imageUrl) {
+  // Single de-duplicated list of every configured hero photo, in order.
+  const images = [imageUrl, ...(imageUrls || [])].filter((url): url is string => Boolean(url));
+
+  // When the owner has uploaded at least one hero photo (Dashboard →
+  // Homepage Editor), it becomes a true full-bleed background — edge to
+  // edge, flush against the header, with the copy overlaid directly on the
+  // photo (no inset card). Without one, this falls back to the original
+  // inset dark card layout so the section never looks broken.
+  if (images.length > 0) {
     return (
       <section className="relative w-full overflow-hidden">
-        {/* Background photo — object-cover keeps it filling the section at
-            every viewport without distortion, from small phones up. */}
-        <img
-          src={imageUrl}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-[center_20%]"
-        />
+        {/* Background photo(s) — object-cover keeps it filling the section
+            at every viewport without distortion, from small phones up.
+            Cross-fades between multiple images when more than one is set. */}
+        <HeroSlideshow images={images} />
         {/* Scrim so heading/buttons stay legible over any photo. Stronger
             behind the text column on desktop (left-to-right fade); on
             narrow screens the text stacks over the top of the image, so a

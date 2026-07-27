@@ -162,6 +162,11 @@ export type HomepageConfig = {
   hero_subheading: string;
   banner_text: string;
   hero_image?: string | null;
+  // Up to 3 additional hero photos — when more than one slot is filled,
+  // the homepage hero cross-fades between them on a timer.
+  hero_image_2?: string | null;
+  hero_image_3?: string | null;
+  hero_image_4?: string | null;
   featured_product_ids: number[];
 };
 

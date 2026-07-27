@@ -192,3 +192,11 @@ def run_migrations(engine: Engine) -> None:
     if not _has_column(engine, "homepage_config", "hero_image"):
         with engine.begin() as conn:
             conn.execute(text("ALTER TABLE homepage_config ADD COLUMN hero_image VARCHAR"))
+
+    # 3 more hero photo slots so the storefront hero can cross-fade between
+    # up to 4 images instead of showing just one static photo. Same
+    # additive/nullable treatment as hero_image above.
+    for column in ("hero_image_2", "hero_image_3", "hero_image_4"):
+        if not _has_column(engine, "homepage_config", column):
+            with engine.begin() as conn:
+                conn.execute(text(f"ALTER TABLE homepage_config ADD COLUMN {column} VARCHAR"))

@@ -8,6 +8,9 @@ class HomepageConfigUpdate(BaseModel):
     hero_subheading: str
     banner_text: str = ""
     hero_image: Optional[str] = None
+    hero_image_2: Optional[str] = None
+    hero_image_3: Optional[str] = None
+    hero_image_4: Optional[str] = None
     featured_product_ids: List[int] = []
 
 
@@ -18,4 +21,7 @@ class HomepageConfigOut(BaseModel):
     hero_subheading: str
     banner_text: str
     hero_image: Optional[str] = None
+    hero_image_2: Optional[str] = None
+    hero_image_3: Optional[str] = None
+    hero_image_4: Optional[str] = None
     featured_product_ids: List[int]

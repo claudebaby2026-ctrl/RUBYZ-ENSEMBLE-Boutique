@@ -28,6 +28,9 @@ def to_out_dict(config: HomepageConfig) -> dict:
         "hero_subheading": config.hero_subheading,
         "banner_text": config.banner_text or "",
         "hero_image": config.hero_image or None,
+        "hero_image_2": config.hero_image_2 or None,
+        "hero_image_3": config.hero_image_3 or None,
+        "hero_image_4": config.hero_image_4 or None,
         "featured_product_ids": _parse_ids(config.featured_product_ids or ""),
     }
 
@@ -38,6 +41,9 @@ def update_config(db: Session, payload: HomepageConfigUpdate) -> HomepageConfig:
     config.hero_subheading = payload.hero_subheading
     config.banner_text = payload.banner_text
     config.hero_image = payload.hero_image or None
+    config.hero_image_2 = payload.hero_image_2 or None
+    config.hero_image_3 = payload.hero_image_3 or None
+    config.hero_image_4 = payload.hero_image_4 or None
     config.featured_product_ids = ",".join(str(i) for i in payload.featured_product_ids)
     db.commit()
     db.refresh(config)

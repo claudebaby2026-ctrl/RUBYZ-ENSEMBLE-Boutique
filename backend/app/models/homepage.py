@@ -22,6 +22,14 @@ class HomepageConfig(Base):
     # frontend's resolveImageUrl(). Null/blank means "no custom hero photo
     # set" — the storefront falls back to the original solid background.
     hero_image = Column(String, nullable=True)
+    # Up to 3 additional hero photos (hero_image is always slot 1). When
+    # more than one slot is filled, the storefront hero cross-fades between
+    # them on a timer instead of showing a single static photo. Each slot
+    # is independent and nullable so the owner can add/remove/replace any
+    # one of the four without disturbing the others.
+    hero_image_2 = Column(String, nullable=True)
+    hero_image_3 = Column(String, nullable=True)
+    hero_image_4 = Column(String, nullable=True)
     # Comma-separated product ids, kept simple since this is a single-row
     # config table (no need for a join table for one editable list).
     featured_product_ids = Column(Text, default="")

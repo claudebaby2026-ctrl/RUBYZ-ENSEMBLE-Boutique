@@ -1859,12 +1859,42 @@ function HomepageEditor({ products }: { products: Product[] }) {
           />
         </div>
         <div>
-          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Hero Background Image</label>
-          <p className="mb-2 mt-0.5 text-xs text-[#A8968A]">Shown behind the hero heading on the homepage. Leave empty to use the default dark background.</p>
-          <HeroImageUploader
-            image={config.hero_image}
-            onChange={(url) => setConfig({ ...config, hero_image: url })}
-          />
+          <label className="text-xs uppercase tracking-[0.18em] text-[#8B7A6E]">Hero Background Images</label>
+          <p className="mb-3 mt-0.5 text-xs text-[#A8968A]">
+            Shown behind the hero heading on the homepage. Leave all empty to use the default dark background. Add more
+            than one and the homepage will automatically fade between them every few seconds — each slot can be
+            uploaded, replaced, or removed independently.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="mb-1.5 text-[11px] font-medium text-[#8B7A6E]">Image 1</p>
+              <HeroImageUploader
+                image={config.hero_image}
+                onChange={(url) => setConfig({ ...config, hero_image: url })}
+              />
+            </div>
+            <div>
+              <p className="mb-1.5 text-[11px] font-medium text-[#8B7A6E]">Image 2</p>
+              <HeroImageUploader
+                image={config.hero_image_2}
+                onChange={(url) => setConfig({ ...config, hero_image_2: url })}
+              />
+            </div>
+            <div>
+              <p className="mb-1.5 text-[11px] font-medium text-[#8B7A6E]">Image 3</p>
+              <HeroImageUploader
+                image={config.hero_image_3}
+                onChange={(url) => setConfig({ ...config, hero_image_3: url })}
+              />
+            </div>
+            <div>
+              <p className="mb-1.5 text-[11px] font-medium text-[#8B7A6E]">Image 4</p>
+              <HeroImageUploader
+                image={config.hero_image_4}
+                onChange={(url) => setConfig({ ...config, hero_image_4: url })}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
