@@ -26,13 +26,25 @@ export function getStockStatus(product: Pick<Product, "stock" | "availability">)
   return "in-stock";
 }
 
-export function getStockLabel(product: Pick<Product, "stock" | "availability">): string {
+export function getStockLabel(
+  product: Pick<Product, "stock" | "availability" | "category" | "fabric">
+): string {
   const status = getStockStatus(product);
   if (status === "out-of-stock") return "Out of Stock";
-  // Every in-stock product is a single, exclusive piece — say so rather
-  // than a generic "In Stock" label. Kept short since this also renders
-  // inside compact product-card badges.
-  return "Only 1 Available";
+  // In-stock items show their stitched/unstitched classification instead
+  // of a generic count. Left blank until the product is classified.
+  return getStitchLabel(product.category, product.fabric);
+}
+
+/**
+ * "Stitched" / "Unstitched" based on the category or fabric text
+ * mentioning it, or "" when neither has been classified yet.
+ */
+export function getStitchLabel(category?: string, fabric?: string): string {
+  const haystack = `${category ?? ""} ${fabric ?? ""}`.toLowerCase();
+  if (haystack.includes("unstitch")) return "Unstitched";
+  if (haystack.includes("stitch")) return "Stitched";
+  return "";
 }
 
 /**

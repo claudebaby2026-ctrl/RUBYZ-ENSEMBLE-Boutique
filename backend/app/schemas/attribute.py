@@ -1,8 +1,8 @@
 from pydantic import BaseModel, ConfigDict, field_validator
 
-# The four product fields that are editable via dropdown + "add new" in the
+# The two product fields that are editable via dropdown + "add new" in the
 # owner dashboard, and used to power storefront filters.
-ATTRIBUTE_TYPES = ("category", "occasion", "color", "fabric")
+ATTRIBUTE_TYPES = ("category", "fabric")
 
 
 class AttributeCreate(BaseModel):

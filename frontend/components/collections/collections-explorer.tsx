@@ -36,21 +36,12 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   });
   // The client's primary, top-level split — every product is either
   // Stitched/Ready-made or Unstitched. Seeded from ?type= so the footer's
-  // Shop links land here pre-filtered, same pattern as ?category=/?occasion=.
+  // Shop links land here pre-filtered, same pattern as ?category=.
   const [selectedType, setSelectedType] = useState<ProductType>(() => {
     const type = searchParams.get("type");
     return type === "stitched" || type === "unstitched" ? type : "all";
   });
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
-  // Seeds the occasion filter from ?occasion= so the homepage's "Shop by
-  // Occasion" tags (Wedding, Eid, Diwali, etc.) land here pre-filtered
-  // instead of on the unfiltered full catalog.
-  const [selectedOccasions, setSelectedOccasions] = useState<string[]>(() => {
-    const occasion = searchParams.get("occasion");
-    return occasion ? [occasion] : [];
-  });
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
-
   // Derived from the real catalog rather than hardcoded, so the slider's
   // bounds always reflect what's actually for sale.
   const MIN_PRICE = products.length ? Math.min(...products.map((p) => p.price)) : FALLBACK_MIN_PRICE;
@@ -82,14 +73,11 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   }, [filtersOpen]);
 
   // Filter option lists come from the taxonomy API (the same table the
-  // owner dashboard's "add new" dropdowns write to), so any category,
-  // fabric, occasion, or color the owner adds shows up here too — falling
-  // back to whatever's actually on the current products if the API call
-  // hasn't resolved yet.
+  // owner dashboard's "add new" dropdowns write to), so any category or
+  // fabric the owner adds shows up here too — falling back to whatever's
+  // actually on the current products if the API call hasn't resolved yet.
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [fabricOptions, setFabricOptions] = useState<string[]>([]);
-  const [occasionOptions, setOccasionOptions] = useState<string[]>([]);
-  const [colorOptions, setColorOptions] = useState<string[]>([]);
 
   useEffect(() => {
     // Keep the search box in sync if the user searches again from the
@@ -114,8 +102,6 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         if (cancelled) return;
         setCategoryOptions(attributes.filter((a) => a.type === "category").map((a) => a.value));
         setFabricOptions(attributes.filter((a) => a.type === "fabric").map((a) => a.value));
-        setOccasionOptions(attributes.filter((a) => a.type === "occasion").map((a) => a.value));
-        setColorOptions(attributes.filter((a) => a.type === "color").map((a) => a.value));
       })
       .catch(() => {
         // Fall back to whatever values are present on the loaded products.
@@ -123,8 +109,6 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         const unique = (values: (string | undefined)[]) => Array.from(new Set(values.filter(Boolean))) as string[];
         setCategoryOptions(unique(products.map((p) => p.category)));
         setFabricOptions(unique(products.map((p) => p.fabric)));
-        setOccasionOptions(unique(products.map((p) => p.occasion)));
-        setColorOptions(unique(products.map((p) => p.color)));
       });
     return () => {
       cancelled = true;
@@ -137,7 +121,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     let result = products.filter((product) => {
       const matchesQuery =
         q.length === 0 ||
-        [product.name, product.category, product.fabric, product.occasion, product.color, product.description]
+        [product.name, product.category, product.fabric, product.description]
           .filter(Boolean)
           .some((field) => field.toLowerCase().includes(q));
 
@@ -152,15 +136,9 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
         selectedFabrics.length === 0 ||
         selectedFabrics.some((fabric) => product.fabric?.toLowerCase().includes(fabric.toLowerCase()));
 
-      const matchesOccasion =
-        selectedOccasions.length === 0 || selectedOccasions.includes(product.occasion);
-
-      const matchesColor =
-        selectedColors.length === 0 || selectedColors.includes(product.color);
-
       const matchesPrice = product.price <= maxPrice;
 
-      return matchesType && matchesQuery && matchesCategory && matchesFabric && matchesOccasion && matchesColor && matchesPrice;
+      return matchesType && matchesQuery && matchesCategory && matchesFabric && matchesPrice;
     });
 
     if (sort === "Price: Low to High") {
@@ -173,15 +151,13 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     }
 
     return result;
-  }, [products, query, selectedType, selectedCategories, selectedFabrics, selectedOccasions, selectedColors, maxPrice, sort]);
+  }, [products, query, selectedType, selectedCategories, selectedFabrics, maxPrice, sort]);
 
   const hasActiveFilters =
     query.trim().length > 0 ||
     selectedType !== "all" ||
     selectedCategories.length > 0 ||
     selectedFabrics.length > 0 ||
-    selectedOccasions.length > 0 ||
-    selectedColors.length > 0 ||
     maxPrice < MAX_PRICE;
 
   // Count of active filter *facets* (excludes the search box, which has its
@@ -189,8 +165,6 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
   const activeFilterCount =
     selectedCategories.length +
     selectedFabrics.length +
-    selectedOccasions.length +
-    selectedColors.length +
     (maxPrice < MAX_PRICE ? 1 : 0);
 
   const clearFilters = () => {
@@ -198,8 +172,6 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     setSelectedType("all");
     setSelectedCategories([]);
     setSelectedFabrics([]);
-    setSelectedOccasions([]);
-    setSelectedColors([]);
     setMaxPrice(MAX_PRICE);
   };
 
@@ -257,38 +229,6 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
           ))}
         </div>
       </div>
-      <div>
-        <p className="text-sm font-semibold text-[#3A2213]">Occasion</p>
-        <div className="mt-3 space-y-2 text-sm text-[#7A6D65]">
-          {occasionOptions.map((occasion) => (
-            <label key={occasion} className="flex items-center gap-2 py-0.5">
-              <input
-                type="checkbox"
-                checked={selectedOccasions.includes(occasion)}
-                onChange={() => setSelectedOccasions((current) => toggle(current, occasion))}
-                className="h-4 w-4 accent-[#B17F5E]"
-              />
-              {occasion}
-            </label>
-          ))}
-        </div>
-      </div>
-      <div>
-        <p className="text-sm font-semibold text-[#3A2213]">Color</p>
-        <div className="mt-3 space-y-2 text-sm text-[#7A6D65]">
-          {colorOptions.map((color) => (
-            <label key={color} className="flex items-center gap-2 py-0.5">
-              <input
-                type="checkbox"
-                checked={selectedColors.includes(color)}
-                onChange={() => setSelectedColors((current) => toggle(current, color))}
-                className="h-4 w-4 accent-[#B17F5E]"
-              />
-              {color}
-            </label>
-          ))}
-        </div>
-      </div>
     </div>
   );
 
@@ -306,7 +246,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search silhouettes, fabrics, occasions…"
+            placeholder="Search silhouettes, fabrics, categories…"
             className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-[#A8968A] lg:w-56"
           />
           {query && (

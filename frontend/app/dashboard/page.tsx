@@ -17,7 +17,7 @@ import type { Product } from "@/lib/content";
 import {
   getProducts, createProduct, updateProduct, deleteProduct,
   getOrders, updateOrderStatus, getDashboardStats, uploadImage, uploadVideo, resolveImageUrl,
-  getAttributes, type Order, type DashboardStats, type AttributeType,
+  getAttributes, deleteAttribute, type Order, type DashboardStats, type AttributeType,
   getCustomers, type Customer,
   getCoupons, createCoupon, updateCoupon, deleteCoupon, type Coupon,
   getHomepageConfig, updateHomepageConfig, type HomepageConfig,
@@ -32,7 +32,7 @@ import { AttributeSelect, AttributeMultiSelect } from "@/components/ui/attribute
 // Product fields backed by the taxonomy (attributes) table — dropdown +
 // "add new" everywhere they're edited, instead of free text.
 export type AttributeOptions = Record<AttributeType, string[]>;
-const EMPTY_ATTRIBUTE_OPTIONS: AttributeOptions = { category: [], occasion: [], color: [], fabric: [] };
+const EMPTY_ATTRIBUTE_OPTIONS: AttributeOptions = { category: [], fabric: [] };
 
 const NAV = [
   { id: "home", label: "Dashboard", icon: LayoutGrid },
@@ -393,10 +393,12 @@ function AddProduct({
   onCreated,
   attributeOptions,
   onAttributeAdded,
+  onAttributeDeleted,
 }: {
   onCreated: () => void;
   attributeOptions: AttributeOptions;
   onAttributeAdded: (type: AttributeType, value: string) => void;
+  onAttributeDeleted: (type: AttributeType, value: string) => void;
 }) {
   const [step, setStep] = useState(1);
   const [images, setImages] = useState<string[]>([]);
@@ -406,7 +408,7 @@ function AddProduct({
   // 0 for "Out of stock").
   const [form, setForm] = useState({
     title: "", price: "", mrp: "", description: "",
-    categories: ["Pakistani Suits"] as string[], fabric: "Georgette", occasion: "Party Wear", color: "",
+    categories: ["Pakistani Suits"] as string[], fabric: "Georgette",
     availability: "In stock",
   });
   const [care, setCare] = useState<string[]>(["Dry clean recommended"]);
@@ -428,8 +430,6 @@ function AddProduct({
         category: form.categories[0],
         categories: form.categories,
         fabric: form.fabric,
-        occasion: form.occasion,
-        color: form.color || "Multi",
         price,
         mrp: Number(form.mrp) || price,
         stock: form.availability === "In stock" ? 1 : 0,
@@ -460,7 +460,7 @@ function AddProduct({
         <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
         <p className="mt-2 text-sm text-[#8B7A6E]">&quot;{form.title}&quot; is now live in the store and inventory.</p>
         <button
-          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", occasion: "Party Wear", color: "", availability: "In stock" }); }}
+          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", availability: "In stock" }); }}
           className="mt-6 rounded-full bg-[#3A2213] px-8 py-3 text-sm text-white"
         >
           Add Another Product
@@ -524,17 +524,8 @@ function AddProduct({
                 options={attributeOptions.category}
                 onChange={(values) => setForm({ ...form, categories: values })}
                 onOptionAdded={(value) => onAttributeAdded("category", value)}
+                onOptionDeleted={(value) => onAttributeDeleted("category", value)}
               />
-              <AttributeSelect
-                label="Color"
-                type="color"
-                value={form.color}
-                options={attributeOptions.color}
-                onChange={(value) => setForm({ ...form, color: value })}
-                onOptionAdded={(value) => onAttributeAdded("color", value)}
-              />
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
               <AttributeSelect
                 label="Fabric"
                 type="fabric"
@@ -543,14 +534,8 @@ function AddProduct({
                 onChange={(value) => setForm({ ...form, fabric: value })}
                 onOptionAdded={(value) => onAttributeAdded("fabric", value)}
               />
-              <AttributeSelect
-                label="Occasion"
-                type="occasion"
-                value={form.occasion}
-                options={attributeOptions.occasion}
-                onChange={(value) => setForm({ ...form, occasion: value })}
-                onOptionAdded={(value) => onAttributeAdded("occasion", value)}
-              />
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Availability</label>
                 <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-3 text-sm">
@@ -1046,12 +1031,14 @@ function EditProductModal({
   onSaved,
   attributeOptions,
   onAttributeAdded,
+  onAttributeDeleted,
 }: {
   product: Product;
   onClose: () => void;
   onSaved: () => void;
   attributeOptions: AttributeOptions;
   onAttributeAdded: (type: AttributeType, value: string) => void;
+  onAttributeDeleted: (type: AttributeType, value: string) => void;
 }) {
   // No numeric "stock" field — RUBYZ keeps exactly one piece per suit, so
   // stock is derived from the Availability toggle. Legacy values like
@@ -1064,8 +1051,6 @@ function EditProductModal({
     description: product.description,
     categories: product.categories?.length ? product.categories : [product.category],
     fabric: product.fabric,
-    occasion: product.occasion,
-    color: product.color,
     availability: product.availability === "Out of stock" ? "Out of stock" : "In stock",
   });
   const [care, setCare] = useState<string[]>(product.care ?? []);
@@ -1095,8 +1080,6 @@ function EditProductModal({
         category: form.categories[0],
         categories: form.categories,
         fabric: form.fabric,
-        occasion: form.occasion,
-        color: form.color,
         availability: form.availability,
         care,
         sizes,
@@ -1156,17 +1139,8 @@ function EditProductModal({
               options={attributeOptions.category}
               onChange={(values) => setForm({ ...form, categories: values })}
               onOptionAdded={(value) => onAttributeAdded("category", value)}
+              onOptionDeleted={(value) => onAttributeDeleted("category", value)}
             />
-            <AttributeSelect
-              label="Color"
-              type="color"
-              value={form.color}
-              options={attributeOptions.color}
-              onChange={(value) => setForm({ ...form, color: value })}
-              onOptionAdded={(value) => onAttributeAdded("color", value)}
-            />
-          </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <AttributeSelect
               label="Fabric"
               type="fabric"
@@ -1175,14 +1149,8 @@ function EditProductModal({
               onChange={(value) => setForm({ ...form, fabric: value })}
               onOptionAdded={(value) => onAttributeAdded("fabric", value)}
             />
-            <AttributeSelect
-              label="Occasion"
-              type="occasion"
-              value={form.occasion}
-              options={attributeOptions.occasion}
-              onChange={(value) => setForm({ ...form, occasion: value })}
-              onOptionAdded={(value) => onAttributeAdded("occasion", value)}
-            />
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="text-xs uppercase tracking-[0.24em] text-[#8B7A6E]">Availability</label>
               <select value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })} className="mt-1 w-full rounded-[1rem] border border-[#3A2213]/12 px-3 py-2 text-sm">
@@ -1273,12 +1241,14 @@ function Inventory({
   onChanged,
   attributeOptions,
   onAttributeAdded,
+  onAttributeDeleted,
 }: {
   products: Product[];
   loading: boolean;
   onChanged: () => void;
   attributeOptions: AttributeOptions;
   onAttributeAdded: (type: AttributeType, value: string) => void;
+  onAttributeDeleted: (type: AttributeType, value: string) => void;
 }) {
   const [editing, setEditing] = useState<Product | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -1339,6 +1309,7 @@ function Inventory({
           onSaved={onChanged}
           attributeOptions={attributeOptions}
           onAttributeAdded={onAttributeAdded}
+          onAttributeDeleted={onAttributeDeleted}
         />
       )}
     </div>
@@ -2053,6 +2024,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [attributeOptions, setAttributeOptions] = useState<AttributeOptions>(EMPTY_ATTRIBUTE_OPTIONS);
+  // Maps "type:value" -> attribute id, so deletions (e.g. removing a
+  // category) can call DELETE /attributes/{id} without a fresh lookup.
+  const [attributeIds, setAttributeIds] = useState<Record<string, number>>({});
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -2064,9 +2038,14 @@ export default function DashboardPage() {
       ]);
       setProducts(productsData);
       setStats(statsData);
-      const grouped: AttributeOptions = { category: [], occasion: [], color: [], fabric: [] };
-      for (const attribute of attributesData) grouped[attribute.type].push(attribute.value);
+      const grouped: AttributeOptions = { category: [], fabric: [] };
+      const ids: Record<string, number> = {};
+      for (const attribute of attributesData) {
+        grouped[attribute.type].push(attribute.value);
+        ids[`${attribute.type}:${attribute.value}`] = attribute.id;
+      }
       setAttributeOptions(grouped);
+      setAttributeIds(ids);
     } finally {
       setLoading(false);
     }
@@ -2080,6 +2059,21 @@ export default function DashboardPage() {
       return { ...current, [type]: [...current[type], value].sort() };
     });
   }, []);
+
+  // Removes a taxonomy value (e.g. a category) from the dashboard's
+  // dropdowns and storefront filters. Existing products keep the text
+  // they already had; only the "offered as an option" entry goes away.
+  const handleAttributeDeleted = useCallback(async (type: AttributeType, value: string) => {
+    const id = attributeIds[`${type}:${value}`];
+    if (id == null) return;
+    await deleteAttribute(id);
+    setAttributeOptions((current) => ({ ...current, [type]: current[type].filter((v) => v !== value) }));
+    setAttributeIds((current) => {
+      const next = { ...current };
+      delete next[`${type}:${value}`];
+      return next;
+    });
+  }, [attributeIds]);
 
   useEffect(() => {
     if (!authLoading && user?.role !== "owner") {
@@ -2203,7 +2197,7 @@ export default function DashboardPage() {
         <main className="flex-1 rounded-[2rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-4 shadow-sm sm:p-6 lg:p-8">
           {active === "home" && <DashboardHome setActive={setActive} stats={stats} outOfStockCount={outOfStockCount} loading={loading} />}
           {active === "add" && (
-            <AddProduct onCreated={refresh} attributeOptions={attributeOptions} onAttributeAdded={handleAttributeAdded} />
+            <AddProduct onCreated={refresh} attributeOptions={attributeOptions} onAttributeAdded={handleAttributeAdded} onAttributeDeleted={handleAttributeDeleted} />
           )}
           {active === "orders" && <Orders />}
           {active === "inventory" && (
@@ -2213,6 +2207,7 @@ export default function DashboardPage() {
               onChanged={refresh}
               attributeOptions={attributeOptions}
               onAttributeAdded={handleAttributeAdded}
+              onAttributeDeleted={handleAttributeDeleted}
             />
           )}
           {active === "customers" && <Customers />}

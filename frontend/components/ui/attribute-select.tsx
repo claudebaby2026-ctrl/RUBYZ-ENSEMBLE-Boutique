@@ -7,18 +7,19 @@ import { createAttribute, type AttributeType } from "@/lib/api";
 const ADD_NEW = "__add_new__";
 
 /**
- * Dropdown for a product taxonomy field (category / occasion / color /
- * fabric) with a trailing "+ Add new…" option. Picking it swaps in a text
- * input; confirming persists the value via POST /attributes and selects it,
- * so it's immediately available as a normal option everywhere else
- * (other product forms, storefront filters) without a page reload.
+ * Dropdown for a product taxonomy field (category / fabric) with a
+ * trailing "+ Add new…" option. Picking it swaps in a text input;
+ * confirming persists the value via POST /attributes and selects it, so
+ * it's immediately available as a normal option everywhere else (other
+ * product forms, storefront filters) without a page reload.
  */
 /**
  * Multi-select variant of AttributeSelect — used only for `category` so a
- * product can belong to more than one, while occasion/color/fabric keep
- * using the single-select AttributeSelect above unchanged. Same "+ Add
- * new…" flow, but toggles values on/off a checklist instead of swapping
- * one selection for another.
+ * product can belong to more than one, while `fabric` keeps using the
+ * single-select AttributeSelect above unchanged. Same "+ Add new…" flow,
+ * but toggles values on/off a checklist instead of swapping one selection
+ * for another. Optionally supports deleting an option entirely (used for
+ * category, via `onOptionDeleted`).
  */
 export function AttributeMultiSelect({
   label,
@@ -27,6 +28,7 @@ export function AttributeMultiSelect({
   options,
   onChange,
   onOptionAdded,
+  onOptionDeleted,
 }: {
   label: string;
   type: AttributeType;
@@ -34,11 +36,13 @@ export function AttributeMultiSelect({
   options: string[];
   onChange: (values: string[]) => void;
   onOptionAdded: (value: string) => void;
+  onOptionDeleted?: (value: string) => void | Promise<void>;
 }) {
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const allOptions = [...options, ...values.filter((v) => !options.includes(v))];
 
@@ -49,6 +53,21 @@ export function AttributeMultiSelect({
       onChange(values.filter((v) => v !== option));
     } else {
       onChange([...values, option]);
+    }
+  };
+
+  const removeOption = async (option: string) => {
+    if (!onOptionDeleted) return;
+    if (!confirm(`Delete "${option}"? It will no longer appear as an option to pick from.`)) return;
+    setDeleting(option);
+    setError(null);
+    try {
+      await onOptionDeleted(option);
+      if (values.includes(option)) onChange(values.filter((v) => v !== option));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not delete");
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -85,16 +104,30 @@ export function AttributeMultiSelect({
         {allOptions.map((option) => {
           const selected = values.includes(option);
           return (
-            <button
-              type="button"
-              key={option}
-              onClick={() => toggle(option)}
-              className={`rounded-full border px-3 py-1.5 text-xs ${
-                selected ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-[#3A2213]/12 text-[#3A2213]"
-              }`}
-            >
-              {option}
-            </button>
+            <span key={option} className="inline-flex items-center">
+              <button
+                type="button"
+                onClick={() => toggle(option)}
+                className={`rounded-full border px-3 py-1.5 text-xs ${
+                  selected ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-[#3A2213]/12 text-[#3A2213]"
+                } ${onOptionDeleted ? "rounded-r-none border-r-0" : ""}`}
+              >
+                {option}
+              </button>
+              {onOptionDeleted && (
+                <button
+                  type="button"
+                  onClick={() => removeOption(option)}
+                  disabled={deleting === option}
+                  aria-label={`Delete ${option}`}
+                  className={`rounded-full rounded-l-none border border-l-0 px-2 py-1.5 text-xs disabled:opacity-60 ${
+                    selected ? "border-[#3A2213] bg-[#3A2213] text-white" : "border-[#3A2213]/12 text-[#8B7A6E]"
+                  }`}
+                >
+                  {deleting === option ? <Loader2 size={11} className="animate-spin" /> : "×"}
+                </button>
+              )}
+            </span>
           );
         })}
         {adding ? (

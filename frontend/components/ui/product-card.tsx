@@ -1,25 +1,10 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Star } from "lucide-react";
 import type { Product } from "@/lib/content";
 import { resolveImageUrl } from "@/lib/api";
 import { LikeButton } from "@/components/product/like-button";
 import { OutOfStockRibbon, StockBadge } from "@/components/product/stock-badge";
 import { getDiscountPercent, getStockStatus } from "@/lib/stock";
-
-function Stars({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <Star
-          key={index}
-          size={13}
-          className={index < Math.round(rating) ? "fill-[#B17F5E] text-[#B17F5E]" : "text-gray-300"}
-        />
-      ))}
-    </div>
-  );
-}
 
 export function ProductCard({ product }: { product: Product }) {
   const image = resolveImageUrl(product.images?.[0]);
@@ -58,10 +43,6 @@ export function ProductCard({ product }: { product: Product }) {
           <span className="mt-2 block text-lg text-[#3A2213] group-hover:text-[#B17F5E]">
             {product.name}
           </span>
-          <div className="mt-2 flex items-center gap-2">
-            <Stars rating={product.rating} />
-            <span className="text-xs text-[#8B7A6E]">({product.sold})</span>
-          </div>
           <div className="mt-3 flex items-center gap-2 text-sm">
             <span className="font-semibold text-[#3A2213]">₹{product.price}</span>
             <span className="text-xs text-[#A8968A] line-through">₹{product.mrp}</span>

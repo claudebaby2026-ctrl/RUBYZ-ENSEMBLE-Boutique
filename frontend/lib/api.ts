@@ -82,9 +82,9 @@ export type DashboardStats = {
 
 export type ProductInput = Omit<Product, "id"> & { stock?: number };
 
-// ---- Attributes (category / occasion / color / fabric taxonomy) ----
+// ---- Attributes (category / fabric taxonomy) ----
 
-export type AttributeType = "category" | "occasion" | "color" | "fabric";
+export type AttributeType = "category" | "fabric";
 
 export type Attribute = {
   id: number;
@@ -349,11 +349,17 @@ export function getAttributes(type?: AttributeType): Promise<Attribute[]> {
   return request<Attribute[]>(`/attributes${query}`);
 }
 
-// Owner-only. Persists a brand-new category/occasion/color/fabric value so
+// Owner-only. Persists a brand-new category/fabric value so
 // it shows up as an option everywhere (dashboard dropdowns + storefront
 // filters) from then on.
 export function createAttribute(type: AttributeType, value: string): Promise<Attribute> {
   return request<Attribute>(`/attributes`, { method: "POST", body: JSON.stringify({ type, value }) });
+}
+
+// Owner-only. Removes a taxonomy value (e.g. a category) from dashboard
+// dropdowns and storefront filters.
+export function deleteAttribute(id: number): Promise<void> {
+  return request<void>(`/attributes/${id}`, { method: "DELETE" });
 }
 
 // ---- Orders ----

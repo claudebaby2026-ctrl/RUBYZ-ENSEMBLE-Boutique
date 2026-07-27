@@ -79,16 +79,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   }
 
   const allProducts = await getProducts();
-  // Prefer pieces that actually share a category or occasion with this
-  // product over an arbitrary "first four others" slice, so "Related
-  // Pieces" is genuinely related rather than coincidentally adjacent.
+  // Prefer pieces that actually share a category with this product over
+  // an arbitrary "first four others" slice, so "Related Pieces" is
+  // genuinely related rather than coincidentally adjacent.
   const related = allProducts
     .filter((item) => item.id !== product.id)
     .map((item) => ({
       item,
-      score:
-        Number(item.category === product.category) * 2 +
-        Number(item.occasion === product.occasion),
+      score: Number(item.category === product.category) * 2,
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 4)
@@ -172,7 +170,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-[#E9CFBA] px-3 py-1 text-sm text-[#3A2213]">{product.category}</span>
               <span className="rounded-full bg-[#E9CFBA] px-3 py-1 text-sm text-[#3A2213]">{product.fabric}</span>
-              <span className="rounded-full bg-[#E9CFBA] px-3 py-1 text-sm text-[#3A2213]">{product.occasion}</span>
             </div>
 
             <div className="mt-8 flex items-end gap-4">
@@ -206,7 +203,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   <p className="mt-1 text-sm text-[#7A6D65]">{product.sizes.join(", ")}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#3A2213]">Care</p>
+                  <p className="text-sm font-semibold text-[#3A2213]">Fabric Care</p>
                   <p className="mt-1 text-sm text-[#7A6D65]">{product.care.join(" • ")}</p>
                 </div>
               </div>

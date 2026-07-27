@@ -11,7 +11,7 @@ from app.schemas.product import ProductCreate, ProductUpdate
 # NOTE: category is handled separately below (every entry in the plural
 # `categories` list is synced under the same "category" attribute type),
 # so it isn't repeated in this tuple.
-_ATTRIBUTE_FIELDS = ("occasion", "color", "fabric")
+_ATTRIBUTE_FIELDS = ("fabric",)
 
 
 def _clean_categories(values: List[str]) -> List[str]:

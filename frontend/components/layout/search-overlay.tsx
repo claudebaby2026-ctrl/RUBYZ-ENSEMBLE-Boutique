@@ -11,7 +11,7 @@ import type { Product } from "@/lib/content";
 const RESULT_LIMIT = 6;
 
 function matches(product: Product, q: string) {
-  return [product.name, product.category, product.fabric, product.occasion, product.color, product.description]
+  return [product.name, product.category, product.fabric, product.description]
     .filter(Boolean)
     .some((field) => (field as string).toLowerCase().includes(q));
 }
@@ -109,7 +109,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                   onKeyDown={(e) => {
                     if (e.key === "Enter") goToResults();
                   }}
-                  placeholder="Search silhouettes, fabrics, occasions…"
+                  placeholder="Search silhouettes, fabrics, categories…"
                   className="w-full min-w-0 bg-transparent text-base text-[#3A2213] outline-none placeholder:text-[#A8968A]"
                 />
                 <button
@@ -160,7 +160,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                         <div className="min-w-0">
                           <p className="truncate text-sm text-[#3A2213]">{product.name}</p>
                           <p className="truncate text-xs uppercase tracking-[0.2em] text-[#A8968A]">
-                            {[product.category, product.color].filter(Boolean).join(" · ")}
+                            {product.category}
                           </p>
                         </div>
                         <p className="ml-auto shrink-0 text-sm text-[#B17F5E]">₹{product.price.toLocaleString()}</p>

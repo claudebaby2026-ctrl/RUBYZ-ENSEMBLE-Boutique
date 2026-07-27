@@ -17,8 +17,8 @@ class ProductBase(BaseModel):
     # when the person actually used it.
     categories: Optional[List[str]] = None
     fabric: str
-    occasion: str
-    color: str
+    occasion: str = ""
+    color: str = ""
     price: int
     mrp: int
     rating: float = 0.0

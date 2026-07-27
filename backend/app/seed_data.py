@@ -19,8 +19,6 @@ DEFAULT_ATTRIBUTES = {
         "Summer Collection",
         "Tailoring Services",
     ],
-    "occasion": ["Wedding", "Festive", "Office", "Casual", "Party Wear", "Eid", "Diwali"],
-    "color": ["Rose", "Gold", "Ivory", "Emerald", "Maroon", "Black", "Navy", "Blush"],
     "fabric": ["Cotton", "Georgette", "Silk", "Net", "Velvet", "Chiffon", "Lawn"],
 }
 
@@ -199,7 +197,7 @@ def seed_attributes(db: Session) -> None:
         for value in values:
             create_attribute(db, type_, value)
     for data in INITIAL_PRODUCTS:
-        for field in ("category", "occasion", "color", "fabric"):
+        for field in ("category", "fabric"):
             create_attribute(db, field, data[field])
 
 

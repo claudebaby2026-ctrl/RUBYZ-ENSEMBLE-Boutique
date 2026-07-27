@@ -43,8 +43,8 @@ export type Product = {
   // `category` needs to change.
   categories?: string[];
   fabric: string;
-  occasion: string;
-  color: string;
+  occasion?: string;
+  color?: string;
   price: number;
   mrp: number;
   rating: number;

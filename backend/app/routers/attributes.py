@@ -34,3 +34,19 @@ def create_attribute(
     if not payload.value:
         raise HTTPException(status_code=400, detail="Value cannot be empty")
     return attribute_crud.create_attribute(db, payload.type, payload.value)
+
+
+@router.delete("/{attribute_id}", status_code=204)
+def delete_attribute(
+    attribute_id: int,
+    db: Session = Depends(get_db),
+    current_owner: User = Depends(get_current_owner),
+):
+    """Owner-only — removes a taxonomy value (e.g. a category) from the
+    dashboard's dropdowns and storefront filters. Existing products that
+    already used this value keep it as plain text; only the "is offered as
+    an option" entry is removed."""
+    attribute = attribute_crud.get_attribute_by_id(db, attribute_id)
+    if not attribute:
+        raise HTTPException(status_code=404, detail="Attribute not found")
+    attribute_crud.delete_attribute(db, attribute)

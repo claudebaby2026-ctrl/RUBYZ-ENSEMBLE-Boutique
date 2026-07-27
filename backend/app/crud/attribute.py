@@ -21,6 +21,10 @@ def get_attribute(db: Session, type: str, value: str) -> Optional[Attribute]:
     )
 
 
+def get_attribute_by_id(db: Session, attribute_id: int) -> Optional[Attribute]:
+    return db.query(Attribute).filter(Attribute.id == attribute_id).first()
+
+
 def create_attribute(db: Session, type: str, value: str) -> Attribute:
     existing = get_attribute(db, type, value)
     if existing:
@@ -35,6 +39,11 @@ def create_attribute(db: Session, type: str, value: str) -> Attribute:
         # silently riding the __default__ fallback forever.
         ensure_category_row(db, value)
     return attribute
+
+
+def delete_attribute(db: Session, attribute: Attribute) -> None:
+    db.delete(attribute)
+    db.commit()
 
 
 def ensure_attribute(db: Session, type: str, value: Optional[str]) -> None:

@@ -15,7 +15,7 @@ export function StockBadge({
   product,
   className = "",
 }: {
-  product: Pick<Product, "stock" | "availability">;
+  product: Pick<Product, "stock" | "availability" | "category" | "fabric">;
   className?: string;
 }) {
   const status = getStockStatus(product);
