@@ -32,7 +32,7 @@ import { AttributeSelect } from "@/components/ui/attribute-select";
 // Product fields backed by the taxonomy (attributes) table — dropdown +
 // "add new" everywhere they're edited, instead of free text.
 export type AttributeOptions = Record<AttributeType, string[]>;
-const EMPTY_ATTRIBUTE_OPTIONS: AttributeOptions = { category: [], fabric: [] };
+const EMPTY_ATTRIBUTE_OPTIONS: AttributeOptions = { category: [], occasion: [], color: [], fabric: [] };
 
 const NAV = [
   { id: "home", label: "Dashboard", icon: LayoutGrid },
@@ -2038,9 +2038,10 @@ export default function DashboardPage() {
       ]);
       setProducts(productsData);
       setStats(statsData);
-      const grouped: AttributeOptions = { category: [], fabric: [] };
+      const grouped: AttributeOptions = { category: [], occasion: [], color: [], fabric: [] };
       const ids: Record<string, number> = {};
       for (const attribute of attributesData) {
+        if (!grouped[attribute.type]) grouped[attribute.type] = [];
         grouped[attribute.type].push(attribute.value);
         ids[`${attribute.type}:${attribute.value}`] = attribute.id;
       }
