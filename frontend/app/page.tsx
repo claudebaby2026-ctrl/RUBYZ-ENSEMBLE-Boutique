@@ -14,9 +14,9 @@ import { ArrowRight, Camera, Check, ExternalLink, Megaphone, Scissors, Sparkles,
 // /collections?type= filter already wired up in collections-explorer.tsx
 // and linked from the footer.
 const homeShopCategories = [
-  { name: "View All", tag: "Every one-of-a-kind suit in the boutique", href: "/collections" },
-  { name: "Stitched", tag: "Ready-to-wear · Try and go", href: "/collections?type=stitched" },
-  { name: "Unstitched", tag: "Custom Fit · Tailored to you", href: "/collections?type=unstitched" },
+  { name: "All Collections", tag: "Every one-of-a-kind suit in the boutique", href: "/collections" },
+  { name: "Stitched Collections", tag: "Ready-to-wear · Try and go", href: "/collections?type=stitched" },
+  { name: "Unstitched Collections", tag: "Custom Fit · Tailored to you", href: "/collections?type=unstitched" },
 ];
 
 export const dynamic = "force-dynamic";
