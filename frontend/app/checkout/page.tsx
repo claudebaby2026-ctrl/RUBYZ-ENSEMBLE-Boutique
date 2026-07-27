@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2, Tag, X } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { useCart } from "@/lib/useCart";
 import { getCartDeliveryFee, getAutoDiscount } from "@/lib/cart";
 import { brand } from "@/lib/content";
-import { validateCoupon, type Coupon } from "@/lib/api";
 
 const MODE_KEY = "rubyz_delivery_mode";
 
@@ -20,10 +19,6 @@ export default function CheckoutPage() {
   const [mode, setMode] = useState<"Delivery" | "Pickup">("Delivery");
   const [sent, setSent] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
-  const [couponError, setCouponError] = useState<string | null>(null);
-  const [couponLoading, setCouponLoading] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(MODE_KEY);
@@ -43,44 +38,14 @@ export default function CheckoutPage() {
   // details directly over WhatsApp, so this is just the flat per-suit
   // estimate (₹100/suit) shown up front for the customer's reference.
   const deliveryFee = mode === "Delivery" ? getCartDeliveryFee(items) : 0;
-  const couponDiscount = appliedCoupon
-    ? Math.min(
-        appliedCoupon.discount_type === "flat"
-          ? appliedCoupon.discount_value
-          : Math.floor((subtotal * appliedCoupon.discount_value) / 100),
-        subtotal
-      )
-    : 0;
-  // Automatic 10% storewide discount — applies on top of any coupon,
-  // computed off whatever's left of the subtotal after the coupon, never
-  // off the delivery fee.
-  const autoDiscount = getAutoDiscount(subtotal - couponDiscount);
-  const discount = couponDiscount + autoDiscount;
+  // Automatic 10% storewide discount — the only discount applied at
+  // checkout now that coupon codes have been removed. Never applies to
+  // the delivery fee.
+  const autoDiscount = getAutoDiscount(subtotal);
+  const discount = autoDiscount;
   const total = subtotal - discount + deliveryFee;
 
   const valid = agreedToTerms;
-
-  const applyCoupon = async () => {
-    const code = couponInput.trim();
-    if (!code || couponLoading) return;
-    setCouponLoading(true);
-    setCouponError(null);
-    try {
-      const coupon = await validateCoupon(code);
-      setAppliedCoupon(coupon);
-    } catch (e) {
-      setAppliedCoupon(null);
-      setCouponError(e instanceof Error ? e.message : "Could not apply this coupon.");
-    } finally {
-      setCouponLoading(false);
-    }
-  };
-
-  const removeCoupon = () => {
-    setAppliedCoupon(null);
-    setCouponInput("");
-    setCouponError(null);
-  };
 
   // Builds the itemized order summary the owner sees in WhatsApp — this is
   // a request for the owner to confirm (nothing is charged, reserved, or
@@ -95,7 +60,6 @@ export default function CheckoutPage() {
       "",
       `Subtotal: ₹${subtotal.toLocaleString()}`,
     ];
-    if (appliedCoupon) lines.push(`Coupon (${appliedCoupon.code}): −₹${couponDiscount.toLocaleString()}`);
     if (autoDiscount > 0) lines.push(`Discount (10%): −₹${autoDiscount.toLocaleString()}`);
     lines.push(`${mode === "Delivery" ? `Delivery: ₹${deliveryFee}` : "Pickup: in-store"}`);
     lines.push(`Estimated total: ₹${total.toLocaleString()}`);
@@ -182,12 +146,6 @@ export default function CheckoutPage() {
                 <span>Delivery</span>
                 <span>{deliveryFee ? `₹${deliveryFee}` : "Free"}</span>
               </div>
-              {appliedCoupon && (
-                <div className="flex justify-between text-[#3A9D5D]">
-                  <span>Coupon ({appliedCoupon.code})</span>
-                  <span>−₹{couponDiscount.toLocaleString()}</span>
-                </div>
-              )}
               {autoDiscount > 0 && (
                 <div className="flex justify-between text-[#B17F5E]">
                   <span>Discount (10%)</span>
@@ -196,39 +154,6 @@ export default function CheckoutPage() {
               )}
               <div className="mt-3 flex justify-between border-t border-[#3A2213]/8 pt-3 text-base font-semibold text-[#3A2213]"><span>Estimated Total</span><span>₹{total.toLocaleString()}</span></div>
               <p className="text-xs text-[#A8968A]">Final pricing and delivery is confirmed by our team over WhatsApp.</p>
-            </div>
-
-            <div className="mt-6">
-              {appliedCoupon ? (
-                <div className="flex items-center justify-between gap-2 rounded-2xl border border-[#3A9D5D]/30 bg-[#3A9D5D]/5 px-4 py-3 text-sm text-[#3A2213]">
-                  <span className="flex items-center gap-2">
-                    <Tag size={14} className="text-[#3A9D5D]" />
-                    <strong className="tracking-[0.08em]">{appliedCoupon.code}</strong> applied
-                  </span>
-                  <button onClick={removeCoupon} className="rounded-full p-1 text-[#8B7A6E] hover:text-[#D94F70]" aria-label="Remove coupon">
-                    <X size={14} />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    placeholder="Coupon code"
-                    value={couponInput}
-                    onChange={(e) => { setCouponInput(e.target.value); setCouponError(null); }}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); applyCoupon(); } }}
-                    className="flex-1 rounded-[1rem] border border-[#3A2213]/12 px-4 py-2.5 text-sm uppercase"
-                  />
-                  <button
-                    onClick={applyCoupon}
-                    disabled={!couponInput.trim() || couponLoading}
-                    className="flex items-center gap-2 whitespace-nowrap rounded-[1rem] border border-[#3A2213] px-4 py-2.5 text-sm font-medium text-[#3A2213] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {couponLoading && <Loader2 size={14} className="animate-spin" />}
-                    Apply
-                  </button>
-                </div>
-              )}
-              {couponError && <p className="mt-2 text-xs text-[#D94F70]">{couponError}</p>}
             </div>
 
             <label className="mt-6 flex items-start gap-3 text-xs leading-5 text-[#7A6D65]">
