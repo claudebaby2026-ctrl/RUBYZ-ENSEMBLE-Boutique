@@ -266,7 +266,7 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
       <div className="mt-6 grid grid-cols-3 gap-1.5 rounded-2xl border border-[#3A2213]/12 bg-[#FFFBF5] p-1.5 shadow-sm sm:inline-flex sm:w-auto sm:gap-2 sm:rounded-full">
         {(
           [
-            { value: "all", label: "All Pieces", short: "All" },
+            { value: "all", label: "All Collections", short: "All" },
             { value: "stitched", label: "Stitched / Ready-made", short: "Stitched" },
             { value: "unstitched", label: "Unstitched", short: "Unstitched" },
           ] as { value: ProductType; label: string; short: string }[]
