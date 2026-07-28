@@ -411,7 +411,7 @@ function AddProduct({
     categories: ["Pakistani Suits"] as string[], fabric: "Georgette",
     availability: "In stock",
   });
-  const [care, setCare] = useState<string[]>(["Dry clean recommended"]);
+  const [care, setCare] = useState<string[]>(["Dry clean recommended", "Do not dry under sun"]);
   const [sizes, setSizes] = useState<string[]>(["S", "M", "L"]);
   const [saved, setSaved] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -437,7 +437,7 @@ function AddProduct({
         sold: 0,
         badge: "NEW",
         description: form.description,
-        care: care.length > 0 ? care : ["Dry clean recommended"],
+        care: care.length > 0 ? care : ["Dry clean recommended", "Do not dry under sun"],
         sizes: sizes.length > 0 ? sizes : ["Free Size"],
         images,
         videos,
@@ -460,7 +460,7 @@ function AddProduct({
         <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Published!</h2>
         <p className="mt-2 text-sm text-[#8B7A6E]">&quot;{form.title}&quot; is now live in the store and inventory.</p>
         <button
-          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", availability: "In stock" }); }}
+          onClick={() => { setStep(1); setImages([]); setVideos([]); setPublished(false); setCare(["Dry clean recommended", "Do not dry under sun"]); setSizes(["S", "M", "L"]); setForm({ title: "", price: "", mrp: "", description: "", categories: ["Pakistani Suits"], fabric: "Georgette", availability: "In stock" }); }}
           className="mt-6 rounded-full bg-[#3A2213] px-8 py-3 text-sm text-white"
         >
           Add Another Product
