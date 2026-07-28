@@ -45,7 +45,9 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
           <div className="mt-3 flex items-center gap-2 text-sm">
             <span className="font-semibold text-[#3A2213]">₹{product.price}</span>
-            <span className="text-xs text-[#A8968A] line-through">₹{product.mrp}</span>
+            {discount !== null && (
+              <span className="text-xs text-[#A8968A] line-through">₹{product.mrp}</span>
+            )}
             {discount !== null && <span className="text-xs text-[#D94F70]">{discount}% OFF</span>}
           </div>
         </div>

@@ -49,7 +49,9 @@ export function AnimatedProductCard({ product }: { product: Product }) {
           </span>
           <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs sm:mt-3 sm:gap-2 sm:text-sm">
             <span className="font-semibold text-[#3A2213]">₹{product.price}</span>
-            <span className="text-[11px] text-[#A8968A] line-through sm:text-xs">₹{product.mrp}</span>
+            {discount !== null && (
+              <span className="text-[11px] text-[#A8968A] line-through sm:text-xs">₹{product.mrp}</span>
+            )}
             {discount !== null && <span className="text-[11px] text-[#D94F70] sm:text-xs">{discount}% OFF</span>}
           </div>
         </div>

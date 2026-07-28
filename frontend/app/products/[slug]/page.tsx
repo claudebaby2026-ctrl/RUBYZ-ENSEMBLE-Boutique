@@ -178,7 +178,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <p className="text-xs uppercase tracking-[0.28em] text-[#A8968A]">Price</p>
                 <p className="text-3xl text-[#3A2213]">₹{product.price}</p>
               </div>
-              <p className="text-sm text-[#A8968A] line-through">₹{product.mrp}</p>
+              {discount !== null && (
+                <p className="text-sm text-[#A8968A] line-through">₹{product.mrp}</p>
+              )}
               {discount !== null && (
                 <span className="rounded-full bg-[#D94F70]/10 px-2.5 py-1 text-xs font-semibold text-[#D94F70]">{discount}% OFF</span>
               )}
