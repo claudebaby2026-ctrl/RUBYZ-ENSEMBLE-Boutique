@@ -69,6 +69,7 @@ const clothingStoreJsonLd = {
   name: "RUBYZ Ensemble",
   url: SITE_URL,
   telephone: legalEntity.phone,
+  taxID: legalEntity.gstin,
   sameAs: [
     socialLinks.facebook,
     socialLinks.instagram,

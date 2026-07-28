@@ -58,6 +58,7 @@ export function SiteFooter() {
             Satya Nagar,<br />
             Bhubaneswar- 751007
           </p>
+          <p className="mt-3 text-sm text-gray-300">GSTIN: 21ACZPH7767A1ZF</p>
           <a
             href="https://maps.google.com/?q=RUBYZ-ENSEMBLE+Boutique+Home-Town+Road+Satya+Nagar+Bhubaneswar"
             target="_blank"

@@ -15,8 +15,9 @@ export default function TermsPage() {
       intro={
         <p>
           These Terms & Conditions govern your access to and use of rubyzensemble.in, operated by {legalEntity.legalName}
-          {" "}(&ldquo;{brand.name}&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;). By browsing the site, creating an
-          account, or placing an order, you agree to be bound by these terms. Please read them carefully.
+          {" "}(&ldquo;{brand.name}&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;), GSTIN: {legalEntity.gstin}. By browsing
+          the site, creating an account, or placing an order, you agree to be bound by these terms. Please read them
+          carefully.
         </p>
       }
       sections={[

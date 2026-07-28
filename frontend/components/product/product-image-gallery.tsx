@@ -43,14 +43,14 @@ export function ProductImageGallery({
             src={mainItem.src}
             controls
             onClick={() => setLightboxOpen(true)}
-            className="h-[320px] w-full cursor-zoom-in rounded-[1.1rem] object-cover sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]"
+            className="max-h-[520px] w-full cursor-zoom-in rounded-[1.1rem] bg-[#F4ECE1] object-contain sm:max-h-[640px] sm:rounded-[1.4rem] lg:max-h-[720px]"
           />
         ) : (
           <img
             src={mainItem.src}
             alt={altFor(alt, fabric, selected)}
             onClick={() => setLightboxOpen(true)}
-            className="h-[320px] w-full cursor-zoom-in rounded-[1.1rem] object-cover sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]"
+            className="max-h-[520px] w-full cursor-zoom-in rounded-[1.1rem] bg-[#F4ECE1] object-contain sm:max-h-[640px] sm:rounded-[1.4rem] lg:max-h-[720px]"
           />
         )
       ) : (
