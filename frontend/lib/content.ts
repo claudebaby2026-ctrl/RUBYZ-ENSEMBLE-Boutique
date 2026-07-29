@@ -124,15 +124,19 @@ export const legalEntity = {
   phone: "+91 78730 11110",
 };
 
-// Direct link to the reviews tab of RUBYZ-ENSEMBLE Boutique's actual,
-// verified Google Business Profile (place_id ChIJFYepAO8LGToRdNWE7bZPXQo —
-// confirmed via Places lookup: "RUBYZ-ENSEMBLE Boutique.", Home-Town Road,
-// Plot no 93, near Prayash Park, Satya Nagar, Bhubaneswar). Unlike a plain
-// maps.google.com/maps/search query — which just runs a text search and may
-// land on the wrong result or the general place page — this
+// RUBYZ-ENSEMBLE Boutique's actual, verified Google Business Profile place_id
+// (confirmed via Places lookup: "RUBYZ-ENSEMBLE Boutique.", Home-Town Road,
+// Plot no 93, near Prayash Park, Satya Nagar, Bhubaneswar). Reused both to
+// build the reviews deep link below and to pull live reviews server-side —
+// see lib/google-reviews.ts.
+export const googlePlaceId = "ChIJFYepAO8LGToRdNWE7bZPXQo";
+
+// Direct link to the reviews tab of the Business Profile above. Unlike a
+// plain maps.google.com/maps/search query — which just runs a text search
+// and may land on the wrong result or the general place page — this
 // search.google.com/local/reviews?placeid= form is Google's own supported
 // pattern for deep-linking straight into a specific listing's reviews.
-export const googleReviewsUrl = `https://search.google.com/local/reviews?placeid=ChIJFYepAO8LGToRdNWE7bZPXQo`;
+export const googleReviewsUrl = `https://search.google.com/local/reviews?placeid=${googlePlaceId}`;
 
 // Pages required for Razorpay merchant verification and Shiprocket seller
 // onboarding: Privacy Policy, Terms & Conditions, Shipping Policy and a

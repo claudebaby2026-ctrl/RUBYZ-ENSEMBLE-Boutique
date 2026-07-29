@@ -1,11 +1,13 @@
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { AnimatedProductCard } from "@/components/ui/animated-product-card";
 import { WhatsAppCommunityForm } from "@/components/ui/whatsapp-community-form";
-import { reviews, brand, legalEntity, socialLinks, googleReviewsUrl, type Product } from "@/lib/content";
+import { ReviewsCarousel } from "@/components/ui/reviews-carousel";
+import { brand, legalEntity, socialLinks, googleReviewsUrl, type Product } from "@/lib/content";
 import { getProducts, getHomepageConfig, resolveImageUrl } from "@/lib/api";
+import { getGoogleReviews } from "@/lib/google-reviews";
 import { InstagramIcon } from "@/components/icons/social-icons";
 import Link from "next/link";
-import { ArrowRight, Camera, Check, ExternalLink, Megaphone, Scissors, Sparkles, Truck } from "lucide-react";
+import { ArrowRight, Camera, Megaphone } from "lucide-react";
 
 // Homepage "Shop by Category" is deliberately trimmed to the 3 top-level
 // entry points the client wants front-and-center — everything else
@@ -22,7 +24,11 @@ const homeShopCategories = [
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [products, homepageConfig] = await Promise.all([getProducts(), getHomepageConfig()]);
+  const [products, homepageConfig, googleReviews] = await Promise.all([
+    getProducts(),
+    getHomepageConfig(),
+    getGoogleReviews(),
+  ]);
 
   // Featured module is driven by the owner's Homepage Editor selection.
   // Falls back to the first few products (the old static behavior) when
@@ -103,8 +109,8 @@ export default async function HomePage() {
       {/* ================= /TEMP BANNER ================= */}
 
       {bannerText && (
-        <div className="flex items-center justify-center gap-2 bg-[#3A2213] px-5 py-2.5 text-center text-xs uppercase tracking-[0.24em] text-white">
-          <Megaphone size={13} className="shrink-0 text-[#B17F5E]" />
+        <div className="flex items-center justify-center gap-2 bg-[linear-gradient(90deg,_#D94F70_0%,_#B13A57_100%)] px-5 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.24em] text-white">
+          <Megaphone size={13} className="shrink-0" />
           <span>{bannerText}</span>
         </div>
       )}
@@ -152,8 +158,8 @@ export default async function HomePage() {
                 Featured
               </h2>
             </div>
-            <Link href="/collections" className="text-sm uppercase tracking-[0.28em] text-[#3A2213] hover:text-[#B17F5E]">
-              View All
+            <Link href="/collections" className="inline-flex items-center gap-1.5 rounded-full bg-[#3A2213] px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#D94F70] sm:px-5">
+              View All <ArrowRight size={13} />
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
@@ -168,9 +174,14 @@ export default async function HomePage() {
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Most Loved</p>
-            <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
-              Best Sellers
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
+                Best Sellers
+              </h2>
+              <span className="rounded-full bg-[#D94F70] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white">
+                Trending
+              </span>
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
@@ -180,59 +191,45 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#3A2213] py-10 sm:py-16 text-white">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Inspired Looks</p>
-          <h2 className="mb-8 text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>
-            Celebrity Inspired Looks
-          </h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {[
-              {
-                name: "Manish Malhotra",
-                description: "Regal shimmer with couture energy.",
-                image: resolveImageUrl(homepageConfig.look_image_manish),
-              },
-              {
-                name: "Sabyasachi",
-                description: "Textural drama and heirloom elegance.",
-                image: resolveImageUrl(homepageConfig.look_image_sabyasachi),
-              },
-            ].map((look) => (
-              <div key={look.name} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-6">
-                {look.image ? (
-                  <img
-                    src={look.image}
-                    alt={`Inspired by ${look.name}`}
-                    className="mb-6 h-48 w-full rounded-[1.2rem] object-cover"
-                  />
-                ) : (
-                  <div className="mb-6 h-48 rounded-[1.2rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
-                )}
-                <h3 className="text-xl">Inspired by {look.name}</h3>
-                <p className="mt-2 text-sm text-gray-300">{look.description}</p>
-                <Link href="/collections" className="mt-5 inline-flex items-center gap-2 text-sm uppercase tracking-[0.28em] text-[#B17F5E]">
-                  Explore Collection <ArrowRight size={14} />
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#E9CFBA] py-10 sm:py-16">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
-          {[
-            { icon: Sparkles, title: "Premium Fabrics" },
-            { icon: Scissors, title: "Expert Tailoring" },
-            { icon: Check, title: "Handpicked Collections" },
-            { icon: Truck, title: "Nationwide Shipping" },
-          ].map(({ icon: Icon, title }) => (
-            <div key={title} className="rounded-[1.2rem] bg-[#FFFBF5] p-6 text-center shadow-sm">
-              <Icon className="mx-auto mb-3 text-[#B17F5E]" size={24} />
-              <p className="text-sm text-[#3A2213]">{title}</p>
+      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+          <Link href="/collections?category=Wedding+Collection" className="group relative block h-[420px] overflow-hidden rounded-[1.5rem] sm:h-[480px]">
+            <img
+              src="/homepage/mehendi-outfit.jpg"
+              alt="Designer mehendi outfit from RUBYZ Ensemble"
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(0deg,_rgba(23,13,6,0.85)_0%,_rgba(23,13,6,0.15)_45%,_transparent_70%)]" />
+            <div className="absolute left-5 top-5 rounded-full bg-[#D94F70] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:left-6 sm:top-6">
+              New Drop
             </div>
-          ))}
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+              <p className="text-xs uppercase tracking-[0.28em] text-[#E9CFBA]">Festive Edit</p>
+              <h3 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">Designer Mehendi Outfits</h3>
+              <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-[0.2em] text-[#3A2213] transition group-hover:bg-[#D94F70] group-hover:text-white">
+                Shop Now <ArrowRight size={14} />
+              </span>
+            </div>
+          </Link>
+
+          <Link href="/collections" className="group relative block h-[420px] overflow-hidden rounded-[1.5rem] sm:h-[480px]">
+            <img
+              src="/homepage/embroidered-suits.jpg"
+              alt="Handcrafted embroidered suits from RUBYZ Ensemble"
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(0deg,_rgba(23,13,6,0.85)_0%,_rgba(23,13,6,0.15)_45%,_transparent_70%)]" />
+            <div className="absolute left-5 top-5 rounded-full bg-[#3A2213] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:left-6 sm:top-6">
+              Handcrafted
+            </div>
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+              <p className="text-xs uppercase tracking-[0.28em] text-[#E9CFBA]">Straight From the Boutique</p>
+              <h3 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">Handpicked Embroidered Suits</h3>
+              <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-[0.2em] text-[#3A2213] transition group-hover:bg-[#D94F70] group-hover:text-white">
+                Explore Collection <ArrowRight size={14} />
+              </span>
+            </div>
+          </Link>
         </div>
       </section>
 
@@ -267,26 +264,14 @@ export default async function HomePage() {
       <section className="bg-[#E9CFBA] py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <h2 className="mb-8 text-center text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
-            Customer Reviews
+            What Our Customers Say
           </h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {reviews.map((review) => (
-              <div key={review.name} className="rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
-                <p className="text-sm leading-7 text-[#5C4E44]">“{review.text}”</p>
-                <p className="mt-4 text-xs uppercase tracking-[0.28em] text-[#B17F5E]">{review.name}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8 flex justify-center">
-            <a
-              href={googleReviewsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-[#3A2213]/12 bg-[#FFFBF5] px-6 py-3 text-sm uppercase tracking-[0.28em] text-[#3A2213] transition hover:border-[#B17F5E] hover:text-[#B17F5E]"
-            >
-              Read More on Google <ExternalLink size={15} />
-            </a>
-          </div>
+          <ReviewsCarousel
+            reviews={googleReviews.reviews}
+            googleReviewsUrl={googleReviewsUrl}
+            overallRating={googleReviews.overallRating}
+            totalReviews={googleReviews.totalReviews}
+          />
         </div>
       </section>
 
