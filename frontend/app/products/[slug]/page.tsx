@@ -173,7 +173,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <span className="rounded-full bg-[#E9CFBA] px-3 py-1 text-sm text-[#3A2213]">{product.fabric}</span>
             </div>
 
-            <div className="mt-8 flex items-end gap-4">
+            <div className="mt-8 flex flex-wrap items-end gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-[#A8968A]">Price</p>
                 <p className="text-3xl text-[#3A2213]">₹{product.price}</p>
@@ -185,6 +185,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <span className="rounded-full bg-[#D94F70]/10 px-2.5 py-1 text-xs font-semibold text-[#D94F70]">{discount}% OFF</span>
               )}
             </div>
+            <p className="mt-1.5 text-xs font-medium text-[#B17F5E]">Extra 10% off during checkout</p>
 
             <AddToCartPanel product={product} image={images[0]} />
 

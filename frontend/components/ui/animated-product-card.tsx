@@ -54,6 +54,7 @@ export function AnimatedProductCard({ product }: { product: Product }) {
             )}
             {discount !== null && <span className="text-[11px] text-[#D94F70] sm:text-xs">{discount}% OFF</span>}
           </div>
+          <p className="mt-1 text-[10px] font-medium text-[#B17F5E] sm:text-[11px]">Extra 10% off during checkout</p>
         </div>
       </motion.article>
     </Link>

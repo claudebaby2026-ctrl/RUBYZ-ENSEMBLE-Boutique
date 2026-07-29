@@ -41,7 +41,6 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     const type = searchParams.get("type");
     return type === "stitched" || type === "unstitched" ? type : "all";
   });
-  const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   // Derived from the real catalog rather than hardcoded, so the slider's
   // bounds always reflect what's actually for sale.
   const MIN_PRICE = products.length ? Math.min(...products.map((p) => p.price)) : FALLBACK_MIN_PRICE;
@@ -72,12 +71,11 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     }
   }, [filtersOpen]);
 
-  // Filter option lists come from the taxonomy API (the same table the
-  // owner dashboard's "add new" dropdowns write to), so any category or
-  // fabric the owner adds shows up here too — falling back to whatever's
-  // actually on the current products if the API call hasn't resolved yet.
+  // Filter option list comes from the taxonomy API (the same table the
+  // owner dashboard's "add new" dropdown writes to), so any category the
+  // owner adds shows up here too — falling back to whatever's actually on
+  // the current products if the API call hasn't resolved yet.
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-  const [fabricOptions, setFabricOptions] = useState<string[]>([]);
 
   useEffect(() => {
     // Keep the search box in sync if the user searches again from the
@@ -101,14 +99,12 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
       .then((attributes) => {
         if (cancelled) return;
         setCategoryOptions(attributes.filter((a) => a.type === "category").map((a) => a.value));
-        setFabricOptions(attributes.filter((a) => a.type === "fabric").map((a) => a.value));
       })
       .catch(() => {
         // Fall back to whatever values are present on the loaded products.
         if (cancelled) return;
         const unique = (values: (string | undefined)[]) => Array.from(new Set(values.filter(Boolean))) as string[];
         setCategoryOptions(unique(products.map((p) => p.category)));
-        setFabricOptions(unique(products.map((p) => p.fabric)));
       });
     return () => {
       cancelled = true;
@@ -132,13 +128,9 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
       const matchesCategory =
         selectedCategories.length === 0 || selectedCategories.includes(product.category);
 
-      const matchesFabric =
-        selectedFabrics.length === 0 ||
-        selectedFabrics.some((fabric) => product.fabric?.toLowerCase().includes(fabric.toLowerCase()));
-
       const matchesPrice = product.price <= maxPrice;
 
-      return matchesType && matchesQuery && matchesCategory && matchesFabric && matchesPrice;
+      return matchesType && matchesQuery && matchesCategory && matchesPrice;
     });
 
     if (sort === "Price: Low to High") {
@@ -151,27 +143,24 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
     }
 
     return result;
-  }, [products, query, selectedType, selectedCategories, selectedFabrics, maxPrice, sort]);
+  }, [products, query, selectedType, selectedCategories, maxPrice, sort]);
 
   const hasActiveFilters =
     query.trim().length > 0 ||
     selectedType !== "all" ||
     selectedCategories.length > 0 ||
-    selectedFabrics.length > 0 ||
     maxPrice < MAX_PRICE;
 
   // Count of active filter *facets* (excludes the search box, which has its
   // own visible input) — drives the badge on the mobile Filters button.
   const activeFilterCount =
     selectedCategories.length +
-    selectedFabrics.length +
     (maxPrice < MAX_PRICE ? 1 : 0);
 
   const clearFilters = () => {
     setQuery("");
     setSelectedType("all");
     setSelectedCategories([]);
-    setSelectedFabrics([]);
     setMaxPrice(MAX_PRICE);
   };
 
@@ -211,22 +200,6 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             <span>₹{MIN_PRICE.toLocaleString()}</span>
             <span>Up to ₹{maxPrice.toLocaleString()}</span>
           </div>
-        </div>
-      </div>
-      <div>
-        <p className="text-sm font-semibold text-[#3A2213]">Fabric</p>
-        <div className="mt-3 space-y-2 text-sm text-[#7A6D65]">
-          {fabricOptions.map((fabric) => (
-            <label key={fabric} className="flex items-center gap-2 py-0.5">
-              <input
-                type="checkbox"
-                checked={selectedFabrics.includes(fabric)}
-                onChange={() => setSelectedFabrics((current) => toggle(current, fabric))}
-                className="h-4 w-4 accent-[#B17F5E]"
-              />
-              {fabric}
-            </label>
-          ))}
         </div>
       </div>
     </div>
