@@ -8,7 +8,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from app.config import settings
-from app.database import Base, SessionLocal, engine
+from app.database import Base, engine
 from app.migrations import run_migrations
 from app.rate_limit import limiter
 from app.routers import (
@@ -26,12 +26,6 @@ from app.routers import (
     shipping_defaults,
     uploads,
     whatsapp_community,
-)
-from app.seed_data import (
-    seed_attributes,
-    seed_if_empty,
-    seed_owner,
-    seed_shipping_defaults,
 )
 
 # Import models so SQLAlchemy metadata knows about them before create_all
@@ -74,14 +68,6 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
     run_migrations(engine)
-    db = SessionLocal()
-    try:
-        #seed_if_empty(db) # disabled before going customer-facing — don't reseed demo products
-        seed_owner(db)
-        seed_attributes(db)
-        seed_shipping_defaults(db)
-    finally:
-        db.close()
 
 
 app.include_router(auth.router)
