@@ -192,48 +192,6 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
-        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-          <Link href="/collections?category=Wedding+Collection" className="group relative block h-[420px] overflow-hidden rounded-[1.5rem] sm:h-[480px]">
-            <img
-              src="/homepage/mehendi-outfit.jpg"
-              alt="Designer mehendi outfit from RUBYZ Ensemble"
-              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(0deg,_rgba(23,13,6,0.85)_0%,_rgba(23,13,6,0.15)_45%,_transparent_70%)]" />
-            <div className="absolute left-5 top-5 rounded-full bg-[#D94F70] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:left-6 sm:top-6">
-              New Drop
-            </div>
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <p className="text-xs uppercase tracking-[0.28em] text-[#E9CFBA]">Festive Edit</p>
-              <h3 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">Designer Mehendi Outfits</h3>
-              <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-[0.2em] text-[#3A2213] transition group-hover:bg-[#D94F70] group-hover:text-white">
-                Shop Now <ArrowRight size={14} />
-              </span>
-            </div>
-          </Link>
-
-          <Link href="/collections" className="group relative block h-[420px] overflow-hidden rounded-[1.5rem] sm:h-[480px]">
-            <img
-              src="/homepage/embroidered-suits.jpg"
-              alt="Handcrafted embroidered suits from RUBYZ Ensemble"
-              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(0deg,_rgba(23,13,6,0.85)_0%,_rgba(23,13,6,0.15)_45%,_transparent_70%)]" />
-            <div className="absolute left-5 top-5 rounded-full bg-[#3A2213] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:left-6 sm:top-6">
-              Handcrafted
-            </div>
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <p className="text-xs uppercase tracking-[0.28em] text-[#E9CFBA]">Straight From the Boutique</p>
-              <h3 className="mt-1 text-2xl font-semibold text-white sm:text-3xl">Handpicked Embroidered Suits</h3>
-              <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-[0.2em] text-[#3A2213] transition group-hover:bg-[#D94F70] group-hover:text-white">
-                Explore Collection <ArrowRight size={14} />
-              </span>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Made for You</p>
