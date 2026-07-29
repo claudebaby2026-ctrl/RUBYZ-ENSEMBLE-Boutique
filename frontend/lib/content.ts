@@ -83,19 +83,24 @@ export const categories = [
 
 export const reviews = [
   {
-    name: "Ananya, Bhubaneswar",
-    text: "The Anarkali fit perfectly after their tailoring team adjusted the sleeves. Feels like a designer piece.",
+    name: "Manamayee Patra, California",
+    text: "I highly recommend Rubyz ensemble for material and stitching both. As I stay in California, I need a lot of ethnic clothes for various events. Rubyz is a perfect match for all my requirements. I have got more than 30 suits in past couple of months. Also Ruby and her staffs are very friendly and professional. Ruby personally takes care of the design and fitting of the clothes. The best part is her materials are of good quality and extremely pocket friendly. Thank you so much Rubyz ensemble!! :)",
     rating: 5,
   },
   {
-    name: "Riya, Cuttack",
-    text: "Fabric quality is far better than what I expected online. Delivery was on time for my sister's wedding.",
+    name: "Sarthika Pattnaik",
+    text: "First of all, I would like to talk about the material of the suit pieces. The quality is absolutely royal, and the overall look and finish are truly elegant. The work on the outfits is unique, and I couldn't find similar designs anywhere else. Every piece looks special and premium. Secondly, the pricing is very reasonable when compared to the quality of the material. Once you see the fabric and craftsmanship, you will feel that the prices are quite affordable. Even the designer pieces may seem a little expensive at first, but they are definitely worth the investment. When you wear the outfit, you can feel that your money has been spent in the right place. I would also like to appreciate the owner. She is extremely kind, understanding, and caring. I faced a small issue during payment and requested a few days' time to complete it. She very politely agreed without any hesitation. Such kindness and trust are rare to find these days. Overall, I highly recommend this store to everyone. The collection, quality, pricing, and customer service are all excellent. For the people of Rameswaram, it's like having a fashion palace right in your area where you can find beautiful outfits for every special occasion. I truly loved my experience and would gladly suggest everyone visit and shop here.",
     rating: 5,
   },
   {
-    name: "Meher, Puri",
-    text: "Loved the personal styling advice over WhatsApp before I even ordered.",
-    rating: 4,
+    name: "Roshni Khannan",
+    text: "Loved the pieces. I have taken two heavy suits, both for the two most loved people in my world—one for my elegant mom and another for my beautiful daughter. Thank you, Ruby bhabhi, for helping me with the last-minute purchase. I couldn't have found a more beautiful or better suit. Will definitely share the pictures once they're stitched!",
+    rating: 5,
+  },
+  {
+    name: "Divyajyoti Sahoo",
+    text: "A very good experience. A large collection of both readymade and unstitched dresses is available. Highly recommended place to visit!",
+    rating: 5,
   },
 ];
 
