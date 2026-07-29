@@ -12,12 +12,7 @@ from app.security import hash_password
 # owner can add any further value from the dashboard at any time.
 DEFAULT_ATTRIBUTES = {
     "category": [
-        "Pakistani Suits",
-        "Party Wear",
-        "Wedding Collection",
-        "Luxury Edit",
-        "Summer Collection",
-        "Tailoring Services",
+        
     ],
     "fabric": ["Cotton", "Georgette", "Silk", "Net", "Velvet", "Chiffon", "Lawn"],
 }
