@@ -19,6 +19,8 @@ function Stars({ rating }: { rating: number }) {
 }
 
 function ReviewCard({ review }: { review: GoogleReview }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <div className="flex h-full flex-col rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
       <div className="flex items-center gap-3">
@@ -34,7 +36,18 @@ function ReviewCard({ review }: { review: GoogleReview }) {
           <Stars rating={review.rating} />
         </div>
       </div>
-      <p className="mt-4 flex-1 text-sm leading-7 text-[#5C4E44]">&ldquo;{review.text}&rdquo;</p>
+      <p className={`mt-4 flex-1 text-sm leading-7 text-[#5C4E44] ${expanded ? "" : "line-clamp-5"}`}>
+        &ldquo;{review.text}&rdquo;
+      </p>
+      {review.text.length > 180 && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-2 self-start text-xs font-semibold uppercase tracking-[0.14em] text-[#D94F70] hover:text-[#B13E5B]"
+        >
+          {expanded ? "Read Less" : "Read More"}
+        </button>
+      )}
       {review.relativeTime && <p className="mt-4 text-[11px] uppercase tracking-[0.24em] text-[#B17F5E]">{review.relativeTime}</p>}
     </div>
   );
