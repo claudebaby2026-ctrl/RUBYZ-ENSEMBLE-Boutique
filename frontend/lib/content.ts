@@ -83,7 +83,7 @@ export const categories = [
 
 export const reviews = [
   {
-    name: "Manamayee Patra, California",
+    name: "Manamayee Patra",
     text: "I highly recommend Rubyz ensemble for material and stitching both. As I stay in California, I need a lot of ethnic clothes for various events. Rubyz is a perfect match for all my requirements. I have got more than 30 suits in past couple of months. Also Ruby and her staffs are very friendly and professional. Ruby personally takes care of the design and fitting of the clothes. The best part is her materials are of good quality and extremely pocket friendly. Thank you so much Rubyz ensemble!! :)",
     rating: 5,
   },
