@@ -93,7 +93,7 @@ export const reviews = [
     rating: 5,
   },
   {
-    name: "Roshni Khannan",
+    name: "Roshni Khannah",
     text: "Loved the pieces. I have taken two heavy suits, both for the two most loved people in my world—one for my elegant mom and another for my beautiful daughter. Thank you, Ruby bhabhi, for helping me with the last-minute purchase. I couldn't have found a more beautiful or better suit. Will definitely share the pictures once they're stitched!",
     rating: 5,
   },
