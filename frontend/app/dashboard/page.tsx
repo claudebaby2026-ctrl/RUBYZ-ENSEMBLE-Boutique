@@ -27,6 +27,7 @@ import {
   ApiError,
 } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
+import { VideoEditorModal } from "@/components/ui/video-editor-modal";
 import { AttributeSelect, AttributeMultiSelect } from "@/components/ui/attribute-select";
 
 // Product fields backed by the taxonomy (attributes) table — dropdown +
@@ -194,14 +195,15 @@ function ImageUploader({ images, onChange }: { images: string[]; onChange: (imag
 function VideoUploader({ videos, onChange }: { videos: string[]; onChange: (videos: string[]) => void }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [editingFile, setEditingFile] = useState<File | null>(null);
 
-  const handleFiles = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  const uploadFiles = async (files: File[]) => {
     setUploading(true);
     setError(null);
     try {
       const uploaded: string[] = [];
-      for (const file of Array.from(files)) {
+      for (const file of files) {
         const { url } = await uploadVideo(file);
         uploaded.push(url);
       }
@@ -210,6 +212,32 @@ function VideoUploader({ videos, onChange }: { videos: string[]; onChange: (vide
       setError(e instanceof Error ? e.message : "Could not upload video");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleFiles = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const queue = Array.from(files);
+    setPendingFiles(queue.slice(1));
+    setEditingFile(queue[0]);
+  };
+
+  const handleEditDone = async (editedFile: File) => {
+    setEditingFile(null);
+    await uploadFiles([editedFile]);
+    if (pendingFiles.length > 0) {
+      const [next, ...rest] = pendingFiles;
+      setPendingFiles(rest);
+      setEditingFile(next);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingFile(null);
+    if (pendingFiles.length > 0) {
+      const [next, ...rest] = pendingFiles;
+      setPendingFiles(rest);
+      setEditingFile(next);
     }
   };
 
@@ -244,6 +272,9 @@ function VideoUploader({ videos, onChange }: { videos: string[]; onChange: (vide
         </label>
       </div>
       {error && <p className="mt-2 text-xs text-[#D94F70]">{error}</p>}
+      {editingFile && (
+        <VideoEditorModal file={editingFile} onCancel={handleEditCancel} onDone={handleEditDone} />
+      )}
     </div>
   );
 }
