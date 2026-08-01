@@ -176,7 +176,7 @@ export default async function HomePage() {
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Most Loved</p>
             <div className="flex items-center gap-3">
               <h2 className="text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
-                Best Sellers
+                Trend Setters
               </h2>
               <span className="rounded-full bg-[#D94F70] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white">
                 Trending

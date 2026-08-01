@@ -12,7 +12,7 @@ ALLOWED_CONTENT_TYPES = {
     "image/webp": ".webp",
     "image/gif": ".gif",
 }
-MAX_FILE_SIZE = 8 * 1024 * 1024  # 8 MB
+MAX_FILE_SIZE = 16 * 1024 * 1024  # 16 MB
 
 ALLOWED_VIDEO_CONTENT_TYPES = {
     "video/mp4": ".mp4",
@@ -39,7 +39,7 @@ async def upload_image(
 
     contents = await file.read()
     if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=400, detail="Image must be under 8MB.")
+        raise HTTPException(status_code=400, detail="Image must be under 16MB.")
 
     extension = ALLOWED_CONTENT_TYPES[file.content_type]
     url = save_file(contents, extension, file.content_type)
