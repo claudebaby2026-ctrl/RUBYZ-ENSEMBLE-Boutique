@@ -26,7 +26,8 @@ import {
   createManualOrder,
   ApiError,
 } from "@/lib/api";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/lib/auth-provider";
+import { ProductMediaThumb } from "@/components/ui/product-media-thumb";
 import { VideoEditorModal } from "@/components/ui/video-editor-modal";
 import { AttributeSelect, AttributeMultiSelect } from "@/components/ui/attribute-select";
 
@@ -1308,13 +1309,17 @@ function Inventory({
           {products.map((product) => (
             <div key={product.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-[#3A2213]/8 p-4 last:border-b-0">
               <div className="flex min-w-0 items-center gap-3">
-                {product.images?.[0] ? (
-                  <img src={resolveImageUrl(product.images[0])} alt={product.name} className="h-12 w-10 shrink-0 rounded-[0.5rem] object-cover" />
-                ) : (
-                  <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#E9CFBA] text-[#A8968A]">
-                    <ImageOff size={14} />
-                  </div>
-                )}
+                <ProductMediaThumb
+                  images={product.images}
+                  videos={product.videos}
+                  alt={product.name}
+                  className="h-12 w-10 shrink-0 rounded-[0.5rem] object-cover"
+                  placeholder={
+                    <div className="flex h-12 w-10 shrink-0 items-center justify-center rounded-[0.5rem] bg-[#E9CFBA] text-[#A8968A]">
+                      <ImageOff size={14} />
+                    </div>
+                  }
+                />
                 <div className="min-w-0">
                   <p className="truncate text-sm text-[#3A2213]">{product.name}</p>
                   <p className="text-xs text-[#A8968A]">₹{product.price} · {product.category}</p>
@@ -1980,11 +1985,15 @@ function HomepageEditor({ products }: { products: Product[] }) {
                   className={`flex cursor-pointer items-center gap-3 rounded-[0.9rem] border p-3 text-sm ${checked ? "border-[#3A2213] bg-[#E9CFBA]" : "border-[#3A2213]/12"}`}
                 >
                   <input type="checkbox" checked={checked} onChange={() => toggleFeatured(p.id)} className="accent-[#3A2213]" />
-                  {p.images?.[0] ? (
-                    <img src={resolveImageUrl(p.images[0])} alt={p.name} className="h-10 w-8 rounded-[0.4rem] object-cover" />
-                  ) : (
-                    <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#E9CFBA] text-[#A8968A]"><ImageOff size={12} /></div>
-                  )}
+                  <ProductMediaThumb
+                    images={p.images}
+                    videos={p.videos}
+                    alt={p.name}
+                    className="h-10 w-8 rounded-[0.4rem] object-cover"
+                    placeholder={
+                      <div className="flex h-10 w-8 items-center justify-center rounded-[0.4rem] bg-[#E9CFBA] text-[#A8968A]"><ImageOff size={12} /></div>
+                    }
+                  />
                   <span className="truncate">{p.name}</span>
                 </label>
               );

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Heart, Loader2 } from "lucide-react";
-import { useLikes } from "@/lib/useLikes";
+import { useLikes } from "@/lib/likes-provider";
 
 export function LikeButton({
   productId,

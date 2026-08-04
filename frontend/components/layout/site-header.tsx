@@ -6,8 +6,8 @@ import { Search, ShoppingBag, Heart, Menu, User, LogOut, X, PackageSearch, Messa
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { brand, socialLinks } from "@/lib/content";
-import { useAuth } from "@/lib/useAuth";
-import { useCart } from "@/lib/useCart";
+import { useAuth } from "@/lib/auth-provider";
+import { useCart } from "@/lib/cart-provider";
 import { SearchOverlay } from "@/components/layout/search-overlay";
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from "@/components/icons/social-icons";
 

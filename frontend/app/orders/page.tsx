@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, PackageSearch } from "lucide-react";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/lib/auth-provider";
 import { getMyOrders, humanizeShipmentStatus, type Order } from "@/lib/api";
 
 function StatusBadge({ status }: { status: string }) {

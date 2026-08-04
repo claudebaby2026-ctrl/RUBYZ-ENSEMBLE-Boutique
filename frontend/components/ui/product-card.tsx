@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Product } from "@/lib/content";
-import { resolveImageUrl } from "@/lib/api";
+import { ProductMediaThumb } from "@/components/ui/product-media-thumb";
 import { LikeButton } from "@/components/product/like-button";
 import { OutOfStockRibbon, StockBadge } from "@/components/product/stock-badge";
 import { getDiscountPercent, getStockStatus } from "@/lib/stock";
 
 export function ProductCard({ product }: { product: Product }) {
-  const image = resolveImageUrl(product.images?.[0]);
   const outOfStock = getStockStatus(product) === "out-of-stock";
   const discount = getDiscountPercent(product);
   return (
@@ -22,15 +21,14 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="absolute right-3 top-3">
             <LikeButton productId={product.id} />
           </div>
-          {image ? (
-            <img
-              src={image}
-              alt={product.name}
-              className={`h-64 w-full rounded-[1rem] object-cover ${outOfStock ? "grayscale-[70%] opacity-70" : ""}`}
-            />
-          ) : (
-            <div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
-          )}        <div className="mt-3 flex items-center justify-between">
+          <ProductMediaThumb
+            images={product.images}
+            videos={product.videos}
+            alt={product.name}
+            className={`h-64 w-full rounded-[1rem] object-cover ${outOfStock ? "grayscale-[70%] opacity-70" : ""}`}
+            placeholder={<div className="h-64 rounded-[1rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />}
+          />
+          <div className="mt-3 flex items-center justify-between">
             <span className="rounded-full bg-[#3A2213] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white">
               {product.badge}
             </span>

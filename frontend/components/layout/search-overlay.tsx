@@ -5,8 +5,9 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, X, Loader2, ArrowRight } from "lucide-react";
-import { getProducts, resolveImageUrl } from "@/lib/api";
+import { getProducts } from "@/lib/api";
 import type { Product } from "@/lib/content";
+import { ProductMediaThumb } from "@/components/ui/product-media-thumb";
 
 const RESULT_LIMIT = 6;
 
@@ -144,7 +145,6 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
 
                 {!loading &&
                   results.map((product) => {
-                    const image = resolveImageUrl(product.images?.[0]);
                     return (
                       <a
                         key={product.id}
@@ -152,11 +152,15 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                         onClick={onClose}
                         className="flex items-center gap-4 rounded-[1rem] px-3 py-2.5 transition hover:bg-[#E9CFBA]"
                       >
-                        {image ? (
-                          <img src={image} alt={product.name} className="h-14 w-14 shrink-0 rounded-[0.7rem] object-cover" />
-                        ) : (
-                          <div className="h-14 w-14 shrink-0 rounded-[0.7rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
-                        )}
+                        <ProductMediaThumb
+                          images={product.images}
+                          videos={product.videos}
+                          alt={product.name}
+                          className="h-14 w-14 shrink-0 rounded-[0.7rem] object-cover"
+                          placeholder={
+                            <div className="h-14 w-14 shrink-0 rounded-[0.7rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)]" />
+                          }
+                        />
                         <div className="min-w-0">
                           <p className="truncate text-sm text-[#3A2213]">{product.name}</p>
                           <p className="truncate text-xs uppercase tracking-[0.2em] text-[#A8968A]">

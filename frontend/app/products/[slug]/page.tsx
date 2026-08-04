@@ -94,7 +94,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     .map(({ item }) => item);
   const images = (product.images ?? []).map((img) => resolveImageUrl(img)).filter(Boolean) as string[];
   const videos = (product.videos ?? []).map((v) => resolveImageUrl(v)).filter(Boolean) as string[];
-  const mainImage = images[0];
+  // Gates the gallery vs. the gradient placeholder below — true whenever
+  // there's *any* media (an image OR a video) for ProductImageGallery to
+  // show, not just when there's a first image.
+  const hasMedia = images.length > 0 || videos.length > 0;
   const discount = getDiscountPercent(product);
   const canonicalUrl = `${SITE_URL}/products/${product.slug}`;
 
@@ -154,7 +157,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <span className="rounded-full bg-[#3A2213] px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white">{product.badge}</span>
               <LikeButton productId={product.id} className="rounded-full border border-[#3A2213]/12 p-2" />
             </div>
-            {mainImage ? (
+            {hasMedia ? (
               <ProductImageGallery images={images} videos={videos} alt={product.name} fabric={product.fabric} />
             ) : (
               <div className="h-[320px] rounded-[1.1rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)] sm:h-[400px] sm:rounded-[1.4rem] lg:h-[440px]" />
@@ -187,7 +190,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
             <p className="mt-1.5 text-xs font-medium text-[#B17F5E]">Extra 10% off during checkout</p>
 
-            <AddToCartPanel product={product} image={images[0]} />
+            <AddToCartPanel product={product} image={images[0]} video={!images[0] ? videos[0] : undefined} />
 
             <div className="mt-8 rounded-[1.4rem] border border-[#3A2213]/8 bg-[#FFFBF5] p-6 shadow-sm">
               <h2 className="text-xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>Product Details</h2>

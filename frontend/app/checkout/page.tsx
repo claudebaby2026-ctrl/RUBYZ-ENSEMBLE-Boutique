@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import { useCart } from "@/lib/useCart";
+import { useCart } from "@/lib/cart-provider";
 import { getCartDeliveryFee, getAutoDiscount } from "@/lib/cart";
 import { brand } from "@/lib/content";
 

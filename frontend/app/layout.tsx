@@ -4,6 +4,9 @@ import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { legalEntity, SITE_URL, brand, socialLinks } from "@/lib/content";
+import { AuthProvider } from "@/lib/auth-provider";
+import { LikesProvider } from "@/lib/likes-provider";
+import { CartProvider } from "@/lib/cart-provider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -109,9 +112,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(clothingStoreJsonLd) }}
         />
-        <SiteHeader />
-        {children}
-        <SiteFooter />
+        <AuthProvider>
+          <LikesProvider>
+            <CartProvider>
+              <SiteHeader />
+              {children}
+              <SiteFooter />
+            </CartProvider>
+          </LikesProvider>
+        </AuthProvider>
       </body>
     </html>
   );

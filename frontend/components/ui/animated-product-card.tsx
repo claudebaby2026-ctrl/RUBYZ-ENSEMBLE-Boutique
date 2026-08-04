@@ -3,14 +3,13 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { Product } from "@/lib/content";
-import { resolveImageUrl } from "@/lib/api";
+import { ProductMediaThumb } from "@/components/ui/product-media-thumb";
 import { toTitleCase } from "@/lib/format";
 import { LikeButton } from "@/components/product/like-button";
 import { OutOfStockRibbon, StockBadge } from "@/components/product/stock-badge";
 import { getDiscountPercent, getStockStatus } from "@/lib/stock";
 
 export function AnimatedProductCard({ product }: { product: Product }) {
-  const image = resolveImageUrl(product.images?.[0]);
   const outOfStock = getStockStatus(product) === "out-of-stock";
   const discount = getDiscountPercent(product);
   return (
@@ -25,15 +24,15 @@ export function AnimatedProductCard({ product }: { product: Product }) {
           <div className="absolute right-2 top-2 sm:right-3 sm:top-3">
             <LikeButton productId={product.id} />
           </div>
-          {image ? (
-            <img
-              src={image}
-              alt={product.name}
-              className={`aspect-[3/4] w-full rounded-[0.8rem] object-cover sm:rounded-[1rem] ${outOfStock ? "grayscale-[70%] opacity-70" : ""}`}
-            />
-          ) : (
-            <div className="aspect-[3/4] w-full rounded-[0.8rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)] sm:rounded-[1rem]" />
-          )}
+          <ProductMediaThumb
+            images={product.images}
+            videos={product.videos}
+            alt={product.name}
+            className={`aspect-[3/4] w-full rounded-[0.8rem] object-cover sm:rounded-[1rem] ${outOfStock ? "grayscale-[70%] opacity-70" : ""}`}
+            placeholder={
+              <div className="aspect-[3/4] w-full rounded-[0.8rem] bg-[linear-gradient(135deg,_#E9CFBA_0%,_#D8BFA8_100%)] sm:rounded-[1rem]" />
+            }
+          />
           <div className="mt-2 flex items-center justify-between gap-2 sm:mt-3">
             <span className="rounded-full bg-[#3A2213] px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.2em] text-white sm:px-2.5 sm:text-[10px] sm:tracking-[0.24em]">
               {product.badge}

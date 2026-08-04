@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { Check, MessageCircle, ShoppingBag, Sparkles } from "lucide-react";
 import type { Product } from "@/lib/content";
 import { brand } from "@/lib/content";
-import { useCart } from "@/lib/useCart";
+import { useCart } from "@/lib/cart-provider";
+import { captureVideoPosterFrame } from "@/lib/video-poster";
 
-export function AddToCartPanel({ product, image }: { product: Product; image?: string }) {
+export function AddToCartPanel({ product, image, video }: { product: Product; image?: string; video?: string }) {
   const router = useRouter();
   const { addToCart } = useCart();
   const sizes = product.sizes?.length ? product.sizes : ["Free Size"];
@@ -18,13 +19,18 @@ export function AddToCartPanel({ product, image }: { product: Product; image?: s
 
   // RUBYZ keeps exactly one piece per suit — there's no quantity to pick,
   // every add-to-cart is a single, exclusive unit.
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (outOfStock) return;
+    // Cart line items store one flat `image` string (no images/videos
+    // arrays like a Product) — when there's no image but there is a
+    // video, grab a still frame from it so the cart shows a static
+    // preview instead of nothing, matching the fallback used on cards.
+    const thumbnail = image ?? (video ? await captureVideoPosterFrame(video) : undefined);
     addToCart({
       productId: product.id,
       slug: product.slug,
       name: product.name,
-      image,
+      image: thumbnail,
       price: product.price,
       mrp: product.mrp,
       size,
