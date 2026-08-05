@@ -106,14 +106,6 @@ export default async function HomePage() {
           }
         `}</style>
       </div>
-      {/* ================= /TEMP BANNER ================= */}
-
-      {bannerText && (
-        <div className="flex items-center justify-center gap-2 bg-[linear-gradient(90deg,_#D94F70_0%,_#B13A57_100%)] px-5 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.24em] text-white">
-          <Megaphone size={13} className="shrink-0" />
-          <span>{bannerText}</span>
-        </div>
-      )}
 
       <AnimatedHero heading={heroHeading} subheading={heroSubheading} imageUrl={heroImage} imageUrls={heroImages} />
 
