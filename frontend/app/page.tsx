@@ -76,36 +76,7 @@ export default async function HomePage() {
 
   return (
     <main className="bg-[#FDF2EC] text-[#3A2213]">
-      {/* ================= TEMP: SITE NOT LIVE BANNER — remove/comment out before going live ================= */}
-      <div className="fixed inset-x-0 top-0 z-[100] overflow-hidden bg-red-600 py-2 shadow-md">
-        <div className="marquee-track flex w-[200%]">
-          <div className="flex w-1/2 shrink-0 justify-around">
-            <span className="whitespace-nowrap px-8 text-xs font-bold uppercase tracking-widest text-white sm:text-sm">
-              ⚠ This site is not live yet — preview only ⚠
-            </span>
-            <span className="whitespace-nowrap px-8 text-xs font-bold uppercase tracking-widest text-white sm:text-sm">
-              ⚠ This site is not live yet — preview only ⚠
-            </span>
-          </div>
-          <div className="flex w-1/2 shrink-0 justify-around" aria-hidden="true">
-            <span className="whitespace-nowrap px-8 text-xs font-bold uppercase tracking-widest text-white sm:text-sm">
-              ⚠ This site is not live yet — preview only ⚠
-            </span>
-            <span className="whitespace-nowrap px-8 text-xs font-bold uppercase tracking-widest text-white sm:text-sm">
-              ⚠ This site is not live yet — preview only ⚠
-            </span>
-          </div>
-        </div>
-        <style>{`
-          @keyframes marquee-ltr {
-            from { transform: translateX(-50%); }
-            to   { transform: translateX(0%); }
-          }
-          .marquee-track {
-            animation: marquee-ltr 12s linear infinite;
-          }
-        `}</style>
-      </div>
+     
 
       <AnimatedHero heading={heroHeading} subheading={heroSubheading} imageUrl={heroImage} imageUrls={heroImages} />
 
