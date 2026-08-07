@@ -201,6 +201,32 @@ export function CollectionsExplorer({ products }: { products: Product[] }) {
             <span>Up to ₹{maxPrice.toLocaleString()}</span>
           </div>
         </div>
+        <div className="mt-3 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setSort("Price: Low to High")}
+            aria-pressed={sort === "Price: Low to High"}
+            className={`flex-1 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+              sort === "Price: Low to High"
+                ? "border-[#3A2213] bg-[#3A2213] text-white"
+                : "border-[#3A2213]/12 bg-transparent text-[#7A6D65] hover:bg-[#E9CFBA]"
+            }`}
+          >
+            Low to High
+          </button>
+          <button
+            type="button"
+            onClick={() => setSort("Price: High to Low")}
+            aria-pressed={sort === "Price: High to Low"}
+            className={`flex-1 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+              sort === "Price: High to Low"
+                ? "border-[#3A2213] bg-[#3A2213] text-white"
+                : "border-[#3A2213]/12 bg-transparent text-[#7A6D65] hover:bg-[#E9CFBA]"
+            }`}
+          >
+            High to Low
+          </button>
+        </div>
       </div>
     </div>
   );
