@@ -17,8 +17,8 @@ import { ArrowRight, Camera, Megaphone } from "lucide-react";
 // and linked from the footer.
 const homeShopCategories = [
   { name: "All Collections", tag: "Every one-of-a-kind suit in the boutique", href: "/collections" },
-  { name: "Stitched Collections", tag: "Ready-to-wear · Try and go", href: "/collections?type=stitched" },
   { name: "Unstitched Collections", tag: "Custom Fit · Tailored to you", href: "/collections?type=unstitched" },
+  { name: "Stitched Collections", tag: "Ready-to-wear · Try and go", href: "/collections?type=stitched" },
 ];
 
 export const dynamic = "force-dynamic";
@@ -58,7 +58,7 @@ export default async function HomePage() {
   const bestSellers: Product[] = [...products]
     .filter((p) => !featuredIds.has(p.id))
     .sort((a, b) => b.sold - a.sold)
-    .slice(0, 4);
+    .slice(0, 12);
 
   // Powers the "@handle" Instagram-style grid near the footer. Not a live
   // API embed (see comment at the section itself) — just the shop's own
@@ -80,7 +80,8 @@ export default async function HomePage() {
 
       <AnimatedHero heading={heroHeading} subheading={heroSubheading} imageUrl={heroImage} imageUrls={heroImages} />
 
-      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
+      <section className="bg-[#FDF2EC] py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Curated Edits</p>
@@ -110,6 +111,7 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
+        </div>
       </section>
 
       <section className="bg-[#E9CFBA] py-10 sm:py-16">
@@ -133,7 +135,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
+      <section className="bg-[#FDF2EC] py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Most Loved</p>
@@ -152,9 +155,16 @@ export default async function HomePage() {
             <AnimatedProductCard key={product.id} product={product} />
           ))}
         </div>
+        <div className="mt-8 flex justify-end">
+          <Link href="/collections" className="inline-flex items-center gap-1.5 rounded-full bg-[#3A2213] px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#D94F70] sm:px-5">
+            View All <ArrowRight size={13} />
+          </Link>
+        </div>
+        </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
+      <section className="bg-[#E9CFBA] py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.3em] text-[#B17F5E]">Made for You</p>
@@ -180,9 +190,10 @@ export default async function HomePage() {
             )}
           </div>
         </div>
+        </div>
       </section>
 
-      <section className="bg-[#E9CFBA] py-10 sm:py-16">
+      <section className="bg-[#FDF2EC] py-10 sm:py-16">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <h2 className="mb-8 text-center text-3xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
             What Our Customers Say
@@ -196,7 +207,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-10 sm:py-16 lg:px-8">
+      <section className="bg-[#E9CFBA] py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
         <div className="mb-8 flex items-center justify-center gap-2">
           <Camera size={18} className="text-[#D94F70]" />
           <h2 className="text-2xl text-[#3A2213]" style={{ fontFamily: "Playfair Display, serif" }}>
@@ -243,6 +255,7 @@ export default async function HomePage() {
           >
             <InstagramIcon size={16} /> Follow Us
           </a>
+        </div>
         </div>
       </section>
 
